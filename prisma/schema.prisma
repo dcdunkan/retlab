@@ -1,0 +1,61 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../src/lib/server/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model College {
+    id       Int    @id
+    name     String
+    base_url String
+
+    accounts Account[]
+
+    @@map("colleges")
+}
+
+model Account {
+    college_id Int
+    username   String
+
+    semester_id     Int
+    batch_id        Int
+    student_id      Int
+    image_url       String
+    semester_name   String
+    profile_name    String
+    course_name     String
+    reg_no          String
+    roll_no         String
+    last_updated_at DateTime
+
+    sessions Session[]
+    college  College   @relation(fields: [college_id], references: [id], onDelete: Cascade)
+
+    @@id(name: "account_id", fields: [college_id, username])
+    @@map("accounts")
+}
+
+// can't map because v7 has some weird bug with enums
+enum DeviceType {
+    LAPTOP
+    MOBILE
+    UNKNOWN
+}
+
+model Session {
+    id               String     @id @default(ulid())
+    college_id       Int
+    account_username String
+    access_token     String
+    device_type      DeviceType
+    device_info      String?
+    created_at       DateTime   @default(now())
+
+    account Account @relation(fields: [college_id, account_username], references: [college_id, username], onDelete: Cascade)
+
+    @@map("sessions")
+}

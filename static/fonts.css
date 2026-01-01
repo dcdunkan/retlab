@@ -1,0 +1,26 @@
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Variable.woff2') format('woff2'),
+       url('/fonts/Lora-Variable.woff') format('woff'),
+       url('/fonts/Lora-Variable.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-VariableItalic.woff2') format('woff2'),
+       url('/fonts/Lora-VariableItalic.woff') format('woff'),
+       url('/fonts/Lora-VariableItalic.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Recursive';
+  src: url('/fonts/Recursive_VF_1.085.woff2') format('woff2');
+  font-weight: 300 1000;
+  font-display: swap;
+}
