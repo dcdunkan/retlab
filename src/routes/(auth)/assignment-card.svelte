@@ -53,6 +53,7 @@
 						variant="outline"
 						shadow="none"
 						href={assignment.url}
+						target="_blank"
 						onclick={(e) => {
 							e.stopPropagation();
 						}}
@@ -80,6 +81,7 @@
 							shadow="none"
 							variant="outline"
 							href={assignment.uploaded_file}
+							target="_blank"
 							onclick={(e) => {
 								e.stopPropagation();
 							}}

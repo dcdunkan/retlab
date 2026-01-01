@@ -16,6 +16,12 @@
 </svelte:head>
 
 <div>
+	<Button>Relax</Button>
+	<Button variant="destructive" class="transition-all duration-75">Relax</Button>
+	<Button variant="outline" class="transition-all duration-150">Relax</Button>
+</div>
+
+<div>
 	<Button variant="outline" href="/attendance">
 		<CalendarCheckIcon /> Attendance
 	</Button>
