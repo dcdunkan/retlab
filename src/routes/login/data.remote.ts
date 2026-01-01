@@ -6,7 +6,7 @@ import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
 import { getDeviceInfo } from "$lib/server/device-info";
 import { prisma } from "$lib/server/prisma";
-import { Prisma } from "$lib/server/prisma/client";
+import { Prisma } from "$lib/prisma/client";
 import type { JWTPayloadData } from "$lib/types";
 import { invalid, redirect } from "@sveltejs/kit";
 import { loginSchema } from "./login-schema";

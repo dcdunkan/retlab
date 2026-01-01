@@ -1,5 +1,5 @@
 import { UAParser, type IDevice } from "ua-parser-js";
-import { DeviceType } from "./prisma/enums";
+import { DeviceType } from "../prisma/enums";
 
 type ParsedInfo = Record<"browser" | "os" | "device", string | null>;
 
