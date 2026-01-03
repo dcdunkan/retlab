@@ -4,8 +4,7 @@
 	import { slide } from "svelte/transition";
 	import { titleCase } from "title-case";
 	import { getAttendance } from "./attendance.remote";
-	import ErrorBox from "$lib/components/error-box.svelte";
-	import LoadingBox from "$lib/components/loading-box.svelte";
+	import Box from "$lib/components/box";
 
 	const attendanceData = getAttendance();
 	let showAdvancedAttendance = new SvelteSet<number>();
@@ -16,7 +15,7 @@
 </svelte:head>
 
 {#if attendanceData.loading}
-	<LoadingBox>Loading...</LoadingBox>
+	<Box.Loading>Loading...</Box.Loading>
 {:else if attendanceData.current}
 	{@const total = attendanceData.current.reduce(
 		(p, c) => ({
@@ -100,9 +99,9 @@
 		{/each}
 	</div>
 {:else}
-	<ErrorBox>
+	<Box.Error>
 		<p>Something went wrong</p>
-	</ErrorBox>
+	</Box.Error>
 {/if}
 
 <style>

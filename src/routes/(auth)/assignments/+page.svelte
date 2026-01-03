@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { isValidDate } from "$lib";
-	import ErrorBox from "$lib/components/error-box.svelte";
-	import LoadingBox from "$lib/components/loading-box.svelte";
+	import Box from "$lib/components/box";
 	import Select from "$lib/components/select.svelte";
 	import AssignmentCard from "../assignment-card.svelte";
 	import { getAssignments } from "./assignments.remote";
@@ -222,7 +221,7 @@
 </Dialog> -->
 
 {#if assignmentsData.loading}
-	<LoadingBox>Loading...</LoadingBox>
+	<Box.Loading>Loading...</Box.Loading>
 {:else if assignmentsData.current}
 	<div class="py-2 font-serif text-5xl font-bold">
 		{overview.due} due, {overview.completed} completed
@@ -277,9 +276,9 @@
 		{/each}
 	</div>
 {:else}
-	<ErrorBox>
+	<Box.Error>
 		<p>Something went wrong</p>
-	</ErrorBox>
+	</Box.Error>
 {/if}
 
 <!-- <div class="flex justify-center">

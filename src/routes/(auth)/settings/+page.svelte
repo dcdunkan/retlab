@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { negateFn } from "$lib";
 	import Button from "$lib/components/button.svelte";
-	import ErrorBox from "$lib/components/error-box.svelte";
-	import LoadingBox from "$lib/components/loading-box.svelte";
+	import Box from "$lib/components/box";
 	import { isHttpError } from "@sveltejs/kit";
 	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
 	import { toast } from "svelte-sonner";
@@ -111,23 +110,28 @@
 		</div>
 
 		{#if sessions.loading}
-			<LoadingBox>Fetching account sessions</LoadingBox>
+			<Box.Loading>Fetching account sessions</Box.Loading>
 		{:else if sessions.current}
+			{@const otherSessions = sessions.current.filter(negateFn(isCurrentSession))}
 			<h3 class="text-lg italic">Other sessions</h3>
-			<div class="max-h-64 divide-y-2 overflow-scroll border-2">
-				{#each sessions.current.filter(negateFn(isCurrentSession)) as session (session.id)}
-					<SessionCard
-						{session}
-						showLogout
-						onLogout={async () => {
-							await logoutSession({ session_id: session.id });
-							getSessions().refresh();
-						}}
-					/>
-				{/each}
-			</div>
+			{#if otherSessions.length > 0}
+				<div class="max-h-64 divide-y-2 overflow-scroll border-2">
+					{#each otherSessions as session (session.id)}
+						<SessionCard
+							{session}
+							showLogout
+							onLogout={async () => {
+								await logoutSession({ session_id: session.id });
+								getSessions().refresh();
+							}}
+						/>
+					{/each}
+				</div>
+			{:else}
+				<Box.Empty>You do not have any other sessions</Box.Empty>
+			{/if}
 		{:else}
-			<ErrorBox>Failed to fetch your account sessions</ErrorBox>
+			<Box.Error>Failed to fetch your account sessions</Box.Error>
 		{/if}
 	</div>
 </section>

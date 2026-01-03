@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Button from "$lib/components/button.svelte";
-	import ErrorBox from "$lib/components/error-box.svelte";
-	import LoadingBox from "$lib/components/loading-box.svelte";
+	import Box from "$lib/components/box";
 	import AssignmentCard from "./assignment-card.svelte";
 
 	import ArrowRightIcon from "phosphor-svelte/lib/ArrowRight";
@@ -40,7 +39,7 @@
 </div>
 
 {#if assignmentsData.loading}
-	<LoadingBox>Loading due assignments...</LoadingBox>
+	<Box.Loading>Loading due assignments...</Box.Loading>
 {:else if assignmentsData.current}
 	<div>
 		{#each assignmentsData.current as assignment (assignment.id)}
@@ -48,7 +47,7 @@
 		{/each}
 	</div>
 {:else}
-	<ErrorBox>Something went wrong</ErrorBox>
+	<Box.Error>Something went wrong</Box.Error>
 {/if}
 
 <!-- <h1 class="text-2xl capitalize">

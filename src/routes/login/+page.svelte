@@ -1,6 +1,5 @@
 <script lang="ts">
-	import ErrorBox from "$lib/components/error-box.svelte";
-	import LoadingBox from "$lib/components/loading-box.svelte";
+	import Box from "$lib/components/box";
 	import { getColleges, loginForm } from "./data.remote";
 	import Button from "$lib/components/button.svelte";
 	import { loginSchema } from "./login-schema";
@@ -18,7 +17,7 @@
 </div>
 
 {#if collegeList.loading}
-	<LoadingBox>Loading institutions</LoadingBox>
+	<Box.Loading>Loading institutions</Box.Loading>
 {:else if collegeList.ready}
 	<form {...loginForm.preflight(loginSchema)} class="flex flex-col space-y-2">
 		<div class="space-y-1">
@@ -70,15 +69,15 @@
 		</div>
 
 		{#if loginForm.fields.issues()?.length}
-			<ErrorBox>
+			<Box.Error>
 				{#each loginForm.fields.issues() as issue, i (i)}
 					<li>{issue.message}</li>
 				{/each}
-			</ErrorBox>
+			</Box.Error>
 		{/if}
 
 		<Button {...loginForm.buttonProps} disabled={!!loginForm.pending}>Login</Button>
 	</form>
 {:else if collegeList.error}
-	<ErrorBox>Failed to load institutions</ErrorBox>
+	<Box.Error>Failed to load institutions</Box.Error>
 {/if}
