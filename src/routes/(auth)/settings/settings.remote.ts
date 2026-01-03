@@ -1,10 +1,10 @@
 import { command, getRequestEvent, query } from "$app/server";
 import { ApiEndPoints } from "$lib/generated/api-endpoints";
-import type { dash, login, main } from "$lib/generated/models";
+import type { dash, login } from "$lib/generated/models";
 import { api } from "$lib/server";
-import { prisma } from "$lib/server/prisma";
-import { error, redirect } from "@sveltejs/kit";
 import * as auth from "$lib/server/auth";
+import { prisma } from "$lib/server/prisma";
+import { error } from "@sveltejs/kit";
 import z from "zod";
 
 export const getSessions = query(async () => {
@@ -13,7 +13,13 @@ export const getSessions = query(async () => {
 		return error(401, "Unauthorized");
 	}
 
+	const session = event.locals.session;
+
 	return await prisma.session.findMany({
+		where: {
+			college_id: session.college_id,
+			account_username: session.account_username
+		},
 		select: {
 			id: true,
 			device_info: true,
