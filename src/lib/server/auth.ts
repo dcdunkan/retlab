@@ -2,6 +2,8 @@ import type { JWTPayloadData } from "$lib/types";
 import { jwtVerify, SignJWT, type JWTPayload, type JWTVerifyResult } from "jose";
 
 import { env } from "$env/dynamic/private";
+import type { RequestEvent } from "@sveltejs/kit";
+import { DAY, MINUTE } from "$lib";
 
 export const ACCESS_TOKEN_COOKIE_NAME = "ret-access-token";
 export const REFRESH_TOKEN_COOKIE_NAME = "ret-refresh-token";
@@ -39,4 +41,28 @@ export function verifyRefreshToken(
 	token: string
 ): Promise<JWTVerifyResult<JWTPayload & JWTPayloadData>> {
 	return jwtVerify(token, JWT_REFRESH_TOKEN_SECRET);
+}
+
+export function deleteTokenCookies(event: RequestEvent) {
+	event.cookies.delete(ACCESS_TOKEN_COOKIE_NAME, {
+		path: "/",
+		secure: import.meta.env.PROD
+	});
+	event.cookies.delete(REFRESH_TOKEN_COOKIE_NAME, {
+		path: "/",
+		secure: import.meta.env.PROD
+	});
+}
+
+export async function setTokenCookies(event: RequestEvent, sessionId: string) {
+	event.cookies.set(ACCESS_TOKEN_COOKIE_NAME, await createAccessToken({ sessionId }), {
+		path: "/",
+		expires: new Date(Date.now() + 10 * MINUTE),
+		secure: import.meta.env.PROD
+	});
+	event.cookies.set(REFRESH_TOKEN_COOKIE_NAME, await createRefreshToken({ sessionId }), {
+		path: "/",
+		expires: new Date(Date.now() + 60 * DAY),
+		secure: import.meta.env.PROD
+	});
 }

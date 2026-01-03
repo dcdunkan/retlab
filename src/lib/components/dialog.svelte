@@ -1,50 +1,68 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
-	import { Dialog } from "bits-ui";
+	import { Dialog, type DialogContentPropsWithoutHTML } from "bits-ui";
 	import XIcon from "phosphor-svelte/lib/X";
-
-	type Props = Dialog.RootProps & {
-		buttonText: string;
-		title: Snippet;
-		description: Snippet;
-		// ...other component props if you wish to pass them
-	};
+	import type { Snippet } from "svelte";
 
 	let {
 		open = $bindable(false),
 		children,
-		buttonText,
+		showCloseIcon = true,
+		trigger,
 		title,
 		description,
+		footer,
+		interactionOutsideBehavior,
 		...restProps
-	}: Props = $props();
+	}: Dialog.RootProps & {
+		showCloseIcon?: boolean;
+		trigger: Snippet;
+		title: Snippet;
+		description?: Snippet;
+		footer?: Snippet;
+		interactionOutsideBehavior?: DialogContentPropsWithoutHTML["interactOutsideBehavior"];
+	} = $props();
 </script>
 
 <Dialog.Root bind:open {...restProps}>
-	<Dialog.Trigger>
-		{buttonText}
-	</Dialog.Trigger>
+	{@render trigger()}
+
 	<Dialog.Portal>
-		<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
+		<Dialog.Overlay
+			class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+		/>
 		<Dialog.Content
-			class="fixed top-[50%] left-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border-2 bg-background p-5 shadow-sshadow outline-hidden sm:max-w-[490px] md:w-full"
+			interactOutsideBehavior={interactionOutsideBehavior ?? "close"}
+			class="fixed top-[50%] left-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] space-y-4 border-2 bg-background p-5 shadow-sshadow outline-hidden data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-[490px] md:w-full"
 		>
-			<Dialog.Title>
-				{@render title()}
-			</Dialog.Title>
-			<Dialog.Description>
-				{@render description()}
-			</Dialog.Description>
+			<div class="flex flex-col gap-1 text-center sm:text-start">
+				<Dialog.Title class="font-serif text-2xl font-bold">
+					{@render title()}
+				</Dialog.Title>
+				{#if description}
+					<Dialog.Description class="text-sm text-muted-foreground">
+						{@render description()}
+					</Dialog.Description>
+				{/if}
+			</div>
+
+			{#if showCloseIcon}
+				<Dialog.Close
+					class="absolute top-4 right-4 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
+				>
+					<div>
+						<XIcon class="size-5 text-foreground" />
+						<span class="sr-only">Close</span>
+					</div>
+				</Dialog.Close>
+			{/if}
+
 			{@render children?.()}
 
-			<Dialog.Close
-				class="absolute top-5 right-5 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
-			>
-				<div>
-					<XIcon class="size-5 text-foreground" />
-					<span class="sr-only">Close</span>
+			{#if footer}
+				<div class="flex flex-col-reverse gap-1 sm:flex-row sm:justify-end">
+					{@render footer()}
 				</div>
-			</Dialog.Close>
+			{/if}
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>

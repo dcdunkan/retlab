@@ -2,7 +2,8 @@
 	const Piece = {
 		HOME: "home",
 		ATTENDANCE: "attendance",
-		ASSIGNMENTS: "assignments"
+		ASSIGNMENTS: "assignments",
+		SETTINGS: "settings"
 	};
 </script>
 
@@ -30,11 +31,13 @@
 					]
 				: page.route.id == "/(auth)"
 					? [{ label: Piece.HOME, href: "/" }]
-					: [{ label: Piece.HOME, href: "/" }]
+					: page.route.id == "/(auth)/settings"
+						? [{ label: Piece.SETTINGS, href: "/settings/" }]
+						: [{ label: Piece.HOME, href: "/" }]
 	);
 </script>
 
-<div class="w-full">
+<div class="min-h-screen w-full">
 	<nav class="sticky top-0 z-50 border-b-2 bg-background/50 backdrop-blur-lg">
 		<div class="mx-auto flex max-w-prose place-items-center justify-between px-4 py-2">
 			<div>
@@ -48,10 +51,14 @@
 					{/if}
 				{/each}
 			</div>
-			<div>settings</div>
+			{#if page.route.id !== "/(auth)/settings"}
+				<a class="hover:bg-foreground/10" href={resolve("/settings/")}>settings</a>
+			{:else}
+				<a class="hover:bg-foreground/10" href={resolve("/")}>home</a>
+			{/if}
 		</div>
 	</nav>
-	<main class="mx-auto max-w-prose space-y-4 p-4">
+	<main class="mx-auto max-w-prose space-y-6 p-4">
 		{@render children()}
 	</main>
 </div>

@@ -2,10 +2,12 @@
 	import Button from "$lib/components/button.svelte";
 	import ErrorBox from "$lib/components/error-box.svelte";
 	import LoadingBox from "$lib/components/loading-box.svelte";
+	import AssignmentCard from "./assignment-card.svelte";
+
 	import ArrowRightIcon from "phosphor-svelte/lib/ArrowRight";
 	import BriefcaseIcon from "phosphor-svelte/lib/Briefcase";
 	import CalendarCheckIcon from "phosphor-svelte/lib/CalendarCheck";
-	import AssignmentCard from "./assignment-card.svelte";
+
 	import { getDueAssignments } from "./dashboard.remote";
 
 	const assignmentsData = getDueAssignments();
@@ -16,7 +18,7 @@
 </svelte:head>
 
 <div>
-	<Button>Relax</Button>
+	<Button class="transition-none">Relax</Button>
 	<Button variant="destructive" class="transition-all duration-75">Relax</Button>
 	<Button variant="outline" class="transition-all duration-150">Relax</Button>
 </div>

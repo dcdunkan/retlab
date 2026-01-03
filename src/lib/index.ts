@@ -59,3 +59,9 @@ export function isValidDate(d: Date): boolean {
 // export function parseSubjectString(str: string) {
 
 // }
+
+export function negateFn<T extends unknown[]>(
+	fn: (...args: T) => boolean
+): (...args: T) => boolean {
+	return (...args: T) => !fn(...args);
+}

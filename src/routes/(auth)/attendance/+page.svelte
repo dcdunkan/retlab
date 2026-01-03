@@ -27,7 +27,7 @@
 	)}
 	{@const totalPercent = cutePercent(safeDivision(total.attended, total.classes) * 100, 0)}
 
-	<div class="px-3 py-2 font-serif text-5xl font-bold">{totalPercent} %</div>
+	<h1 class="text-5xl font-bold">{totalPercent} %</h1>
 
 	<div class="grid grid-flow-row">
 		{#each attendanceData.current as subject, i (i)}

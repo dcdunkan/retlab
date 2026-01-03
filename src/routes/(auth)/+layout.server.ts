@@ -42,6 +42,7 @@ export const load = async (event) => {
 
 	return {
 		semesters,
+		session,
 		account
 	};
 };

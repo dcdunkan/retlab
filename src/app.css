@@ -1,5 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 @import "../static/fonts.css";
+
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
@@ -142,7 +144,7 @@ h3,
 h4,
 h5,
 h6 {
-	@apply mt-2 mb-2 font-serif font-bold;
+	@apply font-serif font-bold;
 }
 
 html {
