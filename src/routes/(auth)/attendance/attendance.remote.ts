@@ -23,14 +23,21 @@ export const getAttendance = query(async () => {
 			}
 		)
 		.json();
+
 	// todo: handle attendanceData.login == false
 	return attendanceData.subjects.map((subject) => {
+		// note: so apparently, subject.total and subject.total_subject are
+		// entirely two different things. no explanation yet.
+		// hack: parse total_subject to actually use it.
+
+		const [attended, classes] = subject.total_subject.split("/").map((x) => Number(x));
+		// todo: duty leave mode.
 		return {
 			name: subject.subject,
 			// @ts-expect-error invalid types
 			code: subject.code,
-			classes: Number.parseInt(subject.total_classes),
-			attended: Number.parseInt(subject.class_attended)
+			classes: classes,
+			attended: attended
 		};
 	});
 	// return [
