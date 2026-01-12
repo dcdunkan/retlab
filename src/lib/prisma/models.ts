@@ -11,4 +11,5 @@
 export type * from './models/College'
 export type * from './models/Account'
 export type * from './models/Session'
+export type * from './models/Settings'
 export type * from './commonInputTypes'

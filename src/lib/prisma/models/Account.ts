@@ -284,6 +284,7 @@ export type AccountWhereInput = {
   reg_no?: Prisma.StringFilter<"Account"> | string
   roll_no?: Prisma.StringFilter<"Account"> | string
   last_updated_at?: Prisma.DateTimeFilter<"Account"> | Date | string
+  settings?: Prisma.XOR<Prisma.SettingsNullableScalarRelationFilter, Prisma.SettingsWhereInput> | null
   sessions?: Prisma.SessionListRelationFilter
   college?: Prisma.XOR<Prisma.CollegeScalarRelationFilter, Prisma.CollegeWhereInput>
 }
@@ -301,6 +302,7 @@ export type AccountOrderByWithRelationInput = {
   reg_no?: Prisma.SortOrder
   roll_no?: Prisma.SortOrder
   last_updated_at?: Prisma.SortOrder
+  settings?: Prisma.SettingsOrderByWithRelationInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   college?: Prisma.CollegeOrderByWithRelationInput
 }
@@ -322,6 +324,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   reg_no?: Prisma.StringFilter<"Account"> | string
   roll_no?: Prisma.StringFilter<"Account"> | string
   last_updated_at?: Prisma.DateTimeFilter<"Account"> | Date | string
+  settings?: Prisma.XOR<Prisma.SettingsNullableScalarRelationFilter, Prisma.SettingsWhereInput> | null
   sessions?: Prisma.SessionListRelationFilter
   college?: Prisma.XOR<Prisma.CollegeScalarRelationFilter, Prisma.CollegeWhereInput>
 }, "account_id">
@@ -376,6 +379,7 @@ export type AccountCreateInput = {
   reg_no: string
   roll_no: string
   last_updated_at: Date | string
+  settings?: Prisma.SettingsCreateNestedOneWithoutAccountInput
   sessions?: Prisma.SessionCreateNestedManyWithoutAccountInput
   college: Prisma.CollegeCreateNestedOneWithoutAccountsInput
 }
@@ -393,6 +397,7 @@ export type AccountUncheckedCreateInput = {
   reg_no: string
   roll_no: string
   last_updated_at: Date | string
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutAccountInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutAccountInput
 }
 
@@ -408,6 +413,7 @@ export type AccountUpdateInput = {
   reg_no?: Prisma.StringFieldUpdateOperationsInput | string
   roll_no?: Prisma.StringFieldUpdateOperationsInput | string
   last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.SettingsUpdateOneWithoutAccountNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutAccountNestedInput
   college?: Prisma.CollegeUpdateOneRequiredWithoutAccountsNestedInput
 }
@@ -425,6 +431,7 @@ export type AccountUncheckedUpdateInput = {
   reg_no?: Prisma.StringFieldUpdateOperationsInput | string
   roll_no?: Prisma.StringFieldUpdateOperationsInput | string
   last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutAccountNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -611,6 +618,20 @@ export type AccountUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutSessionsInput, Prisma.AccountUpdateWithoutSessionsInput>, Prisma.AccountUncheckedUpdateWithoutSessionsInput>
 }
 
+export type AccountCreateNestedOneWithoutSettingsInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutSettingsInput, Prisma.AccountUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutSettingsInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneRequiredWithoutSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutSettingsInput, Prisma.AccountUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutSettingsInput
+  upsert?: Prisma.AccountUpsertWithoutSettingsInput
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutSettingsInput, Prisma.AccountUpdateWithoutSettingsInput>, Prisma.AccountUncheckedUpdateWithoutSettingsInput>
+}
+
 export type AccountCreateWithoutCollegeInput = {
   username: string
   semester_id: number
@@ -623,6 +644,7 @@ export type AccountCreateWithoutCollegeInput = {
   reg_no: string
   roll_no: string
   last_updated_at: Date | string
+  settings?: Prisma.SettingsCreateNestedOneWithoutAccountInput
   sessions?: Prisma.SessionCreateNestedManyWithoutAccountInput
 }
 
@@ -638,6 +660,7 @@ export type AccountUncheckedCreateWithoutCollegeInput = {
   reg_no: string
   roll_no: string
   last_updated_at: Date | string
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutAccountInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutAccountInput
 }
 
@@ -697,6 +720,7 @@ export type AccountCreateWithoutSessionsInput = {
   reg_no: string
   roll_no: string
   last_updated_at: Date | string
+  settings?: Prisma.SettingsCreateNestedOneWithoutAccountInput
   college: Prisma.CollegeCreateNestedOneWithoutAccountsInput
 }
 
@@ -713,6 +737,7 @@ export type AccountUncheckedCreateWithoutSessionsInput = {
   reg_no: string
   roll_no: string
   last_updated_at: Date | string
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutSessionsInput = {
@@ -743,6 +768,7 @@ export type AccountUpdateWithoutSessionsInput = {
   reg_no?: Prisma.StringFieldUpdateOperationsInput | string
   roll_no?: Prisma.StringFieldUpdateOperationsInput | string
   last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.SettingsUpdateOneWithoutAccountNestedInput
   college?: Prisma.CollegeUpdateOneRequiredWithoutAccountsNestedInput
 }
 
@@ -759,6 +785,87 @@ export type AccountUncheckedUpdateWithoutSessionsInput = {
   reg_no?: Prisma.StringFieldUpdateOperationsInput | string
   roll_no?: Prisma.StringFieldUpdateOperationsInput | string
   last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutAccountNestedInput
+}
+
+export type AccountCreateWithoutSettingsInput = {
+  username: string
+  semester_id: number
+  batch_id: number
+  student_id: number
+  image_url: string
+  semester_name: string
+  profile_name: string
+  course_name: string
+  reg_no: string
+  roll_no: string
+  last_updated_at: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutAccountInput
+  college: Prisma.CollegeCreateNestedOneWithoutAccountsInput
+}
+
+export type AccountUncheckedCreateWithoutSettingsInput = {
+  college_id: number
+  username: string
+  semester_id: number
+  batch_id: number
+  student_id: number
+  image_url: string
+  semester_name: string
+  profile_name: string
+  course_name: string
+  reg_no: string
+  roll_no: string
+  last_updated_at: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutAccountInput
+}
+
+export type AccountCreateOrConnectWithoutSettingsInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutSettingsInput, Prisma.AccountUncheckedCreateWithoutSettingsInput>
+}
+
+export type AccountUpsertWithoutSettingsInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutSettingsInput, Prisma.AccountUncheckedUpdateWithoutSettingsInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutSettingsInput, Prisma.AccountUncheckedCreateWithoutSettingsInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutSettingsInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutSettingsInput, Prisma.AccountUncheckedUpdateWithoutSettingsInput>
+}
+
+export type AccountUpdateWithoutSettingsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  semester_id?: Prisma.IntFieldUpdateOperationsInput | number
+  batch_id?: Prisma.IntFieldUpdateOperationsInput | number
+  student_id?: Prisma.IntFieldUpdateOperationsInput | number
+  image_url?: Prisma.StringFieldUpdateOperationsInput | string
+  semester_name?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_name?: Prisma.StringFieldUpdateOperationsInput | string
+  course_name?: Prisma.StringFieldUpdateOperationsInput | string
+  reg_no?: Prisma.StringFieldUpdateOperationsInput | string
+  roll_no?: Prisma.StringFieldUpdateOperationsInput | string
+  last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutAccountNestedInput
+  college?: Prisma.CollegeUpdateOneRequiredWithoutAccountsNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutSettingsInput = {
+  college_id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  semester_id?: Prisma.IntFieldUpdateOperationsInput | number
+  batch_id?: Prisma.IntFieldUpdateOperationsInput | number
+  student_id?: Prisma.IntFieldUpdateOperationsInput | number
+  image_url?: Prisma.StringFieldUpdateOperationsInput | string
+  semester_name?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_name?: Prisma.StringFieldUpdateOperationsInput | string
+  course_name?: Prisma.StringFieldUpdateOperationsInput | string
+  reg_no?: Prisma.StringFieldUpdateOperationsInput | string
+  roll_no?: Prisma.StringFieldUpdateOperationsInput | string
+  last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountCreateManyCollegeInput = {
@@ -787,6 +894,7 @@ export type AccountUpdateWithoutCollegeInput = {
   reg_no?: Prisma.StringFieldUpdateOperationsInput | string
   roll_no?: Prisma.StringFieldUpdateOperationsInput | string
   last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.SettingsUpdateOneWithoutAccountNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutAccountNestedInput
 }
 
@@ -802,6 +910,7 @@ export type AccountUncheckedUpdateWithoutCollegeInput = {
   reg_no?: Prisma.StringFieldUpdateOperationsInput | string
   roll_no?: Prisma.StringFieldUpdateOperationsInput | string
   last_updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutAccountNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -863,6 +972,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   reg_no?: boolean
   roll_no?: boolean
   last_updated_at?: boolean
+  settings?: boolean | Prisma.Account$settingsArgs<ExtArgs>
   sessions?: boolean | Prisma.Account$sessionsArgs<ExtArgs>
   college?: boolean | Prisma.CollegeDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -917,6 +1027,7 @@ export type AccountSelectScalar = {
 
 export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"college_id" | "username" | "semester_id" | "batch_id" | "student_id" | "image_url" | "semester_name" | "profile_name" | "course_name" | "reg_no" | "roll_no" | "last_updated_at", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  settings?: boolean | Prisma.Account$settingsArgs<ExtArgs>
   sessions?: boolean | Prisma.Account$sessionsArgs<ExtArgs>
   college?: boolean | Prisma.CollegeDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -931,6 +1042,7 @@ export type AccountIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Account"
   objects: {
+    settings: Prisma.$SettingsPayload<ExtArgs> | null
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     college: Prisma.$CollegePayload<ExtArgs>
   }
@@ -1341,6 +1453,7 @@ readonly fields: AccountFieldRefs;
  */
 export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  settings<T extends Prisma.Account$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$settingsArgs<ExtArgs>>): Prisma.Prisma__SettingsClient<runtime.Types.Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   sessions<T extends Prisma.Account$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   college<T extends Prisma.CollegeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CollegeDefaultArgs<ExtArgs>>): Prisma.Prisma__CollegeClient<runtime.Types.Result.GetResult<Prisma.$CollegePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1777,6 +1890,25 @@ export type AccountDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Accounts to delete.
    */
   limit?: number
+}
+
+/**
+ * Account.settings
+ */
+export type Account$settingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Settings
+   */
+  select?: Prisma.SettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Settings
+   */
+  omit?: Prisma.SettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SettingsInclude<ExtArgs> | null
+  where?: Prisma.SettingsWhereInput
 }
 
 /**

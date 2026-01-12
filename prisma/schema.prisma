@@ -32,6 +32,7 @@ model Account {
     roll_no         String
     last_updated_at DateTime
 
+    settings Settings?
     sessions Session[]
     college  College   @relation(fields: [college_id], references: [id], onDelete: Cascade)
 
@@ -58,4 +59,16 @@ model Session {
     account Account @relation(fields: [college_id, account_username], references: [college_id, username], onDelete: Cascade)
 
     @@map("sessions")
+}
+
+model Settings {
+    account_username String
+    college_id       Int
+
+    attendance_percent_min Int @default(75)
+    attendance_percent_max Int @default(90)
+
+    account Account @relation(fields: [college_id, account_username], references: [college_id, username], onDelete: Cascade)
+
+    @@id(name: "settings_id", fields: [college_id, account_username])
 }

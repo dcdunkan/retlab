@@ -51,6 +51,7 @@
 
 	{#if showLogout}
 		<Button
+			size={loggingOut ? "icon" : "default"}
 			variant="destructive"
 			shadow="none"
 			disabled={loggingOut}

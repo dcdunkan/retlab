@@ -27,7 +27,7 @@ await prisma.$transaction(async (tx) => {
 		const existing = existingCollegeList.get(id);
 		if (existing == null) {
 			toCreate.push(college);
-		} else if (existing.baseUrl !== college.base_url || existing.name !== college.clgName) {
+		} else if (existing.base_url !== college.base_url || existing.name !== college.clgName) {
 			toUpdate.push(college);
 		}
 	}

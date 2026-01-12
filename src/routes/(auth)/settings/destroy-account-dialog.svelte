@@ -42,6 +42,7 @@
 			Cancel
 		</Button>
 		<Button
+			size={destroying ? "icon" : "default"}
 			variant="destructive"
 			shadow="none"
 			disabled={destroying}

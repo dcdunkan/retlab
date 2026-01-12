@@ -24,10 +24,10 @@
 
 <div>
 	<Button variant="outline" href="/attendance">
-		<CalendarCheckIcon /> Attendance
+		<CalendarCheckIcon weight="fill" /> Attendance
 	</Button>
 	<Button variant="outline" href="/assignments">
-		<BriefcaseIcon /> Assignments
+		<BriefcaseIcon weight="fill" /> Assignments
 	</Button>
 </div>
 

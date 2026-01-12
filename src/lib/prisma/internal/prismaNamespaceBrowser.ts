@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   College: 'College',
   Account: 'Account',
-  Session: 'Session'
+  Session: 'Session',
+  Settings: 'Settings'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -110,6 +111,16 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const SettingsScalarFieldEnum = {
+  account_username: 'account_username',
+  college_id: 'college_id',
+  attendance_percent_min: 'attendance_percent_min',
+  attendance_percent_max: 'attendance_percent_max'
+} as const
+
+export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
 
 
 export const SortOrder = {

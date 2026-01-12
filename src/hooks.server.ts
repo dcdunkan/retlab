@@ -1,4 +1,3 @@
-import { DAY, MINUTE } from "$lib";
 import * as auth from "$lib/server/auth";
 import { prisma } from "$lib/server/prisma";
 import { error, redirect } from "@sveltejs/kit";
@@ -7,7 +6,7 @@ export const handle = async ({ event, resolve }) => {
 	event.locals.session = null;
 	event.locals.sessionId = null;
 
-	console.log(event.request.method, event.url.pathname);
+	console.log(event.request.method, event.url.pathname, new URL(event.request.url).pathname);
 
 	// if there is an unexpired access token cookie, verify it
 	try {
@@ -62,7 +61,14 @@ export const handle = async ({ event, resolve }) => {
 		// todo: jws & no shity
 		const dbSession = await prisma.session.findFirst({
 			where: { id: event.locals.sessionId },
-			include: { account: { include: { college: true } } }
+			include: {
+				account: {
+					include: {
+						college: true,
+						settings: true
+					}
+				}
+			}
 		})!;
 		if (dbSession == null) {
 			auth.deleteTokenCookies(event);

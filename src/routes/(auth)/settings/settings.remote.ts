@@ -6,6 +6,47 @@ import * as auth from "$lib/server/auth";
 import { prisma } from "$lib/server/prisma";
 import { error } from "@sveltejs/kit";
 import z from "zod";
+import { settingsSchema } from "./settings-schema";
+import type { Prisma } from "$lib/prisma/client";
+
+export const updateSettings = command(settingsSchema, async (data) => {
+	const event = getRequestEvent();
+	if (event.locals.session == null) {
+		return error(401, "Unauthorized");
+	}
+
+	const session = event.locals.session;
+
+	const updated: Prisma.SettingsCreateWithoutAccountInput = {
+		attendance_percent_max: data.attendanceMaxCutoff,
+		attendance_percent_min: data.attendanceMinCutoff
+	};
+
+	const settings = await prisma.settings.upsert({
+		create: {
+			account: {
+				connect: {
+					account_id: {
+						college_id: session.account.college_id,
+						username: session.account.username
+					}
+				}
+			},
+			...updated
+		},
+		update: {
+			...updated
+		},
+		where: {
+			settings_id: {
+				college_id: session.account.college_id,
+				account_username: session.account.username
+			}
+		}
+	});
+
+	session.account.settings = settings;
+});
 
 export const getSessions = query(async () => {
 	const event = getRequestEvent();
