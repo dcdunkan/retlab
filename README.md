@@ -1,38 +1,26 @@
-# sv
+# Retlab
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+> a true work in progress.
 
-## Creating a project
+Retlab ([/ˈrɪ tiː læb/](https://ipa-reader.com/?text=%CB%88r%C9%AA%20ti%CB%90%20l%C3%A6b), pronounced `rih-tee-lab`) is a slightly convenient unofficial client for ETlab, built out of pure frustration with the official app. Use Retlab at <https://ret.dunked.dev>.
 
-If you're seeing this, you've probably already done this step. Congrats!
+The official app is true garbage: slow, buggy, and has the most terrible UX.
+Retlab uses the same backend with a lot of hacks and workarounds, but keeps the client small and reliable.
 
-```sh
-# create a new project in the current directory
-npx sv create
+The API endpoints and types are generated and documented by parsing the Etlab android `.apk` files with magic. See: <https://github.com/dcdunkan/retlab-generate>.
 
-# create a new project in my-app
-npx sv create my-app
-```
+### Goals
 
-## Developing
+- Only implement features that are needed.
+- Reliable notifications based on service workers.
+- No survey annoyance + auto-fill.
+- Help with keeping attendance & skipping classes.
+- Don't hit rate limits on dashboard API.
+- Consistency with web & app APIs by implementing web access.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Non-goals
 
-```sh
-npm run dev
+- Implement every features.
+- Touch anything with payments.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Licensed under GPLv3.
