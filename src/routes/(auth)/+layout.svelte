@@ -12,8 +12,22 @@
 	import type { LayoutProps } from "./$types";
 	import { resolve } from "$app/paths";
 	import type { Pathname } from "$app/types";
+	import { settingsState } from "./settings.svelte";
+	import { onMount } from "svelte";
 
-	let { children }: LayoutProps = $props();
+	let { data, children }: LayoutProps = $props();
+
+	onMount(() => {
+		settingsState.resolve();
+		if (data.account.settings != null) {
+			settingsState.set(data.account.settings);
+		} else {
+			settingsState.set({
+				attendance_percent_min: 75,
+				attendance_percent_max: 90
+			});
+		}
+	});
 
 	let pieces: {
 		label: string;

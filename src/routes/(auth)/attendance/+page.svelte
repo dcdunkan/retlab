@@ -1,19 +1,16 @@
 <script lang="ts">
 	import { cutePercent, safeDivision } from "$lib";
 	import Box from "$lib/components/box";
-	import type { PageProps } from "./$types";
+	import { settingsState } from "../settings.svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import { getAttendance } from "./attendance.remote";
 
-	let { data }: PageProps = $props();
-
 	const attendanceData = getAttendance();
 
-	let attendancePercentThresholds = $derived<[number, number]>(
-		(data.account.settings != null
-			? [data.account.settings.attendance_percent_min, data.account.settings.attendance_percent_max]
-			: [75, 90]
-		).map((p) => p / 100) as [number, number]
+	let attendancePercentThresholds = $derived(
+		[settingsState.value.attendance_percent_min, settingsState.value.attendance_percent_max].map(
+			(p) => p / 100
+		) as [number, number]
 	);
 </script>
 

@@ -17,6 +17,7 @@
 		updateSettings
 	} from "./settings.remote.js";
 	import type { PageProps } from "./$types.js";
+	import { settingsState } from "../settings.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -38,10 +39,11 @@
 		saving: boolean;
 	}>();
 	$effect(() => {
-		if (data.account.settings != null) {
+		const settings = settingsState.value;
+		if (settingsState.resolved) {
 			const initial: [number, number] = [
-				data.account.settings.attendance_percent_min,
-				data.account.settings.attendance_percent_max
+				settings.attendance_percent_min,
+				settings.attendance_percent_max
 			];
 			cutoffs = {
 				initial: initial,
@@ -69,7 +71,7 @@
 
 <section>
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Tweaks</h2>
-	<p class="text-sm text-muted-foreground">Tweak some of the application behaviors.</p>
+	<p class="text-sm text-muted-foreground">Tweak some of the application behavior.</p>
 
 	<div class="mt-4 divide-y-2 border-2">
 		<div class="flex justify-between gap-4 px-4 py-3">
@@ -162,6 +164,7 @@
 				<Button
 					size="icon"
 					disabled={cutoffs.saving ||
+						cutoffs.current[0] > cutoffs.current[1] ||
 						(cutoffs.initial[0] == cutoffs.current[0] && cutoffs.initial[1] == cutoffs.current[1])}
 					onclick={async () => {
 						if (cutoffs == null) {
@@ -176,6 +179,10 @@
 								attendanceMaxCutoff: cutoffs.current[1]
 							});
 							cutoffs.initial = cutoffs.current;
+							settingsState.set({
+								attendance_percent_min: cutoffs.current[0],
+								attendance_percent_max: cutoffs.current[1]
+							});
 							toast.success("Save successful", { id: toastId });
 						} catch (error) {
 							console.error(error);

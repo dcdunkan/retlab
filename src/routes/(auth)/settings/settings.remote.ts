@@ -22,7 +22,7 @@ export const updateSettings = command(settingsSchema, async (data) => {
 		attendance_percent_min: data.attendanceMinCutoff
 	};
 
-	const settings = await prisma.settings.upsert({
+	await prisma.settings.upsert({
 		create: {
 			account: {
 				connect: {
@@ -45,7 +45,7 @@ export const updateSettings = command(settingsSchema, async (data) => {
 		}
 	});
 
-	session.account.settings = settings;
+	// event.locals.session.account.settings = settings; // wont work, use shared states
 });
 
 export const getSessions = query(async () => {
