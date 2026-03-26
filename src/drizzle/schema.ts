@@ -45,7 +45,7 @@ export const sessions = pgTable(
 	},
 	(table) => [
 		foreignKey({
-			columns: [table.accountUsername, table.collegeId],
+			columns: [table.collegeId, table.accountUsername],
 			foreignColumns: [accounts.collegeId, accounts.username],
 			name: "sessions_college_id_account_username_fkey"
 		})
@@ -82,7 +82,7 @@ export const settings = pgTable(
 	},
 	(table) => [
 		foreignKey({
-			columns: [table.accountUsername, table.collegeId],
+			columns: [table.collegeId, table.accountUsername],
 			foreignColumns: [accounts.collegeId, accounts.username],
 			name: "Settings_college_id_account_username_fkey"
 		})
