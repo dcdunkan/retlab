@@ -6,7 +6,7 @@ import * as auth from "$lib/server/auth";
 import { error } from "@sveltejs/kit";
 import z from "zod";
 import { settingsSchema } from "./settings-schema";
-import type { SettingsState } from "../../../drizzle/schema";
+import type { SettingsState } from "$lib/server/drizzle/schema";
 import { db, schema } from "$lib/server/db";
 import { and, eq } from "drizzle-orm";
 

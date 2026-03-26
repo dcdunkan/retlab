@@ -10,7 +10,7 @@ import { invalid, redirect } from "@sveltejs/kit";
 import { loginSchema } from "./login-schema";
 import { db, schema } from "$lib/server/db";
 import { eq } from "drizzle-orm";
-import type { Account } from "../../drizzle/schema";
+import type { Account } from "$lib/server/drizzle/schema";
 
 export const getColleges = query(async () => {
 	console.log("fetching colleges");

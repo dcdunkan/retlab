@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type DeviceType } from "../../../drizzle/schema";
+	import type { DeviceType } from "$lib/server/drizzle/schema";
 	import LaptopIcon from "phosphor-svelte/lib/LaptopIcon";
 	import DeviceMobileIcon from "phosphor-svelte/lib/DeviceMobileIcon";
 	import QuestionIcon from "phosphor-svelte/lib/QuestionIcon";

@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"db:push": "tsx node_modules/drizzle-kit/bin.cjs push",
 		"db:generate": "tsx node_modules/drizzle-kit/bin.cjs generate",
-		"db:populate": "tsx src/drizzle/seed.ts"
+		"db:populate": "tsx src/lib/server/drizzle/seed.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.1",

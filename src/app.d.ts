@@ -1,6 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { Account, College, Session, Settings } from "./drizzle/schema";
+import type { Account, College, Session, Settings } from "$lib/server/drizzle/schema";
 
 // import type { login } from '$lib/generated/models';
 

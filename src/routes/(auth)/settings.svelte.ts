@@ -1,4 +1,4 @@
-import { type SettingsState } from "../../drizzle/schema";
+import type { SettingsState } from "$lib/server/drizzle/schema";
 
 export const DEFAULT_SETTINGS: SettingsState = {
 	attendancePercentMin: 75,
