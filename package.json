@@ -46,7 +46,6 @@
 		"vite": "^7.3.0"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.562.0",
 		"@neondatabase/serverless": "^1.0.2",
 		"@paralleldrive/cuid2": "^3.3.0",
 		"bits-ui": "^2.14.4",
