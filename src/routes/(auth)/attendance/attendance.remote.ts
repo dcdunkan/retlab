@@ -12,17 +12,19 @@ export const getAttendance = query(async () => {
 	const session = event.locals.session;
 	const attendanceData = await api
 		.post<attendance.AttendanceResponse>(
-			session.account.college.base_url + ApiEndPoints.ATTENDANCE_BY_SUBJECT_URL,
+			session.account.college.baseUrl + ApiEndPoints.ATTENDANCE_BY_SUBJECT_URL,
 			{
 				json: {
 					sem_id: ""
 				} satisfies attendance.AttendanceRequest,
 				headers: {
-					Authorization: "Bearer " + session.access_token
+					Authorization: "Bearer " + session.accessToken
 				}
 			}
 		)
 		.json();
+
+	console.log(attendanceData);
 
 	// todo: handle attendanceData.login == false
 	return attendanceData.subjects.map((subject) => {

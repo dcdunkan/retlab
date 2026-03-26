@@ -3,11 +3,12 @@ import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login } from "$lib/generated/models";
 import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
-import { prisma } from "$lib/server/prisma";
 import { error } from "@sveltejs/kit";
 import z from "zod";
 import { settingsSchema } from "./settings-schema";
-import type { Prisma } from "$lib/prisma/client";
+import type { SettingsState } from "../../../drizzle/schema";
+import { db, schema } from "$lib/server/db";
+import { and, eq } from "drizzle-orm";
 
 export const updateSettings = command(settingsSchema, async (data) => {
 	const event = getRequestEvent();
@@ -17,35 +18,27 @@ export const updateSettings = command(settingsSchema, async (data) => {
 
 	const session = event.locals.session;
 
-	const updated: Prisma.SettingsCreateWithoutAccountInput = {
-		attendance_percent_max: data.attendanceMaxCutoff,
-		attendance_percent_min: data.attendanceMinCutoff
+	const updated: SettingsState = {
+		attendancePercentMax: data.attendanceMaxCutoff,
+		attendancePercentMin: data.attendanceMinCutoff,
+		expandAttendanceSubjects: data.expandAttendanceSubjects,
+		invalidAttendanceMarker: data.invalidAttendanceMarker,
+		showAttendanceBarByDefault: data.showAttendanceBarByDefault
 	};
 
-	await prisma.settings.upsert({
-		create: {
-			account: {
-				connect: {
-					account_id: {
-						college_id: session.account.college_id,
-						username: session.account.username
-					}
-				}
-			},
+	await db
+		.insert(schema.settings)
+		.values({
+			collegeId: session.account.collegeId,
+			accountUsername: session.account.username,
 			...updated
-		},
-		update: {
-			...updated
-		},
-		where: {
-			settings_id: {
-				college_id: session.account.college_id,
-				account_username: session.account.username
-			}
-		}
-	});
+		})
+		.onConflictDoUpdate({
+			set: updated,
+			target: [schema.settings.collegeId, schema.settings.accountUsername]
+		});
 
-	// event.locals.session.account.settings = settings; // wont work, use shared states
+	// event.locals.session.account.settings = settings; // note for myself: wont work, use shared states
 });
 
 export const getSessions = query(async () => {
@@ -56,16 +49,16 @@ export const getSessions = query(async () => {
 
 	const session = event.locals.session;
 
-	return await prisma.session.findMany({
-		where: {
-			college_id: session.college_id,
-			account_username: session.account_username
-		},
-		select: {
+	return await db.query.sessions.findMany({
+		where: and(
+			eq(schema.sessions.collegeId, session.collegeId),
+			eq(schema.sessions.accountUsername, session.accountUsername)
+		),
+		columns: {
 			id: true,
-			device_info: true,
-			device_type: true,
-			created_at: true
+			deviceInfo: true,
+			deviceType: true,
+			createdAt: true
 		}
 	});
 });
@@ -78,8 +71,8 @@ export const refreshHardCache = command(async () => {
 	const session = event.locals.session;
 
 	const response = await api.get<dash.DashResponse>(
-		session.account.college.base_url + ApiEndPoints.DASH_URL,
-		{ headers: { Authorization: "Bearer " + session.access_token } }
+		session.account.college.baseUrl + ApiEndPoints.DASH_URL,
+		{ headers: { Authorization: "Bearer " + session.accessToken } }
 	);
 	if (response.ok) {
 		const parsed: dash.DashResponse = await response.json();
@@ -87,34 +80,37 @@ export const refreshHardCache = command(async () => {
 			// todo: logout
 			return error(401, "Seems logged out?"); // wont ever really happen
 		} else {
-			const account = await prisma.account.update({
-				where: {
-					account_id: {
-						college_id: session.college_id,
-						username: session.account_username
-					}
-				},
-				data: {
-					batch_id: Number.parseInt(parsed.batch_id),
-					semester_id: Number.parseInt(parsed.sem_id),
-					student_id: Number.parseInt(parsed.student_id),
+			const [account] = await db
+				.update(schema.accounts)
+				.set({
+					batchId: Number.parseInt(parsed.batch_id),
+					semesterId: Number.parseInt(parsed.sem_id),
+					studentId: Number.parseInt(parsed.student_id),
 					// @ts-expect-error invalid types
-					profile_name: parsed.name,
-					course_name: parsed.course,
-					semester_name: parsed.curnt_sem,
-					image_url: parsed.url,
+					profileName: parsed.name,
+					courseName: parsed.course,
+					semesterName: parsed.curnt_sem,
+					imageUrl: parsed.url,
 					// @ts-expect-error invalid types
-					reg_no: String(parsed.register_no),
+					regNo: String(parsed.register_no),
 					// @ts-expect-error invalid types
-					roll_no: String(parsed.roll_no),
-					last_updated_at: new Date()
-				},
-				include: {
-					college: true
-				}
-			});
-			event.locals.session.account = account;
-			return event.locals.session.account.last_updated_at;
+					rollNo: String(parsed.roll_no),
+					lastUpdatedAt: new Date()
+				})
+				.where(
+					and(
+						eq(schema.sessions.collegeId, session.collegeId),
+						eq(schema.sessions.accountUsername, session.accountUsername)
+					)
+				)
+				.returning();
+
+			event.locals.session.account = {
+				...account,
+				college: session.account.college,
+				settings: session.account.settings
+			};
+			return event.locals.session.account.lastUpdatedAt;
 		}
 	} else {
 		return error(500, `Dashboard API returned ${response.status}`);
@@ -128,11 +124,13 @@ export const logoutSession = command(z.object({ session_id: z.string() }), async
 	}
 
 	const currentSession = event.locals.session;
-	const session = await prisma.session.delete({
-		where: { id: args.session_id }
-	});
-	await api.post(currentSession.account.college.base_url + ApiEndPoints.LOGOUT_URL, {
-		headers: { Authorization: "Bearer " + session.access_token },
+	const [session] = await db
+		.delete(schema.sessions)
+		.where(eq(schema.sessions.id, args.session_id))
+		.returning();
+
+	await api.post(currentSession.account.college.baseUrl + ApiEndPoints.LOGOUT_URL, {
+		headers: { Authorization: "Bearer " + session.accessToken },
 		json: {
 			push_token: ""
 		} satisfies login.LogoutRequest
@@ -146,9 +144,9 @@ export const logoutCurrentSession = command(async () => {
 	}
 
 	const session = event.locals.session;
-	await prisma.session.delete({ where: { id: session.id } });
-	await api.post(session.account.college.base_url + ApiEndPoints.LOGOUT_URL, {
-		headers: { Authorization: "Bearer " + session.access_token },
+	await db.delete(schema.sessions).where(eq(schema.sessions.id, session.id));
+	await api.post(session.account.college.baseUrl + ApiEndPoints.LOGOUT_URL, {
+		headers: { Authorization: "Bearer " + session.accessToken },
 		json: {
 			push_token: ""
 		} satisfies login.LogoutRequest
@@ -169,22 +167,28 @@ export const destroyAccount = command(async () => {
 
 	const currentSession = event.locals.session;
 
-	const { sessions } = await prisma.account.delete({
-		where: {
-			account_id: {
-				college_id: currentSession.account.college_id,
-				username: currentSession.account.username
-			}
-		},
-		include: {
-			sessions: true
-		}
-	});
+	const sessions = await db
+		.select()
+		.from(schema.sessions)
+		.where(
+			and(
+				eq(schema.sessions.collegeId, currentSession.collegeId),
+				eq(schema.sessions.accountUsername, currentSession.accountUsername)
+			)
+		);
+	await db
+		.delete(schema.accounts)
+		.where(
+			and(
+				eq(schema.sessions.collegeId, currentSession.account.collegeId),
+				eq(schema.sessions.accountUsername, currentSession.account.username)
+			)
+		);
 
 	await Promise.all(
 		sessions.map((session) => {
-			return api.post(currentSession.account.college.base_url + ApiEndPoints.LOGOUT_URL, {
-				headers: { Authorization: "Bearer " + session.access_token },
+			return api.post(currentSession.account.college.baseUrl + ApiEndPoints.LOGOUT_URL, {
+				headers: { Authorization: "Bearer " + session.accessToken },
 				json: {
 					push_token: ""
 				} satisfies login.LogoutRequest

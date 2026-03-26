@@ -23,8 +23,8 @@
 			settingsState.set(data.account.settings);
 		} else {
 			settingsState.set({
-				attendance_percent_min: 75,
-				attendance_percent_max: 90
+				attendancePercentMin: 75,
+				attendancePercentMax: 90
 			});
 		}
 	});

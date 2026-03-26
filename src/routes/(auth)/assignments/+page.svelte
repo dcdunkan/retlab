@@ -7,7 +7,7 @@
 
 	let { data } = $props();
 
-	let chosenSemester = $derived(data.account.semester_id);
+	let chosenSemester = $derived(data.account.semesterId);
 	const assignmentsData = $derived(getAssignments({ semester_id: chosenSemester }));
 	const overview = $derived(
 		assignmentsData.current

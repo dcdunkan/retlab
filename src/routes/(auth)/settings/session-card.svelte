@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DeviceType } from "$lib/prisma/browser.js";
+	import { type DeviceType } from "../../../drizzle/schema";
 	import LaptopIcon from "phosphor-svelte/lib/Laptop";
 	import DeviceMobileIcon from "phosphor-svelte/lib/DeviceMobile";
 	import QuestionIcon from "phosphor-svelte/lib/Question";
@@ -13,9 +13,9 @@
 		onLogout
 	}: {
 		session: {
-			device_type: DeviceType;
-			device_info: string | null;
-			created_at: Date;
+			deviceType: DeviceType;
+			deviceInfo: string | null;
+			createdAt: Date;
 		};
 		showLogout?: boolean;
 		onLogout?: () => Promise<void>;
@@ -32,9 +32,9 @@
 
 <div class="flex justify-between gap-4 px-4 py-3">
 	<div class="flex place-items-center gap-4 space-y-2">
-		{#if session.device_type == DeviceType.LAPTOP}
+		{#if session.deviceType == "LAPTOP"}
 			<LaptopIcon class="size-6" />
-		{:else if session.device_type == DeviceType.MOBILE}
+		{:else if session.deviceType == "MOBILE"}
 			<DeviceMobileIcon class="size-6" />
 		{:else}
 			<!-- unknown -->
@@ -42,9 +42,9 @@
 		{/if}
 
 		<div>
-			<div class="font-serif font-bold">{session.device_info}</div>
+			<div class="font-serif font-bold">{session.deviceInfo}</div>
 			<p class="text-sm text-muted-foreground">
-				Created at <b>{timeFormatter.format(session.created_at)}</b>
+				Created at <b>{timeFormatter.format(session.createdAt)}</b>
 			</p>
 		</div>
 	</div>

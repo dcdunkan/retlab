@@ -1,6 +1,7 @@
 import * as auth from "$lib/server/auth";
-import { prisma } from "$lib/server/prisma";
+import { db, schema } from "$lib/server/db";
 import { error, redirect } from "@sveltejs/kit";
+import { eq } from "drizzle-orm";
 
 export const handle = async ({ event, resolve }) => {
 	event.locals.session = null;
@@ -59,11 +60,11 @@ export const handle = async ({ event, resolve }) => {
 		}
 
 		// todo: jws & no shity
-		const dbSession = await prisma.session.findFirst({
-			where: { id: event.locals.sessionId },
-			include: {
+		const dbSession = await db.query.sessions.findFirst({
+			where: eq(schema.sessions.id, event.locals.sessionId),
+			with: {
 				account: {
-					include: {
+					with: {
 						college: true,
 						settings: true
 					}

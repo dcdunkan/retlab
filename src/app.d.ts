@@ -1,6 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { Account, College, Session, Settings } from "$lib/prisma/client";
+import type { Account, College, Session, Settings } from "./drizzle/schema";
 
 // import type { login } from '$lib/generated/models';
 

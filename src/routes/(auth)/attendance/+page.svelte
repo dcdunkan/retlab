@@ -8,7 +8,7 @@
 	const attendanceData = getAttendance();
 
 	let attendancePercentThresholds = $derived(
-		[settingsState.value.attendance_percent_min, settingsState.value.attendance_percent_max].map(
+		[settingsState.value.attendancePercentMin, settingsState.value.attendancePercentMax].map(
 			(p) => p / 100
 		) as [number, number]
 	);

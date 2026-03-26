@@ -59,7 +59,7 @@
 		<div class="flex flex-1 flex-col items-end">
 			<div class="flex gap-1 font-serif text-2xl font-bold text-nowrap">
 				{#if subject.classes == 0}
-					&ndash;
+					--
 				{:else}
 					{percent}
 					<span class="text-lg">%</span>

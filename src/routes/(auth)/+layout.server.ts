@@ -20,8 +20,8 @@ export const load = async (event) => {
 				mooc_status: string;
 				additional_elective: string;
 			}[]
-		>(account.college.base_url + ApiEndPoints.SEM_LIST_URL, {
-			headers: { Authorization: "Bearer " + session.access_token }
+		>(account.college.baseUrl + ApiEndPoints.SEM_LIST_URL, {
+			headers: { Authorization: "Bearer " + session.accessToken }
 		})
 		.json()
 		.then((semesters) =>

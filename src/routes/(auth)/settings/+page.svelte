@@ -7,6 +7,8 @@
 	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBack";
 	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
 	import { toast } from "svelte-sonner";
+	import { DEFAULT_SETTINGS, settingsState } from "../settings.svelte";
+	import type { PageProps } from "./$types.js";
 	import DestroyAccountDialog from "./destroy-account-dialog.svelte";
 	import LogoutDialog from "./logout-dialog.svelte";
 	import SessionCard from "./session-card.svelte";
@@ -16,8 +18,7 @@
 		refreshHardCache,
 		updateSettings
 	} from "./settings.remote.js";
-	import type { PageProps } from "./$types.js";
-	import { settingsState } from "../settings.svelte";
+	import Switch from "$lib/components/switch.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -31,7 +32,7 @@
 	const isCurrentSession = (s: Session) => s.id == data.session.id;
 
 	let refreshingHardCache = $state(false);
-	let hardCacheLastUpdatedAt = $derived(data.account.last_updated_at);
+	let hardCacheLastUpdatedAt = $derived(data.account.lastUpdatedAt);
 
 	let cutoffs = $state<{
 		initial: [number, number];
@@ -42,8 +43,8 @@
 		const settings = settingsState.value;
 		if (settingsState.resolved) {
 			const initial: [number, number] = [
-				settings.attendance_percent_min,
-				settings.attendance_percent_max
+				settings.attendancePercentMin,
+				settings.attendancePercentMax
 			];
 			cutoffs = {
 				initial: initial,
@@ -175,13 +176,14 @@
 						const toastId = toast.loading("Saving changes...");
 						try {
 							await updateSettings({
+								...DEFAULT_SETTINGS,
 								attendanceMinCutoff: cutoffs.current[0],
 								attendanceMaxCutoff: cutoffs.current[1]
 							});
 							cutoffs.initial = cutoffs.current;
 							settingsState.set({
-								attendance_percent_min: cutoffs.current[0],
-								attendance_percent_max: cutoffs.current[1]
+								attendancePercentMin: cutoffs.current[0],
+								attendancePercentMax: cutoffs.current[1]
 							});
 							toast.success("Save successful", { id: toastId });
 						} catch (error) {
@@ -197,6 +199,18 @@
 			{:else}
 				<Box.Loading>Fetching values...</Box.Loading>
 			{/if}
+		</div>
+
+		<div class="flex justify-between gap-4 px-4 py-3">
+			<div class="space-y-2">
+				<div>
+					<div class="font-serif font-bold">Expand attendance subjects</div>
+				</div>
+
+				<!-- <p class="text-sm text-muted-foreground">Expand subjects in attendance page by default.</p> -->
+			</div>
+
+			<!-- <Switch /> -->
 		</div>
 	</div>
 </section>
@@ -324,7 +338,7 @@
 				<div>
 					<div class="font-serif font-bold">Logout from your account</div>
 					<p class="text-sm font-medium text-blue-600">
-						You logged in at <b>{timeFormatter.format(data.session.created_at)}</b>
+						You logged in at <b>{timeFormatter.format(data.session.createdAt)}</b>
 					</p>
 				</div>
 

@@ -1,5 +1,5 @@
 import { UAParser, type IDevice } from "ua-parser-js";
-import { DeviceType } from "../prisma/enums";
+import { type DeviceType } from "../../drizzle/schema";
 
 type ParsedInfo = Record<"browser" | "os" | "device", string | null>;
 
@@ -23,7 +23,7 @@ export function getDeviceInfo(userAgent: unknown): DeviceInfo {
 	if (!isValidString(userAgent))
 		return {
 			label: null,
-			type: DeviceType.UNKNOWN
+			type: "UNKNOWN"
 		};
 
 	const { browser, cpu, device, os } = UAParser(userAgent);
@@ -49,11 +49,7 @@ export function getDeviceInfo(userAgent: unknown): DeviceInfo {
 }
 
 function resolveDeviceType(device: IDevice): DeviceType {
-	return device.type == null
-		? DeviceType.UNKNOWN
-		: device.type === "mobile"
-			? DeviceType.MOBILE
-			: DeviceType.LAPTOP;
+	return device.type == null ? "UNKNOWN" : device.type === "mobile" ? "MOBILE" : "LAPTOP";
 }
 
 function stringifyDeviceInfo(info: ParsedInfo): string {

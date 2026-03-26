@@ -14,20 +14,20 @@ export const getDueAssignments = query(async () => {
 
 	const assignments = await api
 		.post<assignment.AssignmentResponse>(
-			session.account.college.base_url + ApiEndPoints.ASSIGNMENT_URL,
+			session.account.college.baseUrl + ApiEndPoints.ASSIGNMENT_URL,
 			{
 				json: {
 					filter: "",
 					sem_id: "",
 					sort: ""
 				} satisfies assignment.AssignmentRequest,
-				headers: { Authorization: "Bearer " + session.access_token }
+				headers: { Authorization: "Bearer " + session.accessToken }
 			}
 		)
 		.json();
 
 	return parseAssignmentsResponse(
 		assignments,
-		new URL(session.account.college.base_url).origin
+		new URL(session.account.college.baseUrl).origin
 	).filter((assignment) => assignment._parsed.is_due);
 });
