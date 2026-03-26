@@ -42,3 +42,5 @@
 		<p>Something went wrong</p>
 	</Box.Error>
 {/if}
+
+<div class="min-h-[50svh]"></div>

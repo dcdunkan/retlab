@@ -50,6 +50,8 @@
 	<Box.Error>Something went wrong</Box.Error>
 {/if}
 
+<div class="min-h-[50svh]"></div>
+
 <!-- <h1 class="text-2xl capitalize">
 	{data.account.profile_name.toLowerCase()}
 </h1> -->

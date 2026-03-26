@@ -281,6 +281,8 @@
 	</Box.Error>
 {/if}
 
+<div class="min-h-[50svh]"></div>
+
 <!-- <div class="flex justify-center">
 	<div class="text-enter font-serif font-normal text-muted-foreground italic">
 		<p>
