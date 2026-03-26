@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
+import type { ExpandAttendanceSubjectCardsOption } from "$lib/types";
 
 export const deviceType = pgEnum("DeviceType", ["LAPTOP", "MOBILE", "UNKNOWN"]);
 
@@ -72,10 +73,10 @@ export const settings = pgTable(
 		attendancePercentMax: integer("attendance_percent_max").default(90).notNull(),
 		expandAttendanceSubjects: text("expand_attendance_subjects")
 			.default("critical")
-			.$type<"none" | "critical" | "all">()
+			.$type<ExpandAttendanceSubjectCardsOption>()
 			.notNull(),
 		invalidAttendanceMarker: text("invalid_attendance_marker")
-			.$type<"double-hyphen" | "single-hyphen" | "ndash" | "mdash">()
+			.$type<"double-hyphen" | "single-hyphen" | "mdash" | "ndash">()
 			.default("double-hyphen")
 			.notNull(),
 		showAttendanceBarByDefault: boolean("show_attendance_bar_by_default").default(false).notNull()

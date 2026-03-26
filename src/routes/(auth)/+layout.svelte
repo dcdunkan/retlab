@@ -20,7 +20,13 @@
 	onMount(() => {
 		settingsState.resolve();
 		if (data.account.settings != null) {
-			settingsState.set(data.account.settings);
+			settingsState.set({
+				attendancePercentMax: data.account.settings.attendancePercentMax,
+				attendancePercentMin: data.account.settings.attendancePercentMin,
+				expandAttendanceSubjects: data.account.settings.expandAttendanceSubjects,
+				invalidAttendanceMarker: data.account.settings.invalidAttendanceMarker,
+				showAttendanceBarByDefault: data.account.settings.showAttendanceBarByDefault
+			});
 		} else {
 			settingsState.set({
 				attendancePercentMin: 75,

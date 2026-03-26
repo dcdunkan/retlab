@@ -3,6 +3,7 @@
 	import { slide } from "svelte/transition";
 	import type { getAttendance } from "./attendance.remote";
 	import { titleCase } from "title-case";
+	import { settingsState } from "../settings.svelte";
 
 	let {
 		subject,
@@ -11,9 +12,6 @@
 		subject: NonNullable<ReturnType<typeof getAttendance>["current"]>[number];
 		attendancePercentThresholds: [number, number];
 	} = $props();
-
-	let open = $state(false);
-	let onActivated = () => (open = !open);
 
 	function percentStats(percent: number) {
 		const y = percent * subject.classes;
@@ -25,6 +23,24 @@
 
 	const percent = $derived(cutePercent(safeDivision(subject.attended, subject.classes) * 100, 1));
 	const [minStats, maxStats] = $derived(attendancePercentThresholds.map((p) => percentStats(p)));
+
+	let open = $derived.by(() => {
+		// todo: verify all these conditions
+		switch (settingsState.value.expandAttendanceSubjects) {
+			case "none":
+				return false;
+			case "all":
+				return true;
+			case "barely-safe":
+				return minStats.cuttable <= 0 && maxStats.needed > 0;
+			case "below-excellence":
+				return maxStats.needed > 0;
+			case "critical": // default!
+			default:
+				return minStats.needed > 0;
+		}
+	});
+	let onActivated = () => (open = !open);
 </script>
 
 <div class="border-2 border-b-0 last:border-b-2">
@@ -103,7 +119,7 @@
 
 					Do not skip classes. Attend <b>{maxStats.needed}</b> more to reach excellent attendance.
 				{:else}
-					<b class="text-amber-600"> At minimum limit. </b>
+					<b class="text-amber-600">At minimum limit.</b>
 					Do not skip any classes.
 				{/if}
 			</div>

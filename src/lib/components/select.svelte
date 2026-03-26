@@ -5,14 +5,34 @@
 	import CaretDownIcon from "phosphor-svelte/lib/CaretDownIcon";
 	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
 	import type { Snippet } from "svelte";
-	import { buttonVariants } from "./button.svelte";
+	import {
+		buttonVariants,
+		type ButtonVariant,
+		type ButtonSize,
+		type ButtonShadow
+	} from "./button.svelte";
 
 	type Props = WithoutChildren<Select.RootProps> & {
+		triggerVariant?: {
+			variant?: ButtonVariant;
+			size?: ButtonSize;
+			shadow?: ButtonShadow;
+		};
 		items: { value: string; label: string; disabled?: boolean }[];
 		trigger: Snippet<[selected: string | undefined]>;
 	};
 
-	let { value = $bindable(), trigger, items, ...restProps }: Props = $props();
+	let {
+		value = $bindable(),
+		trigger,
+		items,
+		triggerVariant = {
+			variant: "outline",
+			size: "sm",
+			shadow: "none"
+		},
+		...restProps
+	}: Props = $props();
 
 	const selected = $derived(items.find((item) => item.value === value));
 </script>
@@ -23,13 +43,7 @@ get along, so we shut typescript up by casting `value` to `never`, however,
 from the perspective of the consumer of this component, it will be typed appropriately.
 -->
 <Select.Root bind:value={value as never} {...restProps}>
-	<Select.Trigger
-		class={buttonVariants({
-			variant: "outline",
-			size: "sm",
-			shadow: "none"
-		})}
-	>
+	<Select.Trigger class={buttonVariants(triggerVariant)}>
 		{@render trigger(selected?.label)}
 		<CaretDownIcon />
 	</Select.Trigger>

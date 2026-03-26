@@ -19,8 +19,8 @@ export const updateSettings = command(settingsSchema, async (data) => {
 	const session = event.locals.session;
 
 	const updated: SettingsState = {
-		attendancePercentMax: data.attendanceMaxCutoff,
-		attendancePercentMin: data.attendanceMinCutoff,
+		attendancePercentMax: data.attendancePercentMax,
+		attendancePercentMin: data.attendancePercentMin,
 		expandAttendanceSubjects: data.expandAttendanceSubjects,
 		invalidAttendanceMarker: data.invalidAttendanceMarker,
 		showAttendanceBarByDefault: data.showAttendanceBarByDefault
@@ -99,8 +99,8 @@ export const refreshHardCache = command(async () => {
 				})
 				.where(
 					and(
-						eq(schema.sessions.collegeId, session.collegeId),
-						eq(schema.sessions.accountUsername, session.accountUsername)
+						eq(schema.accounts.collegeId, session.account.college.id),
+						eq(schema.accounts.username, session.account.username)
 					)
 				)
 				.returning();
@@ -180,8 +180,8 @@ export const destroyAccount = command(async () => {
 		.delete(schema.accounts)
 		.where(
 			and(
-				eq(schema.sessions.collegeId, currentSession.account.collegeId),
-				eq(schema.sessions.accountUsername, currentSession.account.username)
+				eq(schema.accounts.collegeId, currentSession.account.collegeId),
+				eq(schema.accounts.username, currentSession.account.username)
 			)
 		);
 

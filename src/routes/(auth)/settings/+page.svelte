@@ -18,7 +18,8 @@
 		refreshHardCache,
 		updateSettings
 	} from "./settings.remote.js";
-	import Switch from "$lib/components/switch.svelte";
+	import Select from "$lib/components/select.svelte";
+	import type { ExpandAttendanceSubjectCardsOption } from "$lib/types";
 
 	let { data }: PageProps = $props();
 
@@ -34,29 +35,81 @@
 	let refreshingHardCache = $state(false);
 	let hardCacheLastUpdatedAt = $derived(data.account.lastUpdatedAt);
 
-	let cutoffs = $state<{
-		initial: [number, number];
-		current: [number, number];
+	let tweaks = $state<{
 		saving: boolean;
+		attendanceCutoffs: {
+			initial: [number, number];
+			current: [number, number];
+		};
+		expandAttendanceSubjectCards: {
+			initial: ExpandAttendanceSubjectCardsOption;
+			current: ExpandAttendanceSubjectCardsOption;
+		};
 	}>();
+
+	let expandAttendanceSubjectCardsOptions: Record<ExpandAttendanceSubjectCardsOption, string> = {
+		none: "None",
+		"barely-safe": "Barely safe",
+		"below-excellence": "Below excellence",
+		critical: "Critical",
+		all: "All"
+		// "single-hyphen": "Single hyphen (-)",
+		// "double-hyphen": "Double hyphen (--)",
+		// mdash: "Em dash (—)",
+		// ndash: "en dash (–)"
+	};
+
+	function isExpandAttendanceSubjectCardsOption(
+		v: string
+	): v is ExpandAttendanceSubjectCardsOption {
+		return v in expandAttendanceSubjectCardsOptions;
+	}
+
 	$effect(() => {
 		const settings = settingsState.value;
 		if (settingsState.resolved) {
-			const initial: [number, number] = [
-				settings.attendancePercentMin,
-				settings.attendancePercentMax
-			];
-			cutoffs = {
-				initial: initial,
-				current: initial,
-				saving: false
+			// resolved settings:
+			console.log(settings);
+
+			const initials: {
+				attendanceCutoffs: [number, number];
+				expandAttendanceSubjectCards: ExpandAttendanceSubjectCardsOption;
+			} = {
+				attendanceCutoffs: [settings.attendancePercentMin, settings.attendancePercentMax],
+				expandAttendanceSubjectCards: isExpandAttendanceSubjectCardsOption(
+					settings.expandAttendanceSubjects
+				)
+					? settings.expandAttendanceSubjects
+					: DEFAULT_SETTINGS.expandAttendanceSubjects
+			};
+
+			tweaks = {
+				saving: false,
+				attendanceCutoffs: {
+					initial: initials.attendanceCutoffs,
+					current: initials.attendanceCutoffs
+				},
+				expandAttendanceSubjectCards: {
+					initial: initials.expandAttendanceSubjectCards,
+					current: initials.expandAttendanceSubjectCards
+				}
 			};
 		} else {
-			const initial: [number, number] = [75, 90];
-			cutoffs = {
-				initial: initial,
-				current: initial,
-				saving: false
+			// logical defaults:
+			const initials: {
+				attendanceCutoffs: [number, number];
+				expandAttendanceSubjectCards: ExpandAttendanceSubjectCardsOption;
+			} = { attendanceCutoffs: [75, 90], expandAttendanceSubjectCards: "critical" };
+			tweaks = {
+				saving: false,
+				attendanceCutoffs: {
+					initial: initials.attendanceCutoffs,
+					current: initials.attendanceCutoffs
+				},
+				expandAttendanceSubjectCards: {
+					initial: initials.expandAttendanceSubjectCards,
+					current: initials.expandAttendanceSubjectCards
+				}
 			};
 		}
 	});
@@ -74,9 +127,9 @@
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Tweaks</h2>
 	<p class="text-sm text-muted-foreground">Tweak some of the application behavior.</p>
 
-	<div class="mt-4 divide-y-2 border-2">
-		<div class="flex justify-between gap-4 px-4 py-3">
-			{#if cutoffs != null}
+	{#if tweaks != null}
+		<div class="mt-4 divide-y-2 border-2">
+			<div class="flex justify-between gap-4 px-4 py-3">
 				<div class="space-y-2">
 					<div>
 						<div class="font-serif font-bold">Attendance percentage cutoff</div>
@@ -91,7 +144,7 @@
 						<Slider.Root
 							max={99}
 							type="multiple"
-							bind:value={cutoffs.current}
+							bind:value={tweaks.attendanceCutoffs.current}
 							class="relative flex w-full touch-none items-center select-none"
 						>
 							<span
@@ -99,12 +152,12 @@
 							>
 								<span
 									class="absolute h-full bg-red-300"
-									style="left: 0; right: {99 - cutoffs.current[0]}%"
+									style="left: 0; right: {99 - tweaks.attendanceCutoffs.current[0]}%"
 								></span>
 								<Slider.Range class="h-full bg-green-300" />
 								<span
 									class="absolute h-full bg-amber-300"
-									style="right: 0; left: {cutoffs.current[1] + 1}%"
+									style="right: 0; left: {tweaks.attendanceCutoffs.current[1] + 1}%"
 								></span>
 							</span>
 							<Slider.Thumb
@@ -116,7 +169,7 @@
 								position="top"
 								class="my-1 hidden bg-foreground/50 px-2 py-1 text-sm text-background peer-hover/min:block data-active:block"
 							>
-								{cutoffs.current[0]}
+								{tweaks.attendanceCutoffs.current[0]}
 							</Slider.ThumbLabel>
 							<Slider.Thumb
 								index={1}
@@ -127,19 +180,19 @@
 								position="top"
 								class="my-1 hidden bg-foreground/50 px-2 py-1 text-sm text-background peer-hover/max:block data-active:block"
 							>
-								{cutoffs.current[1]}
+								{tweaks.attendanceCutoffs.current[1]}
 							</Slider.ThumbLabel>
 						</Slider.Root>
 
 						<ul class="list-inside list-[square] text-sm">
 							<li>
 								Above or equal to <input
-									disabled={cutoffs.saving}
+									disabled={tweaks.saving}
 									type="number"
 									min="0"
-									max={cutoffs.current[1]}
+									max={tweaks.attendanceCutoffs.current[1]}
 									step="1"
-									bind:value={cutoffs.current[0]}
+									bind:value={tweaks.attendanceCutoffs.current[0]}
 									class="p-0 pl-1"
 								/>
 								% is considered
@@ -147,12 +200,12 @@
 							</li>
 							<li>
 								Above or equal to <input
-									disabled={cutoffs.saving}
+									disabled={tweaks.saving}
 									type="number"
-									min={cutoffs.current[0]}
+									min={tweaks.attendanceCutoffs.current[0]}
 									max="99"
 									step="1"
-									bind:value={cutoffs.current[1]}
+									bind:value={tweaks.attendanceCutoffs.current[1]}
 									class="p-0 pl-1"
 								/>
 								% is considered
@@ -161,58 +214,92 @@
 						</ul>
 					</div>
 				</div>
-
-				<Button
-					size="icon"
-					disabled={cutoffs.saving ||
-						cutoffs.current[0] > cutoffs.current[1] ||
-						(cutoffs.initial[0] == cutoffs.current[0] && cutoffs.initial[1] == cutoffs.current[1])}
-					onclick={async () => {
-						if (cutoffs == null) {
-							toast("This should not happen, just so you know.");
-							return;
-						}
-						cutoffs.saving = true;
-						const toastId = toast.loading("Saving changes...");
-						try {
-							await updateSettings({
-								...DEFAULT_SETTINGS,
-								attendanceMinCutoff: cutoffs.current[0],
-								attendanceMaxCutoff: cutoffs.current[1]
-							});
-							cutoffs.initial = cutoffs.current;
-							settingsState.set({
-								attendancePercentMin: cutoffs.current[0],
-								attendancePercentMax: cutoffs.current[1]
-							});
-							toast.success("Save successful", { id: toastId });
-						} catch (error) {
-							console.error(error);
-							toast.error("Save failed", { id: toastId });
-						} finally {
-							cutoffs.saving = false;
-						}
-					}}
-				>
-					<FloppyDiskBackIcon weight="fill" />
-				</Button>
-			{:else}
-				<Box.Loading>Fetching values...</Box.Loading>
-			{/if}
-		</div>
-
-		<div class="flex justify-between gap-4 px-4 py-3">
-			<div class="space-y-2">
-				<div>
-					<div class="font-serif font-bold">Expand attendance subjects</div>
-				</div>
-
-				<!-- <p class="text-sm text-muted-foreground">Expand subjects in attendance page by default.</p> -->
 			</div>
 
-			<!-- <Switch /> -->
+			<div class="flex justify-between gap-4 px-4 py-3">
+				<div class="space-y-2">
+					<div>
+						<div class="font-serif font-bold">Expand attendance subject cards</div>
+					</div>
+
+					<p class="text-sm text-muted-foreground">
+						Configure how the subject cards in the attendance page should be shown. It can be
+						adjusted to only expand the critical ones!
+					</p>
+				</div>
+
+				<Select
+					type="single"
+					items={Object.entries(expandAttendanceSubjectCardsOptions).map(([value, label]) => ({
+						label: label,
+						value: value,
+						disabled: false
+					}))}
+					bind:value={tweaks.expandAttendanceSubjectCards.current}
+				>
+					{#snippet trigger(label)}
+						{#if label != null}
+							{label}
+						{:else}
+							GHeyyy
+						{/if}
+					{/snippet}
+				</Select>
+			</div>
 		</div>
-	</div>
+
+		<div class="mt-2">
+			<Button
+				size="default"
+				disabled={tweaks.saving ||
+					// tweaks.attendanceCutoffs.current[0] > tweaks.attendanceCutoffs.current[1] || todo: shouldn't handle it here.
+					(tweaks.attendanceCutoffs.initial[0] == tweaks.attendanceCutoffs.current[0] &&
+						tweaks.attendanceCutoffs.initial[1] == tweaks.attendanceCutoffs.current[1] &&
+						tweaks.expandAttendanceSubjectCards.initial ===
+							tweaks.expandAttendanceSubjectCards.current)}
+				onclick={async () => {
+					// todo: write a better disabled check and "change detection" algorithm.
+					if (tweaks == null) {
+						toast("This should not happen, just so you know.");
+						return;
+					}
+					tweaks.saving = true;
+					const toastId = toast.loading("Saving changes...");
+					try {
+						// save changes in db
+						await updateSettings({
+							...settingsState.value,
+							attendancePercentMin: tweaks.attendanceCutoffs.current[0],
+							attendancePercentMax: tweaks.attendanceCutoffs.current[1],
+							expandAttendanceSubjects: tweaks.expandAttendanceSubjectCards.current
+						});
+
+						// update initials after saving the settings in db
+						tweaks.attendanceCutoffs.initial = tweaks.attendanceCutoffs.current;
+						tweaks.expandAttendanceSubjectCards.initial =
+							tweaks.expandAttendanceSubjectCards.current;
+
+						// update the global settings state
+						settingsState.set({
+							attendancePercentMin: tweaks.attendanceCutoffs.current[0],
+							attendancePercentMax: tweaks.attendanceCutoffs.current[1],
+							expandAttendanceSubjects: tweaks.expandAttendanceSubjectCards.current
+						});
+						toast.success("Save successful", { id: toastId });
+					} catch (error) {
+						console.error(error);
+						toast.error("Save failed", { id: toastId });
+					} finally {
+						tweaks.saving = false;
+					}
+				}}
+			>
+				<FloppyDiskBackIcon weight="fill" /> Save changes
+			</Button>
+		</div>
+	{:else}
+		<Box.Loading>Fetching values...</Box.Loading>
+	{/if}
 </section>
 
 <section>

@@ -12,3 +12,15 @@ export type LoadData<T> = LoadPending | LoadRejected | LoadResolved<T>;
 export type JWTPayloadData = {
 	sessionId: string;
 };
+
+export type ExpandAttendanceSubjectCardsOption =
+	| "none"
+	| "critical"
+	| "barely-safe"
+	| "below-excellence"
+	| "all";
+
+// | "double-hyphen"
+// | "single-hyphen"
+// | "mdash"
+// | "ndash";
