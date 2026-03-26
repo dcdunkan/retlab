@@ -76,7 +76,9 @@
 			</Box.Error>
 		{/if}
 
-		<Button {...loginForm.buttonProps} disabled={!!loginForm.pending}>Login</Button>
+		<Button {...loginForm.fields.action.as("submit", "login")} disabled={!!loginForm.pending}
+			>Login</Button
+		>
 	</form>
 {:else if collegeList.error}
 	<Box.Error>Failed to load institutions</Box.Error>

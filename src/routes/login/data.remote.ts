@@ -26,7 +26,7 @@ export const getColleges = query(async () => {
 export const loginForm = form(loginSchema, async (data, issue) => {
 	const event = getRequestEvent();
 
-	// note: some shitty bug
+	// note: some shitty bug, todo: check whether this was fixed
 	data.collegeId = Number(data.collegeId);
 
 	const college = await db.query.colleges.findFirst({

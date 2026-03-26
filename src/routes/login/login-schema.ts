@@ -9,6 +9,7 @@ export const loginSchema = z
 		}),
 		password: z.string().nonempty({
 			error: "Password is empty!"
-		})
+		}),
+		action: z.enum(["login"]) // todo: bruhh... get rid of this once proper docs are released
 	})
 	.strict();

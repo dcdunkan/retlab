@@ -1,7 +1,5 @@
 import { type SettingsState } from "../../drizzle/schema";
 
-export const settingsState = createSettings();
-
 export const DEFAULT_SETTINGS: SettingsState = {
 	attendancePercentMin: 75,
 	attendancePercentMax: 90,
@@ -9,6 +7,7 @@ export const DEFAULT_SETTINGS: SettingsState = {
 	expandAttendanceSubjects: "critical",
 	invalidAttendanceMarker: "double-hyphen"
 };
+export const settingsState = createSettings();
 
 // https://mainmatter.com/blog/2025/03/11/global-state-in-svelte-5/
 function createSettings() {

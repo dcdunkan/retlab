@@ -70,7 +70,8 @@ export const handle = async ({ event, resolve }) => {
 					}
 				}
 			}
-		})!;
+		});
+
 		if (dbSession == null) {
 			auth.deleteTokenCookies(event);
 			event.locals.sessionId = null;

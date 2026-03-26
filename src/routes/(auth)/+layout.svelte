@@ -36,17 +36,17 @@
 		page.route.id == "/(auth)/attendance"
 			? [
 					{ label: Piece.HOME, href: "/" },
-					{ label: Piece.ATTENDANCE, href: "/attendance/" }
+					{ label: Piece.ATTENDANCE, href: "/attendance" }
 				]
 			: page.route.id === "/(auth)/assignments"
 				? [
 						{ label: Piece.HOME, href: "/" },
-						{ label: Piece.ASSIGNMENTS, href: "/assignments/" }
+						{ label: Piece.ASSIGNMENTS, href: "/assignments" }
 					]
 				: page.route.id == "/(auth)"
 					? [{ label: Piece.HOME, href: "/" }]
 					: page.route.id == "/(auth)/settings"
-						? [{ label: Piece.SETTINGS, href: "/settings/" }]
+						? [{ label: Piece.SETTINGS, href: "/settings" }]
 						: [{ label: Piece.HOME, href: "/" }]
 	);
 </script>
@@ -66,7 +66,7 @@
 				{/each}
 			</div>
 			{#if page.route.id !== "/(auth)/settings"}
-				<a class="hover:bg-foreground/10" href={resolve("/settings/")}>settings</a>
+				<a class="hover:bg-foreground/10" href={resolve("/settings")}>settings</a>
 			{:else}
 				<a class="hover:bg-foreground/10" href={resolve("/")}>home</a>
 			{/if}

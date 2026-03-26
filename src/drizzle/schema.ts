@@ -58,8 +58,8 @@ export type Session = typeof sessions.$inferSelect;
 
 export const sessionsRelations = relations(sessions, (r) => ({
 	account: r.one(accounts, {
-		fields: [sessions.accountUsername],
-		references: [accounts.collegeId]
+		fields: [sessions.collegeId, sessions.accountUsername],
+		references: [accounts.collegeId, accounts.username]
 	})
 }));
 
@@ -84,11 +84,11 @@ export const settings = pgTable(
 		foreignKey({
 			columns: [table.collegeId, table.accountUsername],
 			foreignColumns: [accounts.collegeId, accounts.username],
-			name: "Settings_college_id_account_username_fkey"
+			name: "settings_college_id_account_username_fkey"
 		})
 			.onUpdate("cascade")
 			.onDelete("cascade"),
-		primaryKey({ columns: [table.accountUsername, table.collegeId], name: "Settings_pkey" })
+		primaryKey({ columns: [table.accountUsername, table.collegeId], name: "settings_pkey" })
 	]
 );
 
@@ -97,8 +97,8 @@ export type SettingsState = Omit<typeof settings.$inferSelect, "accountUsername"
 
 export const settingsRelations = relations(settings, (r) => ({
 	account: r.one(accounts, {
-		fields: [settings.accountUsername],
-		references: [accounts.collegeId]
+		fields: [settings.collegeId, settings.accountUsername],
+		references: [accounts.collegeId, accounts.username]
 	})
 }));
 
