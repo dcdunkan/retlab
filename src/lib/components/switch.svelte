@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Switch, useId, type WithoutChildrenOrChild } from "bits-ui";
-	import CheckIcon from "phosphor-svelte/lib/Check";
-	import XIcon from "phosphor-svelte/lib/X";
+	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
+	import XIcon from "phosphor-svelte/lib/XIcon";
 
 	let {
 		id = useId(),

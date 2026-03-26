@@ -4,7 +4,7 @@
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Dialog from "$lib/components/dialog.svelte";
 	import { Dialog as DialogPrimitive } from "bits-ui";
-	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 	import { toast } from "svelte-sonner";
 	import { destroyAccount } from "./settings.remote";
 

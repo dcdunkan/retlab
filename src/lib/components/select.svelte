@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Select, type WithoutChildren } from "bits-ui";
-	import CaretDoubleDownIcon from "phosphor-svelte/lib/CaretDoubleDown";
-	import CaretDoubleUpIcon from "phosphor-svelte/lib/CaretDoubleUp";
-	import CaretDownIcon from "phosphor-svelte/lib/CaretDown";
-	import CheckIcon from "phosphor-svelte/lib/Check";
+	import CaretDoubleDownIcon from "phosphor-svelte/lib/CaretDoubleDownIcon";
+	import CaretDoubleUpIcon from "phosphor-svelte/lib/CaretDoubleUpIcon";
+	import CaretDownIcon from "phosphor-svelte/lib/CaretDownIcon";
+	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
 	import type { Snippet } from "svelte";
 	import { buttonVariants } from "./button.svelte";
 

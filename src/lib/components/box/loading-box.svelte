@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 	import type { Snippet } from "svelte";
 
 	let { children }: { children: Snippet } = $props();

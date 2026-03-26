@@ -3,11 +3,11 @@
 	import favicon from "$lib/assets/favicon.svg";
 	import type { LayoutProps } from "./$types";
 
-	import WarningIcon from "phosphor-svelte/lib/Warning";
-	import InfoIcon from "phosphor-svelte/lib/Info";
-	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
-	import CheckIcon from "phosphor-svelte/lib/Check";
-	import XIcon from "phosphor-svelte/lib/X";
+	import WarningIcon from "phosphor-svelte/lib/WarningIcon";
+	import InfoIcon from "phosphor-svelte/lib/InfoIcon";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
+	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
+	import XIcon from "phosphor-svelte/lib/XIcon";
 
 	let { children }: LayoutProps = $props();
 

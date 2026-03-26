@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Dialog, type DialogContentPropsWithoutHTML } from "bits-ui";
-	import XIcon from "phosphor-svelte/lib/X";
+	import XIcon from "phosphor-svelte/lib/XIcon";
 	import type { Snippet } from "svelte";
 
 	let {

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { type DeviceType } from "../../../drizzle/schema";
-	import LaptopIcon from "phosphor-svelte/lib/Laptop";
-	import DeviceMobileIcon from "phosphor-svelte/lib/DeviceMobile";
-	import QuestionIcon from "phosphor-svelte/lib/Question";
+	import LaptopIcon from "phosphor-svelte/lib/LaptopIcon";
+	import DeviceMobileIcon from "phosphor-svelte/lib/DeviceMobileIcon";
+	import QuestionIcon from "phosphor-svelte/lib/QuestionIcon";
 	import Button from "$lib/components/button.svelte";
 	import { toast } from "svelte-sonner";
-	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 
 	let {
 		session,

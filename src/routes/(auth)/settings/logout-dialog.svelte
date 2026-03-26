@@ -6,7 +6,7 @@
 	import { goto } from "$app/navigation";
 	import { resolve } from "$app/paths";
 	import { toast } from "svelte-sonner";
-	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 
 	let {
 		open = $bindable(false)

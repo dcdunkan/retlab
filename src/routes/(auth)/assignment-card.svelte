@@ -2,10 +2,10 @@
 	import { isValidDate } from "$lib";
 	import Button from "$lib/components/button.svelte";
 	import type * as models from "$lib/generated/models";
-	import DownloadSimpleIcon from "phosphor-svelte/lib/DownloadSimple";
-	import UploadSimpleIcon from "phosphor-svelte/lib/UploadSimple";
-	import EyeIcon from "phosphor-svelte/lib/Eye";
-	import TrashIcon from "phosphor-svelte/lib/Trash";
+	import DownloadSimpleIcon from "phosphor-svelte/lib/DownloadSimpleIcon";
+	import UploadSimpleIcon from "phosphor-svelte/lib/UploadSimpleIcon";
+	import EyeIcon from "phosphor-svelte/lib/EyeIcon";
+	import TrashIcon from "phosphor-svelte/lib/TrashIcon";
 	import sanitizeHtml from "sanitize-html";
 	import { MediaQuery } from "svelte/reactivity";
 	import { slide } from "svelte/transition";

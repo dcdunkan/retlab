@@ -4,8 +4,8 @@
 	import Button from "$lib/components/button.svelte";
 	import { isHttpError } from "@sveltejs/kit";
 	import { Slider } from "bits-ui";
-	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBack";
-	import SpinnerIcon from "phosphor-svelte/lib/Spinner";
+	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 	import { toast } from "svelte-sonner";
 	import { DEFAULT_SETTINGS, settingsState } from "../settings.svelte";
 	import type { PageProps } from "./$types.js";

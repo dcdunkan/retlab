@@ -3,9 +3,9 @@
 	import Box from "$lib/components/box";
 	import AssignmentCard from "./assignment-card.svelte";
 
-	import ArrowRightIcon from "phosphor-svelte/lib/ArrowRight";
-	import BriefcaseIcon from "phosphor-svelte/lib/Briefcase";
-	import CalendarCheckIcon from "phosphor-svelte/lib/CalendarCheck";
+	import ArrowRightIcon from "phosphor-svelte/lib/ArrowRightIcon";
+	import BriefcaseIcon from "phosphor-svelte/lib/BriefcaseIcon";
+	import CalendarCheckIcon from "phosphor-svelte/lib/CalendarCheckIcon";
 
 	import { getDueAssignments } from "./dashboard.remote";
 
