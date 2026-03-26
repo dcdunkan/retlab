@@ -7,21 +7,27 @@
 
 	let {
 		subject,
-		attendancePercentThresholds
+		attendancePercentThresholds,
+		attendanceMode
 	}: {
 		subject: NonNullable<ReturnType<typeof getAttendance>["current"]>[number];
 		attendancePercentThresholds: [number, number];
+		attendanceMode: "normal" | "duty_leave";
 	} = $props();
 
+	const subjectStats = $derived(subject[attendanceMode]);
+
 	function percentStats(percent: number) {
-		const y = percent * subject.classes;
+		const y = percent * subjectStats.classes;
 		return {
-			cuttable: Math.floor((subject.attended - y) / percent),
-			needed: Math.ceil((y - subject.attended) / (1 - percent))
+			cuttable: Math.floor((subjectStats.attended - y) / percent),
+			needed: Math.ceil((y - subjectStats.attended) / (1 - percent))
 		};
 	}
 
-	const percent = $derived(cutePercent(safeDivision(subject.attended, subject.classes) * 100, 1));
+	const percent = $derived(
+		cutePercent(safeDivision(subjectStats.attended, subjectStats.classes) * 100, 1)
+	);
 	const [minStats, maxStats] = $derived(attendancePercentThresholds.map((p) => percentStats(p)));
 
 	let open = $derived.by(() => {
@@ -74,21 +80,21 @@
 		</div>
 		<div class="flex flex-1 flex-col items-end">
 			<div class="flex gap-1 font-serif text-2xl font-bold text-nowrap">
-				{#if subject.classes == 0}
+				{#if subjectStats.classes == 0}
 					--
 				{:else}
 					{percent}
 					<span class="text-lg">%</span>
 				{/if}
 			</div>
-			<div class="text-nowrap">{subject.attended} / {subject.classes}</div>
+			<div class="text-nowrap">{subjectStats.attended} / {subjectStats.classes}</div>
 		</div>
 	</div>
 
 	{#if open}
 		<div transition:slide class="w-full bg-muted text-sm">
 			<div class="border-t-2 border-dashed px-3 py-2">
-				{#if subject.classes <= 0}
+				{#if subjectStats.classes <= 0}
 					<span class="text-muted-foreground">No classes recorded yet.</span>
 				{:else if minStats.needed > 0}
 					<b class="text-red-600">Critical!</b>
