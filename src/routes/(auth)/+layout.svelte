@@ -12,7 +12,7 @@
 	import type { LayoutProps } from "./$types";
 	import { resolve } from "$app/paths";
 	import type { Pathname } from "$app/types";
-	import { settingsState } from "./settings.svelte";
+	import { DEFAULT_SETTINGS, settingsState } from "./settings.svelte";
 	import { onMount } from "svelte";
 
 	let { data, children }: LayoutProps = $props();
@@ -28,10 +28,7 @@
 				showAttendanceBarByDefault: data.account.settings.showAttendanceBarByDefault
 			});
 		} else {
-			settingsState.set({
-				attendancePercentMin: 75,
-				attendancePercentMax: 90
-			});
+			settingsState.set(DEFAULT_SETTINGS);
 		}
 	});
 

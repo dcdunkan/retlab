@@ -32,7 +32,7 @@
 	)}
 	{@const totalPercent = cutePercent(safeDivision(total.attended, total.classes) * 100, 0)}
 
-	<div class="flex flex-col justify-between sm:flex-row">
+	<div class="flex flex-col justify-between gap-4 sm:flex-row">
 		<h1 class="text-5xl font-bold">{totalPercent} %</h1>
 
 		<button
