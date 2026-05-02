@@ -17,7 +17,7 @@
 	let destroying = $state(false);
 </script>
 
-<Dialog bind:open showCloseIcon={false} interactionOutsideBehavior="ignore">
+<Dialog bind:open showCloseIcon={false} interactOutsideBehavior="ignore">
 	{#snippet trigger()}
 		<DialogPrimitive.Trigger class={buttonVariants({ variant: "destructive" })}>
 			DESTROY

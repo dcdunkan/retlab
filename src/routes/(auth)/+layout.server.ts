@@ -1,13 +1,21 @@
 import { ApiEndPoints } from "$lib/generated/api-endpoints.js";
 import { api } from "$lib/server/index.js";
+import type {
+	ClientNotificationServerSettingsState,
+	ClientSettingsState
+} from "$lib/server/schema.js";
 import { error } from "@sveltejs/kit";
 
 export const load = async (event) => {
 	if (event.locals.session == null) {
 		return error(401, "Unauthorized");
 	}
-	const { account, ...session } = event.locals.session;
+	const {
+		account: { settings, notificationServerSettings, ...account },
+		...session
+	} = event.locals.session;
 
+	// todo:
 	const semesters = await api
 		.get<
 			{
@@ -41,8 +49,28 @@ export const load = async (event) => {
 		);
 
 	return {
-		semesters,
+		// todo: expose explicit stuff only
+		semesters: semesters,
 		session,
-		account
+		account: {
+			...account,
+			settings:
+				settings == null
+					? null
+					: ({
+							attendancePercentMax: settings.attendancePercentMax,
+							attendancePercentMin: settings.attendancePercentMin,
+							expandAttendanceSubjects: settings.expandAttendanceSubjects,
+							invalidAttendanceMarker: settings.invalidAttendanceMarker,
+							showAttendanceBarByDefault: settings.showAttendanceBarByDefault
+						} satisfies ClientSettingsState),
+			notificationServerSettings:
+				notificationServerSettings == null
+					? null
+					: ({
+							url: notificationServerSettings.url,
+							vapidKey: notificationServerSettings.vapidKey
+						} satisfies ClientNotificationServerSettingsState)
+		}
 	};
 };

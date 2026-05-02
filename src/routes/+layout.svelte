@@ -1,6 +1,5 @@
 <script lang="ts">
 	import "../app.css";
-	import favicon from "$lib/assets/favicon.svg";
 	import type { LayoutProps } from "./$types";
 
 	import WarningIcon from "phosphor-svelte/lib/WarningIcon";
@@ -15,7 +14,11 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+	<link rel="manifest" href="/site.webmanifest" />
 </svelte:head>
 
 <Toaster
@@ -26,7 +29,7 @@
 			toast:
 				"border-2 px-3 py-2 bg-background w-[356px] flex items-center gap-2 place-items-center cursor-default shadow-sshadow",
 			title: "font-bold font-serif font-sm",
-			description: "text-xs",
+			description: "text-xs font-sans",
 			icon: "size-5 justify-start relative flex shrink-0 items-center",
 
 			loader: "",

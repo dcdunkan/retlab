@@ -16,10 +16,6 @@
 	// root: h-6 min-h-6 w-11; thumb: size-4 checked:x-5.5 unchecked:x-0.5
 </script>
 
-<Switch.Root>
-	<Switch.Thumb />
-</Switch.Root>
-
 <Switch.Root
 	bind:checked
 	bind:ref

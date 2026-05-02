@@ -4,6 +4,10 @@ import { error, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 
 export const handle = async ({ event, resolve }) => {
+	if (event.url.pathname === "/api/proxy") {
+		return resolve(event);
+	}
+
 	event.locals.session = null;
 	event.locals.sessionId = null;
 
@@ -20,7 +24,6 @@ export const handle = async ({ event, resolve }) => {
 		// const exp = payload.exp! * 1000;
 		// const now = Date.now();
 		// console.log(now, exp - now);
-		// console.log("access token verified");
 	} catch {
 		// console.log("access token verification failed");
 
@@ -59,6 +62,7 @@ export const handle = async ({ event, resolve }) => {
 			redirect(307, "/");
 		}
 
+		// console.log("finding session");
 		// todo: jws & no shity
 		const dbSession = await db.query.sessions.findFirst({
 			where: eq(schema.sessions.id, event.locals.sessionId),
@@ -66,7 +70,8 @@ export const handle = async ({ event, resolve }) => {
 				account: {
 					with: {
 						college: true,
-						settings: true
+						settings: true,
+						notificationServerSettings: true
 					}
 				}
 			}
@@ -77,6 +82,7 @@ export const handle = async ({ event, resolve }) => {
 			event.locals.sessionId = null;
 			redirect(307, "/login");
 		}
+		// await auth.setTokenCookies(event, dbSession.id);
 		const { account, ...session } = dbSession;
 		event.locals.session = {
 			...session,
@@ -84,6 +90,9 @@ export const handle = async ({ event, resolve }) => {
 		};
 		return resolve(event);
 	} else {
+		if (event.url.pathname.startsWith("/api")) {
+			return resolve(event);
+		}
 		// console.log("unauthorized");
 		if (event.route.id == "/login") {
 			return resolve(event);

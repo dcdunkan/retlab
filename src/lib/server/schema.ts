@@ -1,16 +1,18 @@
-import {
-	pgTable,
-	integer,
-	text,
-	foreignKey,
-	timestamp,
-	primaryKey,
-	boolean,
-	pgEnum
-} from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
-import { createId } from "@paralleldrive/cuid2";
 import type { ExpandAttendanceSubjectCardsOption } from "$lib/types";
+import { createId } from "@paralleldrive/cuid2";
+import { relations, sql } from "drizzle-orm";
+import {
+	boolean,
+	foreignKey,
+	integer,
+	jsonb,
+	pgEnum,
+	pgTable,
+	primaryKey,
+	text,
+	timestamp,
+	varchar
+} from "drizzle-orm/pg-core";
 
 export const deviceType = pgEnum("DeviceType", ["LAPTOP", "MOBILE", "UNKNOWN"]);
 
@@ -64,13 +66,23 @@ export const sessionsRelations = relations(sessions, (r) => ({
 	})
 }));
 
+export const staleProxyCache = pgTable("stale_proxy_cache", {
+	key: varchar({ length: 64 }).primaryKey(),
+	data: jsonb().notNull(),
+	cachedAt: timestamp({ withTimezone: true }).notNull()
+});
+
 export const settings = pgTable(
 	"settings",
 	{
 		accountUsername: text("account_username").notNull(),
 		collegeId: integer("college_id").notNull(),
+
+		// useful tweaks
 		attendancePercentMin: integer("attendance_percent_min").default(75).notNull(),
 		attendancePercentMax: integer("attendance_percent_max").default(90).notNull(),
+
+		// fun tweaks
 		expandAttendanceSubjects: text("expand_attendance_subjects")
 			.default("critical")
 			.$type<ExpandAttendanceSubjectCardsOption>()
@@ -93,15 +105,63 @@ export const settings = pgTable(
 	]
 );
 
-export type Settings = typeof settings.$inferSelect;
-export type SettingsState = Omit<typeof settings.$inferSelect, "accountUsername" | "collegeId">;
-
 export const settingsRelations = relations(settings, (r) => ({
 	account: r.one(accounts, {
 		fields: [settings.collegeId, settings.accountUsername],
 		references: [accounts.collegeId, accounts.username]
 	})
 }));
+
+export type Settings = typeof settings.$inferSelect;
+
+export const notificationServerSettings = pgTable(
+	"notification_server_settings",
+	{
+		accountUsername: text("account_username").notNull(),
+		collegeId: integer("college_id").notNull(),
+
+		url: text().notNull(), // Notification server Url
+		vapidKey: text().notNull(), // Vapid key used by the Ns, so that R can compare
+		etlabAccessToken: text().notNull(), // Etlab access token that should be used by the proxied request
+		apiKey: text().notNull(), // API key that must be used by the R to make request to Ns
+		authToken: text().notNull() // Token that must be used by the Ns to make proxied request to R
+	},
+	(table) => [
+		foreignKey({
+			columns: [table.collegeId, table.accountUsername],
+			foreignColumns: [accounts.collegeId, accounts.username],
+			name: "notification_server_settings_college_id_account_username_fkey"
+		})
+			.onUpdate("cascade")
+			.onDelete("cascade"),
+		primaryKey({
+			columns: [table.accountUsername, table.collegeId],
+			name: "notification_server_settings_pkey"
+		})
+	]
+);
+
+export type NotificationServerSettings = typeof notificationServerSettings.$inferSelect;
+
+export const notificationSettingsRelations = relations(notificationServerSettings, (r) => ({
+	account: r.one(accounts, {
+		fields: [notificationServerSettings.collegeId, notificationServerSettings.accountUsername],
+		references: [accounts.collegeId, accounts.username]
+	})
+}));
+
+export type SettingsState = Omit<Settings, "collegeId" | "accountUsername">;
+export type NotificationServerSettingsState = Omit<
+	NotificationServerSettings,
+	"collegeId" | "accountUsername"
+>;
+
+// settings that's passed on to the client side.
+export type ClientSettingsState = SettingsState;
+export type ClientNotificationServerSettingsState = Omit<
+	NotificationServerSettingsState,
+	"etlabAccessToken" | "apiKey" | "authToken"
+> | null;
 
 export const accounts = pgTable(
 	"accounts",
@@ -136,6 +196,7 @@ export type Account = typeof accounts.$inferSelect;
 export const accountsRelations = relations(accounts, (r) => ({
 	sessions: r.many(sessions),
 	settings: r.one(settings),
+	notificationServerSettings: r.one(notificationServerSettings),
 	college: r.one(colleges, {
 		fields: [accounts.collegeId],
 		references: [colleges.id]

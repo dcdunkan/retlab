@@ -1,5 +1,5 @@
 import { UAParser, type IDevice } from "ua-parser-js";
-import { type DeviceType } from "$lib/server/drizzle/schema";
+import { type DeviceType } from "$lib/server/schema";
 
 type ParsedInfo = Record<"browser" | "os" | "device", string | null>;
 

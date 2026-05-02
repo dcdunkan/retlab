@@ -29,7 +29,7 @@
 </section>
 
 <div>
-	<Button class="transition-none" >Relax</Button>
+	<Button class="transition-none">Relax</Button>
 	<Button variant="destructive" class="transition-all duration-75">Relax</Button>
 	<Button variant="outline" class="transition-all duration-150">Relax</Button>
 </div>
@@ -71,8 +71,6 @@
 		>. Any kind of help with the development is appreciated :)
 	</p>
 </section>
-
-<div class="min-h-[50svh]"></div>
 
 <!-- <h1 class="text-2xl capitalize">
 	{data.account.profile_name.toLowerCase()}
