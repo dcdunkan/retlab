@@ -2,24 +2,22 @@
 	import { negateFn } from "$lib";
 	import Box from "$lib/components/box";
 	import Button from "$lib/components/button.svelte";
+	import Select from "$lib/components/select.svelte";
+	import { type ExpandAttendanceSubjectCardsOption } from "$lib/types";
 	import { isHttpError } from "@sveltejs/kit";
 	import { Slider } from "bits-ui";
-	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
-	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 	import { toast } from "svelte-sonner";
-	import { DEFAULT_SETTINGS, settingsState } from "../settings.svelte";
+	import { settingsState } from "../states.svelte";
 	import type { PageProps } from "./$types.js";
 	import DestroyAccountDialog from "./destroy-account-dialog.svelte";
 	import LogoutDialog from "./logout-dialog.svelte";
 	import SessionCard from "./session-card.svelte";
-	import {
-		getSessions,
-		logoutSession,
-		refreshHardCache,
-		updateSettings
-	} from "./settings.remote.js";
-	import Select from "$lib/components/select.svelte";
-	import type { ExpandAttendanceSubjectCardsOption } from "$lib/types";
+	import { getSessions, logoutSession, refreshHardCache, updateTweaks } from "./settings.remote.js";
+	import NotificationSection from "./notifications-section.svelte";
+	import { DEFAULT_SETTINGS } from "./default-settings";
+
+	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 
 	let { data }: PageProps = $props();
 
@@ -65,11 +63,11 @@
 		return v in expandAttendanceSubjectCardsOptions;
 	}
 
+	// todo: extract tweak section to anotherfile
 	$effect(() => {
 		const settings = settingsState.value;
 		if (settingsState.resolved) {
 			// resolved settings:
-			console.log(settings);
 
 			const initials: {
 				attendanceCutoffs: [number, number];
@@ -100,6 +98,7 @@
 				attendanceCutoffs: [number, number];
 				expandAttendanceSubjectCards: ExpandAttendanceSubjectCardsOption;
 			} = { attendanceCutoffs: [75, 90], expandAttendanceSubjectCards: "critical" };
+
 			tweaks = {
 				saving: false,
 				attendanceCutoffs: {
@@ -125,7 +124,7 @@
 
 <section>
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Tweaks</h2>
-	<p class="text-sm text-muted-foreground">Tweak some of the application behavior.</p>
+	<p class="text-sm">Tweak some of the application behavior.</p>
 
 	{#if tweaks != null}
 		<div class="mt-4 divide-y-2 border-2">
@@ -135,7 +134,7 @@
 						<div class="font-serif font-bold">Attendance percentage cutoff</div>
 					</div>
 
-					<p class="text-sm text-muted-foreground">
+					<p class="text-sm">
 						Adjust the percent cutoff for safe attendance range, so the attendance page can show
 						more helpful text for you!
 					</p>
@@ -187,6 +186,7 @@
 						<ul class="list-inside list-[square] text-sm">
 							<li>
 								Above or equal to <input
+									id="tweaks-safe-range-value"
 									disabled={tweaks.saving}
 									type="number"
 									min="0"
@@ -200,6 +200,7 @@
 							</li>
 							<li>
 								Above or equal to <input
+									id="tweaks-excellence-range-value"
 									disabled={tweaks.saving}
 									type="number"
 									min={tweaks.attendanceCutoffs.current[0]}
@@ -222,7 +223,7 @@
 						<div class="font-serif font-bold">Expand attendance subject cards</div>
 					</div>
 
-					<p class="text-sm text-muted-foreground">
+					<p class="text-sm">
 						Configure how the subject cards in the attendance page should be shown. It can be
 						adjusted to only expand the critical ones!
 					</p>
@@ -267,7 +268,7 @@
 					const toastId = toast.loading("Saving changes...");
 					try {
 						// save changes in db
-						await updateSettings({
+						await updateTweaks({
 							...settingsState.value,
 							attendancePercentMin: tweaks.attendanceCutoffs.current[0],
 							attendancePercentMax: tweaks.attendanceCutoffs.current[1],
@@ -302,11 +303,13 @@
 	{/if}
 </section>
 
+<NotificationSection />
+
 <section>
 	<!-- <div class="relative right-1/2 left-1/2 mx-[-50vw] w-[100vw] max-w-none"> -->
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Cache</h2>
 	<!-- </div> -->
-	<p class="text-sm text-muted-foreground">
+	<p class="text-sm">
 		Retlab uses many hacks to avoid a lot of errors that you get with Etlab's API. These workarounds
 		include hard-caching because of weird rate limits from Etlab's side on important API endpoints.
 		<!-- An attempt is made to refresh these cache every 24 hours. You can refresh your stored
@@ -323,7 +326,7 @@
 					</p>
 				</div>
 
-				<p class="text-sm text-muted-foreground">
+				<p class="text-sm">
 					<!-- Hard-cache mainly includes IDs such as semester ID, batch ID, profile image, profile name,
 					semester name, register no, etc. -->
 					Hard-cache mainly includes IDs and names returned from Etlab's dashboard API. And it can't be
@@ -331,38 +334,38 @@
 					<b>because they often return 429 & 500</b>. So, these are hard-cached, and refreshed on
 					demand & periodically.
 				</p>
-			</div>
 
-			<Button
-				size={refreshingHardCache ? "icon" : "default"}
-				disabled={refreshingHardCache}
-				onclick={async () => {
-					refreshingHardCache = true;
-					const toastId = toast.loading("Refreshing hard-cache...");
-					try {
-						const lastUpdatedAt = await refreshHardCache();
-						hardCacheLastUpdatedAt = lastUpdatedAt;
-						toast.success("Refreshed hard-cache", { id: toastId });
-					} catch (error) {
-						if (isHttpError(error)) {
-							toast.error("Hard-cache refresh failed", {
-								description: error.body.message,
-								id: toastId
-							});
-						} else {
-							toast.error("Something went wrong", { id: toastId });
+				<Button
+					variant="outline"
+					disabled={refreshingHardCache}
+					onclick={async () => {
+						refreshingHardCache = true;
+						const toastId = toast.loading("Refreshing hard-cache...");
+						try {
+							const lastUpdatedAt = await refreshHardCache();
+							hardCacheLastUpdatedAt = lastUpdatedAt;
+							toast.success("Refreshed hard-cache", { id: toastId });
+						} catch (error) {
+							if (isHttpError(error)) {
+								toast.error("Hard-cache refresh failed", {
+									description: error.body.message,
+									id: toastId
+								});
+							} else {
+								toast.error("Something went wrong", { id: toastId });
+							}
+						} finally {
+							refreshingHardCache = false;
 						}
-					} finally {
-						refreshingHardCache = false;
-					}
-				}}
-			>
-				{#if refreshingHardCache}
-					<SpinnerIcon class="animate-spin" />
-				{:else}
-					Refresh
-				{/if}
-			</Button>
+					}}
+				>
+					{#if refreshingHardCache}
+						<SpinnerIcon class="animate-spin" /> Refreshing...
+					{:else}
+						Refresh hard-cache
+					{/if}
+				</Button>
+			</div>
 		</div>
 	</div>
 </section>
@@ -372,7 +375,7 @@
 		Sessions & Devices
 	</h2>
 
-	<p class="text-sm text-muted-foreground">
+	<p class="text-sm">
 		You can manage your account sessions associated with Retlab here. But your Etlab's account
 		sessions cannot be managed here, because there are no APIs for it afaik.
 	</p>
@@ -412,12 +415,6 @@
 
 <section class="space-y-4">
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Account</h2>
-	<!-- <p class="text-sm text-muted-foreground">
-			Retlab uses many hacks to avoid a lot of errors that you get with Etlab's API. These
-			workarounds include hard-caching because of weird rate limits from Etlab's side on frequently
-			used API endpoints. An attempt is made to refresh these cache every 24 hours. You can refresh
-			your stored cache here, if your details seems wrong.
-		</p> -->
 
 	<div class="divide-y-2 border-2">
 		<div class="flex justify-between gap-4 px-4 py-3">
@@ -429,7 +426,7 @@
 					</p>
 				</div>
 
-				<p class="text-sm text-muted-foreground">
+				<p class="text-sm">
 					This does <b>not</b> really log out your account session from Etlab btw. But, you log out from
 					Retlab, and Retlab WILL call the logout route of Etlab's API, but it doesn't seem to have any
 					real effect (meaning, your access token is still valid).
@@ -452,5 +449,3 @@
 		</div>
 	</div>
 </section>
-
-<div class="min-h-[50svh]"></div>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cutePercent, safeDivision } from "$lib";
 	import Box from "$lib/components/box";
-	import { settingsState } from "../settings.svelte";
+	import { settingsState } from "../states.svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import { getAttendance } from "./attendance.remote";
 
@@ -62,5 +62,3 @@
 		<p>Something went wrong</p>
 	</Box.Error>
 {/if}
-
-<div class="min-h-[50svh]"></div>

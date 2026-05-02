@@ -24,7 +24,7 @@ export const getAssignments = query(
 				{
 					json: {
 						filter: "",
-						sem_id: arg.semester_id.toString(), // todo: implement semester chooser
+						sem_id: arg.semester_id.toString(),
 						sort: ""
 					} satisfies assignment.AssignmentRequest,
 					headers: { Authorization: "Bearer " + session.accessToken }

@@ -3,14 +3,14 @@ import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login } from "$lib/generated/models";
 import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
+import { db, schema } from "$lib/server/db";
+import type { ClientSettingsState } from "$lib/server/schema";
 import { error } from "@sveltejs/kit";
+import { and, eq } from "drizzle-orm";
 import z from "zod";
 import { settingsSchema } from "./settings-schema";
-import type { SettingsState } from "$lib/server/drizzle/schema";
-import { db, schema } from "$lib/server/db";
-import { and, eq } from "drizzle-orm";
 
-export const updateSettings = command(settingsSchema, async (data) => {
+export const updateTweaks = command(settingsSchema, async (data) => {
 	const event = getRequestEvent();
 	if (event.locals.session == null) {
 		return error(401, "Unauthorized");
@@ -18,7 +18,7 @@ export const updateSettings = command(settingsSchema, async (data) => {
 
 	const session = event.locals.session;
 
-	const updated: SettingsState = {
+	const updated: ClientSettingsState = {
 		attendancePercentMax: data.attendancePercentMax,
 		attendancePercentMin: data.attendancePercentMin,
 		expandAttendanceSubjects: data.expandAttendanceSubjects,
@@ -32,6 +32,7 @@ export const updateSettings = command(settingsSchema, async (data) => {
 			collegeId: session.account.collegeId,
 			accountUsername: session.account.username,
 			...updated
+			// other by default nulls will be NULL
 		})
 		.onConflictDoUpdate({
 			set: updated,
@@ -46,7 +47,6 @@ export const getSessions = query(async () => {
 	if (event.locals.session == null) {
 		return error(401, "Unauthorized");
 	}
-
 	const session = event.locals.session;
 
 	return await db.query.sessions.findMany({
@@ -80,7 +80,8 @@ export const refreshHardCache = command(async () => {
 			// todo: logout
 			return error(401, "Seems logged out?"); // wont ever really happen
 		} else {
-			const [account] = await db
+			// const [account] =
+			await db
 				.update(schema.accounts)
 				.set({
 					batchId: Number.parseInt(parsed.batch_id),
@@ -105,11 +106,13 @@ export const refreshHardCache = command(async () => {
 				)
 				.returning();
 
-			event.locals.session.account = {
-				...account,
-				college: session.account.college,
-				settings: session.account.settings
-			};
+			// todo: is it really useful?
+			// event.locals.session.account = {
+			// 	...account,
+			// 	college: session.account.college,
+			// 	settings: session.account.settings,
+			// 	notificationServerSettings: session.account.notificationServerSettings
+			// };
 			return event.locals.session.account.lastUpdatedAt;
 		}
 	} else {

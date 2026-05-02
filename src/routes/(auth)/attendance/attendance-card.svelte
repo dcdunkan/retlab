@@ -3,7 +3,7 @@
 	import { slide } from "svelte/transition";
 	import type { getAttendance } from "./attendance.remote";
 	import { titleCase } from "title-case";
-	import { settingsState } from "../settings.svelte";
+	import { settingsState } from "../states.svelte";
 
 	let {
 		subject,

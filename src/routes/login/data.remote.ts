@@ -10,11 +10,10 @@ import { invalid, redirect } from "@sveltejs/kit";
 import { loginSchema } from "./login-schema";
 import { db, schema } from "$lib/server/db";
 import { eq } from "drizzle-orm";
-import type { Account } from "$lib/server/drizzle/schema";
+import type { Account } from "$lib/server/schema";
 
+// make this a server load and prerender the page
 export const getColleges = query(async () => {
-	console.log("fetching colleges");
-
 	return await db.query.colleges.findMany({
 		columns: {
 			id: true,
@@ -46,8 +45,6 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 		})
 		.json()
 		.catch(() => invalid(issue("Something went wrong")));
-
-	console.log(loginDetails.access_token);
 
 	if (typeof loginDetails.error == "string") {
 		invalid(issue(loginDetails.error));
