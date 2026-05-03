@@ -7,3 +7,5 @@ export const GET = () => {
 		enc: NOTIF_ENC_PUBLIC_KEY
 	});
 };
+
+export const prerender = true;

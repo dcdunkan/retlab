@@ -1,4 +1,4 @@
-import { form, getRequestEvent, query } from "$app/server";
+import { form, getRequestEvent } from "$app/server";
 import { DAY, MINUTE } from "$lib";
 import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login, SuccessResponse } from "$lib/generated/models";
@@ -11,16 +11,6 @@ import { loginSchema } from "./login-schema";
 import { db, schema } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import type { Account } from "$lib/server/schema";
-
-// make this a server load and prerender the page
-export const getColleges = query(async () => {
-	return await db.query.colleges.findMany({
-		columns: {
-			id: true,
-			name: true
-		}
-	});
-});
 
 export const loginForm = form(loginSchema, async (data, issue) => {
 	const event = getRequestEvent();
