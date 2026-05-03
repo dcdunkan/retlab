@@ -42,14 +42,13 @@
 
 		// unsubscribe zombie subscriptions:
 		getLocalSubscription()
-			.then((sub) => {
-				if (sub == null) return;
+			.then<boolean>((sub) => {
+				if (sub == null) return false;
 
 				// was subscribed correctly, unregistered from another device, then
 				// the local subscription is useless. zombie subscription (sub without reg)
 				if (data.account.notificationServerSettings == null) {
-					sub.unsubscribe();
-					return;
+					return sub.unsubscribe();
 				}
 
 				// has local sub, but the vapid key used for registration and the locally subscribed vapid key
@@ -57,13 +56,15 @@
 				// making the notificationServer not null, but mismatch in vapid key.
 
 				// handle unfortunate cases first:
-				if (
-					data.account.notificationServerSettings.vapidKey == null ||
-					sub.options.applicationServerKey == null
-				) {
-					sub.unsubscribe();
-					return;
+				if (data.account.notificationServerSettings.vapidKey == null) {
+					return sub.unsubscribe();
 				}
+
+				if (sub.options.applicationServerKey == null) {
+					// note: cannot unsubscribe definitively, because Firefox doesn't store them properly as of today.
+					return false;
+				}
+
 				// and real comparison now. but it sucks:
 				// https://stackoverflow.com/questions/45994933/changing-application-server-key-in-push-manager-subscription#comment137027226_75503694
 				// https://github.com/GoogleChromeLabs/web-push-codelab/blob/469a70b1eb195eeb27f5901ab58bd8452f015d9a/completed/07-unsubscribe/scripts/main.js#L32
@@ -79,14 +80,13 @@
 					.replaceAll("=", "");
 
 				if (applicationServerKey !== data.account.notificationServerSettings.vapidKey) {
-					sub.unsubscribe();
-					return;
+					return sub.unsubscribe();
 				}
 
-				return true;
+				return false;
 			})
-			.then((r) => {
-				if (r !== true) {
+			.then((subscribed) => {
+				if (subscribed) {
 					console.log("Unsubscribed push subscription");
 				}
 			});
