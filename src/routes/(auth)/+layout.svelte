@@ -159,7 +159,8 @@
 		<footer>
 			<div class="text-center text-xs text-muted-foreground">
 				ret build <a
-					href="https://github.com/dcdunkan/retlab/commit/{__GIT_SHA__}"
+					target="_blank"
+					href="https://github.com/dcdunkan/retlab/tree/{__GIT_SHA__}"
 					class="hover:text-primary"
 				>
 					{__GIT_SHORT_SHA__}
