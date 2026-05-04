@@ -59,15 +59,15 @@ async function makeNsRequest<T extends $ZodType, E extends $ZodType = $ZodType<u
 	let serverKeys: PublicKeys | null = null;
 	try {
 		// check inside cache
-		const key = `nskc:${serverUrl}`;
-		const cachedKeys = await redis.get<PublicKeys>(key);
+		const redisCachedKeysKey = `nskc:${serverUrl}`;
+		const cachedKeys = await redis.get<PublicKeys>(redisCachedKeysKey);
 		if (cachedKeys != null) {
 			serverKeys = cachedKeys;
 		} else {
 			// fetch fresh keys if missed in cache:
 			const response = await ky.get(urlJoin(serverUrl, "/keys")).json<{ result: PublicKeys }>();
 			await redis.set<PublicKeys>(
-				serverUrl,
+				redisCachedKeysKey,
 				{
 					enc: response.result.enc,
 					sign: response.result.sign
