@@ -25,6 +25,9 @@ export const SECOND = 1000,
 	HOUR = 60 * MINUTE,
 	DAY = 24 * HOUR;
 
+export const ETLAB_RESPONSE_FRESH_EXPIRY = 15 * SECOND;
+export const ETLAB_RESPONSE_STALE_EXPIRY = 30 * DAY;
+
 export function safeDivision(numerator: number, denominator: number): number {
 	return denominator == 0 ? 0 : numerator / denominator;
 }
@@ -101,6 +104,25 @@ export function normalizeJson(obj: any) {
 	}
 	return result;
 }
+
+// Source - https://stackoverflow.com/a/52171480
+// Posted by bryc, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-05-04, License - CC BY-SA 4.0
+export const cyrb53 = (str: string, seed = 0) => {
+	let h1 = 0xdeadbeef ^ seed,
+		h2 = 0x41c6ce57 ^ seed;
+	for (let i = 0, ch; i < str.length; i++) {
+		ch = str.charCodeAt(i);
+		h1 = Math.imul(h1 ^ ch, 2654435761);
+		h2 = Math.imul(h2 ^ ch, 1597334677);
+	}
+	h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+	h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+	h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+	h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+	return (h2 >>> 0).toString(16).padStart(8, "0") + (h1 >>> 0).toString(16).padStart(8, "0");
+};
 
 export const PROXY_RESPONSE_CACHE_STATUS = {
 	Fresh: 0,

@@ -11,11 +11,34 @@ import { waitUntil } from "@vercel/functions";
 import { eq } from "drizzle-orm";
 import { db, schema } from "./db";
 import { redis } from "./redis";
+import type { ResponseCacheStatus } from "$lib/types";
+
+export type ParsedAssignmentResponse = {
+	_parsed: {
+		issue_date: Date;
+		last_date: Date;
+		has_uploaded: boolean;
+		is_due: boolean;
+	};
+	can_download?: boolean;
+	can_submit?: boolean;
+	details: string;
+	id: string;
+	issue_date: string;
+	last_date: string;
+	semester: string;
+	status: string;
+	subject: string;
+	title: string;
+	upload?: boolean;
+	uploaded_file: string;
+	url: string;
+}[];
 
 export function parseAssignmentsResponse(
 	response: assignment.AssignmentResponse,
 	collegeBaseUrlOrigin: string
-) {
+): ParsedAssignmentResponse {
 	return response.assignments.map((assignment) => {
 		const hasUploaded =
 			assignment.uploaded_file !== "" && assignment.uploaded_file !== collegeBaseUrlOrigin;
@@ -42,7 +65,7 @@ const STALE_CACHE_EXPIRY = 14 * DAY;
 
 type ProxySuccess<T> = {
 	ok: true;
-	cacheStatus: (typeof PROXY_RESPONSE_CACHE_STATUS)[keyof typeof PROXY_RESPONSE_CACHE_STATUS];
+	cacheStatus: ResponseCacheStatus;
 	fetchedAt: number;
 	data: T;
 };

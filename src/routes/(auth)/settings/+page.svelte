@@ -7,12 +7,12 @@
 	import { isHttpError } from "@sveltejs/kit";
 	import { Slider } from "bits-ui";
 	import { toast } from "svelte-sonner";
-	import { settingsState } from "../states.svelte";
+	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
 	import type { PageProps } from "./$types.js";
 	import DestroyAccountDialog from "./destroy-account-dialog.svelte";
 	import LogoutDialog from "./logout-dialog.svelte";
 	import SessionCard from "./session-card.svelte";
-	import { getSessions, logoutSession, refreshHardCache, updateTweaks } from "./settings.remote.js";
+	import * as remotes from "./settings.remote.js";
 	import NotificationSection from "./notifications-section.svelte";
 	import { DEFAULT_SETTINGS } from "./default-settings";
 
@@ -26,9 +26,15 @@
 		timeStyle: "medium"
 	});
 
-	const sessions = getSessions();
-	type Session = NonNullable<typeof sessions.current>[number];
+	const sessions = cachedGracefulRemoteQuery(
+		{ name: "getSessions", version: 1 },
+		remotes.getSessions
+	);
+	type Session = NonNullable<typeof sessions.data>[number];
 	const isCurrentSession = (s: Session) => s.id == data.session.id;
+	$effect(() => {
+		sessions.load();
+	});
 
 	let refreshingHardCache = $state(false);
 	let hardCacheLastUpdatedAt = $derived(data.account.lastUpdatedAt);
@@ -268,7 +274,7 @@
 					const toastId = toast.loading("Saving changes...");
 					try {
 						// save changes in db
-						await updateTweaks({
+						await remotes.updateTweaks({
 							...settingsState.value,
 							attendancePercentMin: tweaks.attendanceCutoffs.current[0],
 							attendancePercentMax: tweaks.attendanceCutoffs.current[1],
@@ -342,7 +348,7 @@
 						refreshingHardCache = true;
 						const toastId = toast.loading("Refreshing hard-cache...");
 						try {
-							const lastUpdatedAt = await refreshHardCache();
+							const lastUpdatedAt = await remotes.refreshHardCache();
 							hardCacheLastUpdatedAt = lastUpdatedAt;
 							toast.success("Refreshed hard-cache", { id: toastId });
 						} catch (error) {
@@ -388,8 +394,8 @@
 
 		{#if sessions.loading}
 			<Box.Loading>Fetching account sessions</Box.Loading>
-		{:else if sessions.current}
-			{@const otherSessions = sessions.current.filter(negateFn(isCurrentSession))}
+		{:else if sessions.data}
+			{@const otherSessions = sessions.data.filter(negateFn(isCurrentSession))}
 			<h3 class="text-lg italic">Other sessions</h3>
 			{#if otherSessions.length > 0}
 				<div class="max-h-64 divide-y-2 overflow-scroll border-2">
@@ -398,8 +404,8 @@
 							{session}
 							showLogout
 							onLogout={async () => {
-								await logoutSession({ session_id: session.id });
-								getSessions().refresh();
+								await remotes.logoutSession({ session_id: session.id });
+								sessions.load();
 							}}
 						/>
 					{/each}
@@ -408,7 +414,11 @@
 				<Box.Empty>You do not have any other sessions</Box.Empty>
 			{/if}
 		{:else}
-			<Box.Error>Failed to fetch your account sessions</Box.Error>
+			<Box.Error>
+				{isHttpError(sessions.error)
+					? sessions.error.body.message
+					: "Failed to fetch your account sessions"}
+			</Box.Error>
 		{/if}
 	</div>
 </section>

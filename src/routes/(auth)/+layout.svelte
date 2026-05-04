@@ -16,13 +16,14 @@
 	import { getLocalSubscription } from "$lib/browser";
 	import { onMount, type Component } from "svelte";
 	import type { LayoutProps } from "./$types";
-	import { notificationServerSettingsState, settingsState } from "./states.svelte";
+	import { idb, notificationServerSettingsState, settingsState } from "./states.svelte";
 	import { DEFAULT_SETTINGS } from "./settings/default-settings";
 	import type { IconComponentProps } from "phosphor-svelte";
+	import { IDBStore, openIdb } from "$lib/indexeddb";
 
 	let { data, children }: LayoutProps = $props();
 
-	onMount(() => {
+	onMount(async () => {
 		// Resolve normal settings:
 		if (data.account.settings != null) {
 			// tweak stuff
@@ -37,6 +38,20 @@
 			settingsState.set(DEFAULT_SETTINGS);
 		}
 		settingsState.resolve();
+
+		const cacheStorageIdb = await openIdb("cache-storage", 1, [
+			{ name: "et-res-cache", options: { keyPath: "key" } }
+		]);
+		const etlabResponseCache = new IDBStore<{
+			key: string;
+			data: unknown;
+			timestamp: number;
+		}>(cacheStorageIdb, "et-res-cache");
+
+		idb.set({
+			cacheStorageIdb,
+			etlabResponseCache
+		});
 
 		// Resolve notification server settings:
 

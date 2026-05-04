@@ -2,15 +2,24 @@
 	import "../app.css";
 	import type { LayoutProps } from "./$types";
 
-	import WarningIcon from "phosphor-svelte/lib/WarningIcon";
+	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
 	import InfoIcon from "phosphor-svelte/lib/InfoIcon";
 	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
-	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
+	import WarningIcon from "phosphor-svelte/lib/WarningIcon";
 	import XIcon from "phosphor-svelte/lib/XIcon";
+	import { onMount } from "svelte";
+
+	import { Toaster } from "svelte-sonner";
 
 	let { children }: LayoutProps = $props();
 
-	import { Toaster } from "svelte-sonner";
+	onMount(async () => {
+		// Clear indexedDB databases:
+		const databases = await indexedDB.databases();
+		for (const database of databases) {
+			if (database.name != null) indexedDB.deleteDatabase(database.name);
+		}
+	});
 </script>
 
 <svelte:head>

@@ -1,3 +1,5 @@
+import type { PROXY_RESPONSE_CACHE_STATUS } from "$lib";
+
 export enum LoadState {
 	Pending = "pending",
 	Resolved = "resolved",
@@ -19,6 +21,9 @@ export type ExpandAttendanceSubjectCardsOption =
 	| "barely-safe"
 	| "below-excellence"
 	| "all";
+
+export type ResponseCacheStatus =
+	(typeof PROXY_RESPONSE_CACHE_STATUS)[keyof typeof PROXY_RESPONSE_CACHE_STATUS];
 
 // | "double-hyphen"
 // | "single-hyphen"

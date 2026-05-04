@@ -2,16 +2,27 @@
 	import { isValidDate } from "$lib";
 	import Box from "$lib/components/box";
 	import Select from "$lib/components/select.svelte";
+	import { isHttpError } from "@sveltejs/kit";
 	import AssignmentCard from "../assignment-card.svelte";
-	import { getAssignments } from "./assignments.remote";
+	import { cachedGracefulRemoteQuery } from "../states.svelte";
+	import * as remotes from "./assignments.remote";
 
 	let { data } = $props();
 
 	let chosenSemester = $derived(data.account.semesterId);
-	const assignmentsData = $derived(getAssignments({ semester_id: chosenSemester }));
+
+	const assignmentsData = cachedGracefulRemoteQuery(
+		{ name: "getAssignments", version: 1 },
+		remotes.getAssignments
+	);
+
+	$effect.pre(() => {
+		assignmentsData.load({ semester_id: chosenSemester });
+	});
+
 	const overview = $derived(
-		assignmentsData.current
-			? assignmentsData.current.reduce(
+		assignmentsData.data
+			? assignmentsData.data.reduce(
 					(p, c) => {
 						if (c._parsed.is_due) p.due++;
 						else p.completed++;
@@ -22,7 +33,7 @@
 			: { due: "?", completed: "?" } // unused for now
 	);
 
-	type Assignment = NonNullable<typeof assignmentsData.current>[number];
+	type Assignment = NonNullable<typeof assignmentsData.data>[number];
 
 	const yearMonthFormatter = new Intl.DateTimeFormat("en-IN", {
 		timeZone: "Asia/Kolkata",
@@ -222,7 +233,7 @@
 
 {#if assignmentsData.loading}
 	<Box.Loading>Loading...</Box.Loading>
-{:else if assignmentsData.current}
+{:else if assignmentsData.data}
 	<div class="py-2 font-serif text-5xl font-bold">
 		{overview.due} due, {overview.completed} completed
 	</div>
@@ -264,7 +275,7 @@
 	</Select>
 
 	<div class="space-y-6">
-		{#each Object.entries(groupByOptions[groupBy].fn(assignmentsData.current)) as [groupKey, assignmentGroup] (groupKey)}
+		{#each Object.entries(groupByOptions[groupBy].fn(assignmentsData.data)) as [groupKey, assignmentGroup] (groupKey)}
 			<div class="space-y-2">
 				<div class="font-bold text-muted-foreground uppercase">{assignmentGroup.label}</div>
 				<div class="grid grid-flow-row">
@@ -277,7 +288,9 @@
 	</div>
 {:else}
 	<Box.Error>
-		<p>Something went wrong</p>
+		{isHttpError(assignmentsData.error)
+			? assignmentsData.error.body.message
+			: "Something went wrong"}
 	</Box.Error>
 {/if}
 

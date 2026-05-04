@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { cutePercent, safeDivision } from "$lib";
 	import Box from "$lib/components/box";
-	import { settingsState } from "../states.svelte";
+	import { isHttpError } from "@sveltejs/kit";
+	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
 	import AttendanceCard from "./attendance-card.svelte";
-	import { getAttendance } from "./attendance.remote";
+	import * as remotes from "./attendance.remote";
 
-	const attendanceData = getAttendance();
+	const attendanceData = cachedGracefulRemoteQuery(
+		{ name: "getAttendance", version: 1 },
+		remotes.getAttendance
+	);
+	$effect.pre(() => {
+		attendanceData.load();
+	});
 
 	let attendancePercentThresholds = $derived(
 		[settingsState.value.attendancePercentMin, settingsState.value.attendancePercentMax].map(
@@ -20,12 +27,10 @@
 	<title>Attendance / Retlab</title>
 </svelte:head>
 
-{#if attendanceData.error}
-	<Box.Error>
-		<p>Something went wrong</p>
-	</Box.Error>
-{:else if attendanceData.current}
-	{@const total = attendanceData.current.reduce(
+{#if attendanceData.loading}
+	<Box.Loading>Loading...</Box.Loading>
+{:else if attendanceData.data}
+	{@const total = attendanceData.data.reduce(
 		(p, c) => ({
 			attended: p.attended + c[attendanceMode].attended,
 			classes: p.classes + c[attendanceMode].classes
@@ -47,7 +52,7 @@
 	</div>
 
 	<div class="grid grid-flow-row">
-		{#each attendanceData.current as subject, i (i)}
+		{#each attendanceData.data as subject, i (i)}
 			<AttendanceCard {attendancePercentThresholds} {subject} {attendanceMode} />
 		{/each}
 	</div>
@@ -60,5 +65,7 @@
 		</div>
 	</section> -->
 {:else}
-	<Box.Loading>Loading...</Box.Loading>
+	<Box.Error>
+		{isHttpError(attendanceData.error) ? attendanceData.error.body.message : "Something went wrong"}
+	</Box.Error>
 {/if}
