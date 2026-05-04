@@ -20,8 +20,10 @@
 	<title>Attendance / Retlab</title>
 </svelte:head>
 
-{#if attendanceData.loading}
-	<Box.Loading>Loading...</Box.Loading>
+{#if attendanceData.error}
+	<Box.Error>
+		<p>Something went wrong</p>
+	</Box.Error>
 {:else if attendanceData.current}
 	{@const total = attendanceData.current.reduce(
 		(p, c) => ({
@@ -58,7 +60,5 @@
 		</div>
 	</section> -->
 {:else}
-	<Box.Error>
-		<p>Something went wrong</p>
-	</Box.Error>
+	<Box.Loading>Loading...</Box.Loading>
 {/if}

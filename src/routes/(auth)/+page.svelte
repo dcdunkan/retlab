@@ -50,16 +50,16 @@
 	>
 </div>
 
-{#if assignmentsData.loading}
-	<Box.Loading>Loading due assignments...</Box.Loading>
-{:else if assignmentsData.current}
+{#if assignmentsData.error}
+	<Box.Error>Something went wrong</Box.Error>
+{:else if assignmentsData.ready}
 	<div>
 		{#each assignmentsData.current as assignment (assignment.id)}
 			<AssignmentCard {assignment} />
 		{/each}
 	</div>
 {:else}
-	<Box.Error>Something went wrong</Box.Error>
+	<Box.Loading>Loading due assignments...</Box.Loading>
 {/if}
 
 <section class="flex place-items-center gap-2 border-2 border-muted-foreground p-2">

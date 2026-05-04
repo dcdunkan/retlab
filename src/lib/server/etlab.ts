@@ -51,6 +51,28 @@ type ProxyError = {
 	message: string;
 	statusCode: number;
 };
+type ProxyResponse<T> = ProxyError | ProxySuccess<T>;
+type ProxyRequest = {
+	method: "GET" | "POST";
+	endpoint: string;
+	body?: unknown;
+};
+
+export function makeSessionBoundProxy(
+	session: NonNullable<App.Locals["session"]>
+): <T>(req: ProxyRequest) => Promise<ProxyResponse<T>> {
+	return <T>(req: ProxyRequest) => {
+		return proxyEtRequest<T>(
+			{
+				collegeBaseUrl: session.account.college.baseUrl,
+				collegeId: session.account.collegeId,
+				username: session.account.username
+			},
+			session.accessToken,
+			req
+		);
+	};
+}
 
 export async function proxyEtRequest<T>(
 	user: {
@@ -59,12 +81,8 @@ export async function proxyEtRequest<T>(
 		collegeBaseUrl: string;
 	},
 	etlabAccessToken: string,
-	req: {
-		method: "GET" | "POST";
-		endpoint: string;
-		body?: unknown;
-	}
-): Promise<ProxySuccess<T> | ProxyError> {
+	req: ProxyRequest
+): Promise<ProxyResponse<T>> {
 	const now = Date.now();
 	const cacheKey = await hexSha256(
 		JSON.stringify({

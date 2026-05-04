@@ -1,7 +1,7 @@
 import { getRequestEvent, query } from "$app/server";
 import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { attendance } from "$lib/generated/models";
-import { api } from "$lib/server";
+import { makeSessionBoundProxy } from "$lib/server/etlab";
 import { error } from "@sveltejs/kit";
 
 export const getAttendance = query(async () => {
@@ -10,23 +10,23 @@ export const getAttendance = query(async () => {
 		return error(401, "Unauthorized");
 	}
 	const session = event.locals.session;
-	const attendanceData = await api
-		.post<attendance.AttendanceResponse>(
-			session.account.college.baseUrl + ApiEndPoints.ATTENDANCE_BY_SUBJECT_URL,
-			{
-				json: {
-					sem_id: ""
-				} satisfies attendance.AttendanceRequest,
-				headers: {
-					Authorization: "Bearer " + session.accessToken
-				}
-			}
-		)
-		.json();
+	const etproxy = makeSessionBoundProxy(session);
+
+	const attendanceData = await etproxy<attendance.AttendanceResponse>({
+		endpoint: ApiEndPoints.ATTENDANCE_BY_SUBJECT_URL,
+		method: "POST",
+		body: {
+			sem_id: ""
+		} satisfies attendance.AttendanceRequest
+	});
+
+	if (!attendanceData.ok) {
+		return error(attendanceData.statusCode, attendanceData.message);
+	}
 
 	// todo: handle attendanceData.login == false
 
-	return attendanceData.subjects.map((subject) => {
+	return attendanceData.data.subjects.map((subject) => {
 		// note: so apparently, subject.total_classes and subject.total_subject are
 		// entirely two different things. no explanation yet.
 		// hack: parse total_subject to actually use it.

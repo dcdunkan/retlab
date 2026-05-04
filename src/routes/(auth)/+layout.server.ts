@@ -1,5 +1,5 @@
 import { ApiEndPoints } from "$lib/generated/api-endpoints.js";
-import { api } from "$lib/server/index.js";
+import { makeSessionBoundProxy } from "$lib/server/etlab.js";
 import type {
 	ClientNotificationServerSettingsState,
 	ClientSettingsState
@@ -15,25 +15,26 @@ export const load = async (event) => {
 		...session
 	} = event.locals.session;
 
-	// todo:
-	const semesters = await api
-		.get<
-			{
-				id: string;
-				course_id: string;
-				name: string;
-				position: string;
-				elective: string;
-				program_elective: string;
-				mooc_status: string;
-				additional_elective: string;
-			}[]
-		>(account.college.baseUrl + ApiEndPoints.SEM_LIST_URL, {
-			headers: { Authorization: "Bearer " + session.accessToken }
-		})
-		.json()
-		.then((semesters) =>
-			semesters.map(
+	const etproxy = makeSessionBoundProxy(event.locals.session);
+
+	const semesters = await etproxy<
+		{
+			id: string;
+			course_id: string;
+			name: string;
+			position: string;
+			elective: string;
+			program_elective: string;
+			mooc_status: string;
+			additional_elective: string;
+		}[]
+	>({
+		method: "GET",
+		endpoint: ApiEndPoints.SEM_LIST_URL
+	});
+
+	const processedSemesters = semesters.ok
+		? semesters.data.map(
 				(semester) =>
 					({
 						id: Number.parseInt(semester.id),
@@ -44,13 +45,15 @@ export const load = async (event) => {
 						program_elective: Number.parseInt(semester.program_elective),
 						mooc_status: Number.parseInt(semester.mooc_status),
 						additional_elective: Number.parseInt(semester.additional_elective)
-					}) satisfies Record<keyof Omit<(typeof semesters)[0], "name">, number> & { name: string } // hack: retlab-generate should technically generate this, right?
+					}) satisfies Record<keyof Omit<(typeof semesters.data)[0], "name">, number> & {
+						name: string;
+					} // hack: retlab-generate should technically generate this, right?
 			)
-		);
+		: [];
 
 	return {
 		// todo: expose explicit stuff only
-		semesters: semesters,
+		semesters: processedSemesters,
 		session,
 		account: {
 			...account,
