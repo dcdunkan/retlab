@@ -81,7 +81,12 @@ export async function proxyEtRequest<T>(
 		collegeBaseUrl: string;
 	},
 	etlabAccessToken: string,
-	req: ProxyRequest
+	req: ProxyRequest,
+	options: {
+		useL1Cache: boolean;
+	} = {
+		useL1Cache: true
+	}
 ): Promise<ProxyResponse<T>> {
 	const now = Date.now();
 	const cacheKey = await hexSha256(
@@ -93,15 +98,16 @@ export async function proxyEtRequest<T>(
 		})
 	);
 
-	// check inside fresh cache
-	const cached = await redis.get<{ data: T; fetchedAt: number }>(`pc:${cacheKey}`);
-	if (cached != null) {
-		return {
-			ok: true,
-			cacheStatus: PROXY_RESPONSE_CACHE_STATUS.Cached,
-			fetchedAt: cached.fetchedAt,
-			data: cached.data
-		};
+	if (options.useL1Cache) {
+		const cached = await redis.get<{ data: T; fetchedAt: number }>(`pc:${cacheKey}`);
+		if (cached != null) {
+			return {
+				ok: true,
+				cacheStatus: PROXY_RESPONSE_CACHE_STATUS.Cached,
+				fetchedAt: cached.fetchedAt,
+				data: cached.data
+			};
+		}
 	}
 
 	const response = await fetch(user.collegeBaseUrl + req.endpoint, {
@@ -139,11 +145,13 @@ export async function proxyEtRequest<T>(
 
 	if (response.ok && parsedJson != null) {
 		// store in both caches and then return the result
-		await redis.set(
-			`pc:${cacheKey}`,
-			{ data: parsedJson, fetchedAt: now },
-			{ ex: FRESH_CACHE_EXPIRY_IN_S }
-		);
+		if (options.useL1Cache) {
+			await redis.set(
+				`pc:${cacheKey}`,
+				{ data: parsedJson, fetchedAt: now },
+				{ ex: FRESH_CACHE_EXPIRY_IN_S }
+			);
+		}
 		const updatedData = {
 			cachedAt: new Date(now),
 			data: parsedJson

@@ -84,7 +84,8 @@ export const POST = async (event) => {
 			endpoint: parsed.endpoint,
 			method: parsed.method,
 			body: parsed.body
-		}
+		},
+		{ useL1Cache: false }
 	);
 
 	if (proxyResponse.ok) {
