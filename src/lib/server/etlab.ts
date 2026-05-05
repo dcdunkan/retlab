@@ -86,16 +86,16 @@ type ProxyRequestOptions = {
 };
 
 export function makeSessionBoundProxy(
-	session: NonNullable<App.Locals["session"]>
+	sessionUser: NonNullable<App.Locals["sessionUser"]>
 ): <T>(req: ProxyRequest, options?: ProxyRequestOptions) => Promise<ProxyResponse<T>> {
 	return <T>(req: ProxyRequest, options?: ProxyRequestOptions) => {
 		return proxyEtRequest<T>(
 			{
-				collegeBaseUrl: session.account.college.baseUrl,
-				collegeId: session.account.collegeId,
-				username: session.account.username
+				collegeBaseUrl: sessionUser.college.baseUrl,
+				collegeId: sessionUser.college.id,
+				username: sessionUser.account.username
 			},
-			session.accessToken,
+			sessionUser.session.accessToken,
 			req,
 			options
 		);

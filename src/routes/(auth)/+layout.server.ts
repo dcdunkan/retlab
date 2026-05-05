@@ -8,15 +8,12 @@ import type {
 import { error } from "@sveltejs/kit";
 
 export const load = async (event) => {
-	if (event.locals.session == null) {
+	if (event.locals.sessionUser == null) {
 		return error(401, "Unauthorized");
 	}
-	const {
-		account: { settings, notificationServerSettings, ...account },
-		...session
-	} = event.locals.session;
+	const sessionUser = event.locals.sessionUser;
 
-	const etproxy = makeSessionBoundProxy(event.locals.session);
+	const etproxy = makeSessionBoundProxy(event.locals.sessionUser);
 
 	const semesters = await etproxy<
 		{
@@ -58,26 +55,40 @@ export const load = async (event) => {
 	return {
 		// todo: expose explicit stuff only
 		semesters: processedSemesters,
-		session,
-		account: {
-			...account,
-			settings:
-				settings == null
-					? null
-					: ({
-							attendancePercentMax: settings.attendancePercentMax,
-							attendancePercentMin: settings.attendancePercentMin,
-							expandAttendanceSubjects: settings.expandAttendanceSubjects,
-							invalidAttendanceMarker: settings.invalidAttendanceMarker,
-							showAttendanceBarByDefault: settings.showAttendanceBarByDefault
-						} satisfies ClientSettingsState),
+		sessionUser: {
+			session: {
+				id: sessionUser.session.id,
+				deviceInfo: sessionUser.session.deviceInfo,
+				deviceType: sessionUser.session.deviceType,
+				createdAt: sessionUser.session.createdAt
+			},
+			account: {
+				username: sessionUser.account.username,
+				semesterId: sessionUser.account.semesterId,
+				lastUpdatedAt: sessionUser.account.lastUpdatedAt
+			},
+			college: {
+				id: sessionUser.college.id,
+				name: sessionUser.college.name,
+				baseUrl: sessionUser.college.baseUrl
+			},
 			notificationServerSettings:
-				notificationServerSettings == null
+				sessionUser.notificationServerSettings == null
 					? null
 					: ({
-							url: notificationServerSettings.url,
-							vapidKey: notificationServerSettings.vapidKey
-						} satisfies ClientNotificationServerSettingsState)
+							url: sessionUser.notificationServerSettings.url,
+							vapidKey: sessionUser.notificationServerSettings.vapidKey
+						} satisfies ClientNotificationServerSettingsState),
+			settings:
+				sessionUser.settings == null
+					? null
+					: ({
+							attendancePercentMax: sessionUser.settings.attendancePercentMax,
+							attendancePercentMin: sessionUser.settings.attendancePercentMin,
+							expandAttendanceSubjects: sessionUser.settings.expandAttendanceSubjects,
+							invalidAttendanceMarker: sessionUser.settings.invalidAttendanceMarker,
+							showAttendanceBarByDefault: sessionUser.settings.showAttendanceBarByDefault
+						} satisfies ClientSettingsState)
 		}
 	};
 };

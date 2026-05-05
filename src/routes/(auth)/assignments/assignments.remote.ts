@@ -12,11 +12,11 @@ export const getAssignments = query(
 	}),
 	async (arg) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) {
+		if (event.locals.sessionUser == null) {
 			return error(401, "Unauthorized");
 		}
-		const session = event.locals.session;
-		const etproxy = makeSessionBoundProxy(session);
+		const sessionUser = event.locals.sessionUser;
+		const etproxy = makeSessionBoundProxy(sessionUser);
 
 		const assignments = await etproxy<assignment.AssignmentResponse>({
 			endpoint: ApiEndPoints.ASSIGNMENT_URL,
@@ -32,10 +32,7 @@ export const getAssignments = query(
 			return error(assignments.statusCode, assignments.message);
 		}
 
-		return parseAssignmentsResponse(
-			assignments.data,
-			new URL(session.account.college.baseUrl).origin
-		);
+		return parseAssignmentsResponse(assignments.data, new URL(sessionUser.college.baseUrl).origin);
 	}
 );
 
@@ -45,12 +42,12 @@ export const getAssignmentResults = query(
 	}),
 	async (arg) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) {
+		if (event.locals.sessionUser == null) {
 			return error(401, "Unauthorized");
 		}
 
-		const session = event.locals.session;
-		const etproxy = makeSessionBoundProxy(session);
+		const sessionUser = event.locals.sessionUser;
+		const etproxy = makeSessionBoundProxy(sessionUser);
 
 		const assignmentResults = await etproxy<result.ResultAssignment>({
 			endpoint: ApiEndPoints.RESULT_ASSIGNMENT_URL,

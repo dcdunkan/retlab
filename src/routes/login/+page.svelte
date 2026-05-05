@@ -7,8 +7,17 @@
 	import HeartIcon from "phosphor-svelte/lib/HeartIcon";
 	import SealWarningIcon from "phosphor-svelte/lib/SealWarningIcon";
 	import type { PageProps } from "./$types";
+	import { onMount } from "svelte";
+	import { getLocalSubscription } from "$lib/browser";
 
 	let { data }: PageProps = $props();
+
+	onMount(async () => {
+		const subscription = await getLocalSubscription();
+		if (subscription != null) {
+			await subscription.unsubscribe();
+		}
+	});
 </script>
 
 <svelte:head>

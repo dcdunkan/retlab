@@ -1,14 +1,15 @@
+import { DAY, SECOND } from "$lib";
 import * as auth from "$lib/server/auth";
-import { db, schema } from "$lib/server/db";
+import { db, schema, sessionCacheTag } from "$lib/server/db";
 import { error, redirect } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const handle = async ({ event, resolve }) => {
 	if (event.url.pathname === "/api/proxy") {
 		return resolve(event);
 	}
 
-	event.locals.session = null;
+	event.locals.sessionUser = null;
 	event.locals.sessionId = null;
 
 	console.log(event.request.method, event.url.pathname, new URL(event.request.url).pathname);
@@ -64,18 +65,70 @@ export const handle = async ({ event, resolve }) => {
 
 		// console.log("finding session");
 		// todo: jws & no shity
-		const dbSession = await db.query.sessions.findFirst({
-			where: eq(schema.sessions.id, event.locals.sessionId),
-			with: {
+
+		const [dbSession] = await db
+			.select({
+				session: {
+					id: schema.sessions.id,
+					accessToken: schema.sessions.accessToken,
+					deviceInfo: schema.sessions.deviceInfo,
+					deviceType: schema.sessions.deviceType,
+					createdAt: schema.sessions.createdAt
+				},
 				account: {
-					with: {
-						college: true,
-						settings: true,
-						notificationServerSettings: true
-					}
+					username: schema.accounts.username,
+					semesterId: schema.accounts.semesterId,
+					lastUpdatedAt: schema.accounts.lastUpdatedAt
+				},
+				college: {
+					id: schema.colleges.id,
+					name: schema.colleges.name,
+					baseUrl: schema.colleges.baseUrl
+				},
+				settings: {
+					attendancePercentMax: schema.settings.attendancePercentMax,
+					attendancePercentMin: schema.settings.attendancePercentMin,
+					expandAttendanceSubjects: schema.settings.expandAttendanceSubjects,
+					invalidAttendanceMarker: schema.settings.invalidAttendanceMarker,
+					showAttendanceBarByDefault: schema.settings.showAttendanceBarByDefault
+				},
+				notificationServerSettings: {
+					url: schema.notificationServerSettings.url,
+					apiKey: schema.notificationServerSettings.apiKey,
+					authToken: schema.notificationServerSettings.authToken,
+					vapidKey: schema.notificationServerSettings.vapidKey,
+					etlabAccessToken: schema.notificationServerSettings.etlabAccessToken
 				}
-			}
-		});
+			})
+			.from(schema.sessions)
+			.innerJoin(
+				schema.accounts,
+				and(
+					eq(schema.accounts.username, schema.sessions.accountUsername),
+					eq(schema.accounts.collegeId, schema.sessions.collegeId)
+				)
+			)
+			.innerJoin(schema.colleges, eq(schema.colleges.id, schema.accounts.collegeId))
+			.leftJoin(
+				schema.settings,
+				and(
+					eq(schema.settings.accountUsername, schema.accounts.username),
+					eq(schema.settings.collegeId, schema.accounts.collegeId)
+				)
+			)
+			.leftJoin(
+				schema.notificationServerSettings,
+				and(
+					eq(schema.notificationServerSettings.accountUsername, schema.accounts.username),
+					eq(schema.notificationServerSettings.collegeId, schema.accounts.collegeId)
+				)
+			)
+			.where(eq(schema.sessions.id, event.locals.sessionId))
+			.limit(1)
+			.$withCache({
+				tag: sessionCacheTag(event.locals.sessionId),
+				config: { ex: (14 * DAY) / SECOND }
+			});
 
 		if (dbSession == null) {
 			auth.deleteTokenCookies(event);
@@ -83,10 +136,12 @@ export const handle = async ({ event, resolve }) => {
 			redirect(307, "/login");
 		}
 		// await auth.setTokenCookies(event, dbSession.id);
-		const { account, ...session } = dbSession;
-		event.locals.session = {
-			...session,
-			account: account
+		event.locals.sessionUser = {
+			session: dbSession.session,
+			account: dbSession.account,
+			college: dbSession.college,
+			settings: dbSession.settings,
+			notificationServerSettings: dbSession.notificationServerSettings
 		};
 		return resolve(event);
 	} else {

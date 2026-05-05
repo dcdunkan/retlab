@@ -8,7 +8,7 @@ import { getDeviceInfo } from "$lib/server/device-info";
 import type { JWTPayloadData } from "$lib/types";
 import { invalid, redirect } from "@sveltejs/kit";
 import { loginSchema } from "./login-schema";
-import { db, schema } from "$lib/server/db";
+import { db, invalidateSessionCache, schema } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import type { Account } from "$lib/server/schema";
 

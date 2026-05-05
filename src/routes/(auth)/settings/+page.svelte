@@ -36,10 +36,10 @@
 	});
 
 	type Session = NonNullable<typeof sessions.data>[number];
-	const isCurrentSession = (s: Session) => s.id == data.session.id;
+	const isCurrentSession = (s: Session) => s.id == data.sessionUser.session.id;
 
 	let refreshingHardCache = $state(false);
-	let hardCacheLastUpdatedAt = $derived(data.account.lastUpdatedAt);
+	let hardCacheLastUpdatedAt = $derived(data.sessionUser.account.lastUpdatedAt);
 
 	let tweaks = $state<{
 		saving: boolean;
@@ -391,7 +391,7 @@
 	<div class="mt-4 space-y-2">
 		<h3 class="text-lg italic">This session</h3>
 		<div class="border-2 bg-blue-100">
-			<SessionCard session={data.session} showLogout={false} />
+			<SessionCard session={data.sessionUser.session} showLogout={false} />
 		</div>
 
 		{#if sessions.loading}
@@ -434,7 +434,7 @@
 				<div>
 					<div class="font-serif font-bold">Logout from your account</div>
 					<p class="text-sm font-medium text-blue-600">
-						You logged in at <b>{timeFormatter.format(data.session.createdAt)}</b>
+						You logged in at <b>{timeFormatter.format(data.sessionUser.session.createdAt)}</b>
 					</p>
 				</div>
 

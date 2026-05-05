@@ -25,14 +25,14 @@
 
 	onMount(async () => {
 		// Resolve normal settings:
-		if (data.account.settings != null) {
+		if (data.sessionUser.settings != null) {
 			// tweak stuff
 			settingsState.set({
-				attendancePercentMax: data.account.settings.attendancePercentMax,
-				attendancePercentMin: data.account.settings.attendancePercentMin,
-				expandAttendanceSubjects: data.account.settings.expandAttendanceSubjects,
-				invalidAttendanceMarker: data.account.settings.invalidAttendanceMarker,
-				showAttendanceBarByDefault: data.account.settings.showAttendanceBarByDefault
+				attendancePercentMax: data.sessionUser.settings.attendancePercentMax,
+				attendancePercentMin: data.sessionUser.settings.attendancePercentMin,
+				expandAttendanceSubjects: data.sessionUser.settings.expandAttendanceSubjects,
+				invalidAttendanceMarker: data.sessionUser.settings.invalidAttendanceMarker,
+				showAttendanceBarByDefault: data.sessionUser.settings.showAttendanceBarByDefault
 			});
 		} else {
 			settingsState.set(DEFAULT_SETTINGS);
@@ -53,63 +53,67 @@
 			etlabResponseCache
 		});
 
-		// Resolve notification server settings:
-
 		// unsubscribe zombie subscriptions:
-		getLocalSubscription()
-			.then<boolean>((sub) => {
-				if (sub == null) return false;
+		async function unsubscribeLocalPushSubscription() {
+			const localSubscription = await getLocalSubscription();
 
-				// was subscribed correctly, unregistered from another device, then
-				// the local subscription is useless. zombie subscription (sub without reg)
-				if (data.account.notificationServerSettings == null) {
-					return sub.unsubscribe();
-				}
+			if (localSubscription == null) return false;
 
-				// has local sub, but the vapid key used for registration and the locally subscribed vapid key
-				// doesn't match. user subscribed correctly, another device unregistered and registered to another server,
-				// making the notificationServer not null, but mismatch in vapid key.
+			// was subscribed correctly, unregistered from another device, then
+			// the local subscription is useless. zombie subscription (sub without reg)
+			if (data.sessionUser.notificationServerSettings == null) {
+				return localSubscription.unsubscribe();
+			}
 
-				// handle unfortunate cases first:
-				if (data.account.notificationServerSettings.vapidKey == null) {
-					return sub.unsubscribe();
-				}
+			// has local sub, but the vapid key used for registration and the locally subscribed vapid key
+			// doesn't match. user subscribed correctly, another device unregistered and registered to another server,
+			// making the notificationServer not null, but mismatch in vapid key.
 
-				if (sub.options.applicationServerKey == null) {
-					// note: cannot unsubscribe definitively, because Firefox doesn't store them properly as of today.
-					return false;
-				}
+			// handle unfortunate cases first:
+			if (data.sessionUser.notificationServerSettings.vapidKey == null) {
+				return localSubscription.unsubscribe();
+			}
 
-				// and real comparison now. but it sucks:
-				// https://stackoverflow.com/questions/45994933/changing-application-server-key-in-push-manager-subscription#comment137027226_75503694
-				// https://github.com/GoogleChromeLabs/web-push-codelab/blob/469a70b1eb195eeb27f5901ab58bd8452f015d9a/completed/07-unsubscribe/scripts/main.js#L32
-				const applicationServerKey = window
-					.btoa(
-						String.fromCharCode.apply(
-							null,
-							Array.from(new Uint8Array(sub.options.applicationServerKey))
-						)
-					)
-					.replaceAll("+", "-")
-					.replaceAll("/", "_")
-					.replaceAll("=", "");
-
-				if (applicationServerKey !== data.account.notificationServerSettings.vapidKey) {
-					return sub.unsubscribe();
-				}
-
+			if (localSubscription.options.applicationServerKey == null) {
+				// note: cannot unsubscribe definitively, because Firefox doesn't store them properly as of today (04/05/2026).
 				return false;
-			})
-			.then((subscribed) => {
-				if (subscribed) {
-					console.log("Unsubscribed push subscription");
-				}
-			});
+			}
 
-		if (data.account.notificationServerSettings != null) {
+			// and real comparison now. but it sucks:
+			// https://stackoverflow.com/questions/45994933/changing-application-server-key-in-push-manager-subscription#comment137027226_75503694
+			// https://github.com/GoogleChromeLabs/web-push-codelab/blob/469a70b1eb195eeb27f5901ab58bd8452f015d9a/completed/07-unsubscribe/scripts/main.js#L32
+			const applicationServerKey = window
+				.btoa(
+					String.fromCharCode.apply(
+						null,
+						Array.from(new Uint8Array(localSubscription.options.applicationServerKey))
+					)
+				)
+				.replaceAll("+", "-")
+				.replaceAll("/", "_")
+				.replaceAll("=", "");
+
+			if (applicationServerKey !== data.sessionUser.notificationServerSettings.vapidKey) {
+				return localSubscription.unsubscribe();
+			}
+
+			return false;
+		}
+		try {
+			const unsubscribed = await unsubscribeLocalPushSubscription();
+			if (unsubscribed) {
+				console.log("Unsubscribed invalid push subscription");
+			}
+		} catch (error) {
+			console.error("Error while trying to unsubscribe notifications");
+			console.error(error);
+		}
+
+		// Resolve notification server settings:
+		if (data.sessionUser.notificationServerSettings != null) {
 			notificationServerSettingsState.set({
-				url: data.account.notificationServerSettings.url,
-				vapidKey: data.account.notificationServerSettings.vapidKey
+				url: data.sessionUser.notificationServerSettings.url,
+				vapidKey: data.sessionUser.notificationServerSettings.vapidKey
 			});
 		} else {
 			notificationServerSettingsState.set(null);

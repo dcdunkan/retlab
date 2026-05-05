@@ -5,10 +5,10 @@ import urlJoin from "url-join";
 import z from "zod";
 
 export const PUT = async (event) => {
-	if (event.locals.session == null)
+	if (event.locals.sessionUser == null)
 		return json({ ok: false, message: "Unauthorized" }, { status: 401 });
-	const account = event.locals.session.account;
-	if (account.notificationServerSettings == null)
+	const sessionUser = event.locals.sessionUser;
+	if (sessionUser.notificationServerSettings == null)
 		return json(
 			{ ok: false, message: "You are not registered in a notification server" },
 			{ status: 404 }
@@ -25,21 +25,21 @@ export const PUT = async (event) => {
 		})
 		.parse(await event.request.json());
 
-	const keysResponse = await fetch(urlJoin(account.notificationServerSettings.url, "/keys"));
+	const keysResponse = await fetch(urlJoin(sessionUser.notificationServerSettings.url, "/keys"));
 	if (!keysResponse.ok) {
 		return json({ ok: false, message: "Failed to get server keys" }, { status: 500 });
 	}
 	const serverKeys = (await keysResponse.json()).result as PublicKeys;
 	const encrypted = createMessage({ subscription: data }, NOTIF_SIGN_PRIVATE_KEY, serverKeys.enc);
 	await fetch(
-		urlJoin(account.notificationServerSettings.url, "/subscription", event.params.subId),
+		urlJoin(sessionUser.notificationServerSettings.url, "/subscription", event.params.subId),
 		{
 			method: "PUT",
 			body: JSON.stringify(encrypted),
 			headers: {
-				"X-Username": account.username,
-				"X-College-ID": account.collegeId.toString(),
-				"X-Api-Key": account.notificationServerSettings.apiKey
+				"X-Username": sessionUser.account.username,
+				"X-College-ID": sessionUser.college.id.toString(),
+				"X-Api-Key": sessionUser.notificationServerSettings.apiKey
 			}
 		}
 	);

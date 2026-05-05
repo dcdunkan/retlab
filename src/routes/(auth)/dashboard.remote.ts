@@ -6,11 +6,11 @@ import { error } from "@sveltejs/kit";
 
 export const getDueAssignments = query(async () => {
 	const event = getRequestEvent();
-	if (event.locals.session == null) {
+	if (event.locals.sessionUser == null) {
 		return error(401, "Unauthorized");
 	}
-	const session = event.locals.session;
-	const etproxy = makeSessionBoundProxy(session);
+	const sessionUser = event.locals.sessionUser;
+	const etproxy = makeSessionBoundProxy(sessionUser);
 
 	const assignments = await etproxy<assignment.AssignmentResponse>({
 		method: "POST",
@@ -28,6 +28,6 @@ export const getDueAssignments = query(async () => {
 
 	return parseAssignmentsResponse(
 		assignments.data,
-		new URL(session.account.college.baseUrl).origin
+		new URL(sessionUser.college.baseUrl).origin
 	).filter((assignment) => assignment._parsed.is_due);
 });

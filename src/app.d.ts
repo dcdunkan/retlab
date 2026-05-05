@@ -30,21 +30,46 @@ declare global {
 						input: unknown;
 				  };
 		}
+		// i forgot why exactly I wrote this shit
 		interface Error {
 			code: "NotificationServer:RESPONSE_MISMATCH";
 			message: string;
 		}
 		interface Locals {
 			sessionId: string | null;
-			session:
-				| (Session & {
-						account: Account & {
-							college: College;
-							settings: Settings | null;
-							notificationServerSettings: NotificationServerSettings | null;
-						};
-				  })
-				| null;
+			sessionUser: {
+				session: {
+					id: string;
+					accessToken: string;
+					deviceInfo: string | null;
+					deviceType: "LAPTOP" | "MOBILE" | "UNKNOWN";
+					createdAt: Date;
+				};
+				account: {
+					username: string;
+					semesterId: number;
+					lastUpdatedAt: Date;
+				};
+				college: {
+					id: number;
+					name: string;
+					baseUrl: string;
+				};
+				settings: {
+					attendancePercentMax: number;
+					attendancePercentMin: number;
+					expandAttendanceSubjects: ExpandAttendanceSubjectCardsOption;
+					invalidAttendanceMarker: "double-hyphen" | "single-hyphen" | "mdash" | "ndash";
+					showAttendanceBarByDefault: boolean;
+				} | null;
+				notificationServerSettings: {
+					url: string;
+					apiKey: string;
+					authToken: string;
+					vapidKey: string;
+					etlabAccessToken: string;
+				} | null;
+			} | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

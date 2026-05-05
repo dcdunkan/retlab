@@ -11,7 +11,7 @@ import {
 	type EncryptedEnvelope,
 	type PublicKeys
 } from "$lib/server/crypto";
-import { db, schema } from "$lib/server/db";
+import { db, invalidateSessionCache, schema } from "$lib/server/db";
 import type { NotificationServerSettingsState } from "$lib/server/schema";
 import { error } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -199,12 +199,12 @@ async function getServerHealth(serverUrl: string) {
 
 export const checkNotificationServerHealth = command(async () => {
 	const event = getRequestEvent();
-	if (event.locals.session == null) return error(401, "Unauthorized");
-	const account = event.locals.session.account;
-	if (account.notificationServerSettings == null)
+	if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+	const sessionUser = event.locals.sessionUser;
+	if (sessionUser.notificationServerSettings == null)
 		return error(400, "You are not registered in a notification server.");
 
-	const response = await getServerHealth(account.notificationServerSettings.url);
+	const response = await getServerHealth(sessionUser.notificationServerSettings.url);
 
 	if (response.ok) {
 		return true;
@@ -215,29 +215,34 @@ export const checkNotificationServerHealth = command(async () => {
 
 export const getNotificationServerVapidKey = query(async () => {
 	const event = getRequestEvent();
-	if (event.locals.session == null) return error(401, "Unauthorized");
-	const account = event.locals.session.account;
-	if (account.notificationServerSettings == null)
+	if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+	const sessionUser = event.locals.sessionUser;
+	if (sessionUser.notificationServerSettings == null)
 		return error(400, "You are not registered in a notification server.");
 
-	const response = await makeNsRequest(account.notificationServerSettings.url, "GET vapid-key", {
-		schema: z.object({ vapidKey: z.string() })
-	});
+	const response = await makeNsRequest(
+		sessionUser.notificationServerSettings.url,
+		"GET vapid-key",
+		{
+			schema: z.object({ vapidKey: z.string() })
+		}
+	);
 
 	if (response.ok) {
 		if (
-			account.notificationServerSettings.vapidKey != null &&
-			response.result.vapidKey !== account.notificationServerSettings.vapidKey
+			sessionUser.notificationServerSettings.vapidKey != null &&
+			response.result.vapidKey !== sessionUser.notificationServerSettings.vapidKey
 		) {
 			await db
 				.update(schema.notificationServerSettings)
 				.set({ vapidKey: response.result.vapidKey })
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 		}
 
 		return response.result.vapidKey;
@@ -248,9 +253,9 @@ export const getNotificationServerVapidKey = query(async () => {
 
 export const registerNotificationServer = form(notificationServerSchema, async (data) => {
 	const event = getRequestEvent();
-	if (event.locals.session == null) return error(401, "Unauthorized");
-	const account = event.locals.session.account;
-	if (account.notificationServerSettings != null)
+	if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+	const sessionUser = event.locals.sessionUser;
+	if (sessionUser.notificationServerSettings != null)
 		return error(400, "You are already registered in a notification server.");
 
 	// const serverHealthResponse = await getServerHealth(data.serverUrl);
@@ -272,9 +277,9 @@ export const registerNotificationServer = form(notificationServerSchema, async (
 	}
 
 	const loginDetails = await api
-		.post<login.LoginResponse>(account.college.baseUrl + ApiEndPoints.LOGIN_URL, {
+		.post<login.LoginResponse>(sessionUser.college.baseUrl + ApiEndPoints.LOGIN_URL, {
 			json: {
-				username: account.username,
+				username: sessionUser.account.username,
 				password: data.accountPassword
 				// todo: is hostel support needed??
 			} satisfies login.LoginRequest,
@@ -295,8 +300,8 @@ export const registerNotificationServer = form(notificationServerSchema, async (
 			apiKey: z.string().nonempty()
 		}),
 		body: {
-			collegeId: account.collegeId,
-			username: account.username,
+			collegeId: sessionUser.college.id,
+			username: sessionUser.account.username,
 			authToken: generatedAuthToken
 		}
 	});
@@ -313,8 +318,8 @@ export const registerNotificationServer = form(notificationServerSchema, async (
 		await db
 			.insert(schema.notificationServerSettings)
 			.values({
-				collegeId: account.collegeId,
-				accountUsername: account.username,
+				collegeId: sessionUser.college.id,
+				accountUsername: sessionUser.account.username,
 				...updated
 			})
 			.onConflictDoUpdate({
@@ -324,6 +329,7 @@ export const registerNotificationServer = form(notificationServerSchema, async (
 					schema.notificationServerSettings.accountUsername
 				]
 			});
+		await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 
 		return {
 			serverUrl: data.serverUrl,
@@ -338,20 +344,20 @@ export const unregisterFromNotificationServer = command(
 	z.object({ force: z.boolean().default(false) }),
 	async (args) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) return error(401, "Unauthorized");
-		const account = event.locals.session.account;
-		if (account.notificationServerSettings == null)
+		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+		const sessionUser = event.locals.sessionUser;
+		if (sessionUser.notificationServerSettings == null)
 			return error(400, "You are not registered in a notification server.");
 
 		const response = await makeNsRequest(
-			account.notificationServerSettings.url,
+			sessionUser.notificationServerSettings.url,
 			"DELETE unregister",
 			{
 				schema: z.literal(true),
 				auth: {
-					collegeId: account.collegeId,
-					username: account.username,
-					apiKey: account.notificationServerSettings.apiKey
+					collegeId: sessionUser.college.id,
+					username: sessionUser.account.username,
+					apiKey: sessionUser.notificationServerSettings.apiKey
 				}
 			}
 		);
@@ -361,10 +367,11 @@ export const unregisterFromNotificationServer = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return true;
 		}
 
@@ -373,10 +380,11 @@ export const unregisterFromNotificationServer = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -392,10 +400,11 @@ export const unregisterFromNotificationServer = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return true;
 		}
 
@@ -418,26 +427,30 @@ export const subscribeToNotificationServer = command(
 	}),
 	async (data) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) return error(401, "Unauthorized");
-		const account = event.locals.session.account;
-		if (account.notificationServerSettings == null)
+		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+		const sessionUser = event.locals.sessionUser;
+		if (sessionUser.notificationServerSettings == null)
 			return error(400, "You are not registered in a notification server.");
 
-		const response = await makeNsRequest(account.notificationServerSettings.url, "POST subscribe", {
-			schema: z.literal(true),
-			auth: {
-				collegeId: account.collegeId,
-				username: account.username,
-				apiKey: account.notificationServerSettings.apiKey
-			},
-			body: {
-				subscription: {
-					endpoint: data.endpoint,
-					expirationTime: data.expirationTime,
-					keys: data.keys
+		const response = await makeNsRequest(
+			sessionUser.notificationServerSettings.url,
+			"POST subscribe",
+			{
+				schema: z.literal(true),
+				auth: {
+					collegeId: sessionUser.college.id,
+					username: sessionUser.account.username,
+					apiKey: sessionUser.notificationServerSettings.apiKey
+				},
+				body: {
+					subscription: {
+						endpoint: data.endpoint,
+						expirationTime: data.expirationTime,
+						keys: data.keys
+					}
 				}
 			}
-		});
+		);
 
 		if (response.ok) {
 			return true;
@@ -449,10 +462,11 @@ export const subscribeToNotificationServer = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -467,20 +481,20 @@ export const hasSubscribedToNSWithEndpoint = command(
 	z.object({ endpoint: z.string().nonempty() }),
 	async (data) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) return error(401, "Unauthorized");
-		const account = event.locals.session.account;
-		if (account.notificationServerSettings == null)
+		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+		const sessionUser = event.locals.sessionUser;
+		if (sessionUser.notificationServerSettings == null)
 			return error(400, "You are not registered in a notification server.");
 
 		const response = await makeNsRequest(
-			account.notificationServerSettings.url,
+			sessionUser.notificationServerSettings.url,
 			`GET subscription/${await hexSha256(data.endpoint)}`,
 			{
 				schema: z.boolean(),
 				auth: {
-					collegeId: account.collegeId,
-					username: account.username,
-					apiKey: account.notificationServerSettings.apiKey
+					collegeId: sessionUser.college.id,
+					username: sessionUser.account.username,
+					apiKey: sessionUser.notificationServerSettings.apiKey
 				}
 			}
 		);
@@ -494,10 +508,11 @@ export const hasSubscribedToNSWithEndpoint = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -514,20 +529,20 @@ export const unsubscribeFromNotificationServer = command(
 	}),
 	async (data) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) return error(401, "Unauthorized");
-		const account = event.locals.session.account;
-		if (account.notificationServerSettings == null)
+		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+		const sessionUser = event.locals.sessionUser;
+		if (sessionUser.notificationServerSettings == null)
 			return error(400, "You are not registered in a notification server.");
 
 		const response = await makeNsRequest(
-			account.notificationServerSettings.url,
+			sessionUser.notificationServerSettings.url,
 			"DELETE unsubscribe",
 			{
 				schema: z.literal(true),
 				auth: {
-					collegeId: account.collegeId,
-					username: account.username,
-					apiKey: account.notificationServerSettings.apiKey
+					collegeId: sessionUser.college.id,
+					username: sessionUser.account.username,
+					apiKey: sessionUser.notificationServerSettings.apiKey
 				},
 				body: {
 					subscription: {
@@ -546,10 +561,11 @@ export const unsubscribeFromNotificationServer = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -562,19 +578,19 @@ export const unsubscribeFromNotificationServer = command(
 
 export const getConfiguration = query(async () => {
 	const event = getRequestEvent();
-	if (event.locals.session == null) return error(401, "Unauthorized");
-	const account = event.locals.session.account;
-	if (account.notificationServerSettings == null)
+	if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+	const sessionUser = event.locals.sessionUser;
+	if (sessionUser.notificationServerSettings == null)
 		return error(400, "You are not registered in a notification server.");
 
 	const response = await makeNsRequest(
-		account.notificationServerSettings.url,
+		sessionUser.notificationServerSettings.url,
 		"GET configuration",
 		{
 			auth: {
-				collegeId: account.collegeId,
-				username: account.username,
-				apiKey: account.notificationServerSettings.apiKey
+				collegeId: sessionUser.college.id,
+				username: sessionUser.account.username,
+				apiKey: sessionUser.notificationServerSettings.apiKey
 			},
 			schema: serverConfigSchema,
 			errorSchema: z.unknown()
@@ -594,10 +610,11 @@ export const getConfiguration = query(async () => {
 			.delete(schema.notificationServerSettings)
 			.where(
 				and(
-					eq(schema.notificationServerSettings.collegeId, account.collegeId),
-					eq(schema.notificationServerSettings.accountUsername, account.username)
+					eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+					eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 				)
 			);
+		await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 		return error(400, {
 			code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 			message: "Must be registered in the notification server"
@@ -626,19 +643,19 @@ export const setConfiguration = command(
 	}),
 	async (updatedConfig) => {
 		const event = getRequestEvent();
-		if (event.locals.session == null) return error(401, "Unauthorized");
-		const account = event.locals.session.account;
-		if (account.notificationServerSettings == null)
+		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+		const sessionUser = event.locals.sessionUser;
+		if (sessionUser.notificationServerSettings == null)
 			return error(400, "You are not registered in a notification server.");
 
 		const response = await makeNsRequest(
-			account.notificationServerSettings.url,
+			sessionUser.notificationServerSettings.url,
 			"PUT configuration",
 			{
 				auth: {
-					collegeId: account.collegeId,
-					username: account.username,
-					apiKey: account.notificationServerSettings.apiKey
+					collegeId: sessionUser.college.id,
+					username: sessionUser.account.username,
+					apiKey: sessionUser.notificationServerSettings.apiKey
 				},
 				schema: z.literal(true),
 				errorSchema: z.record(z.string(), z.array(z.string())),
@@ -655,10 +672,11 @@ export const setConfiguration = command(
 				.delete(schema.notificationServerSettings)
 				.where(
 					and(
-						eq(schema.notificationServerSettings.collegeId, account.collegeId),
-						eq(schema.notificationServerSettings.accountUsername, account.username)
+						eq(schema.notificationServerSettings.collegeId, sessionUser.college.id),
+						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
+			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(401, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"

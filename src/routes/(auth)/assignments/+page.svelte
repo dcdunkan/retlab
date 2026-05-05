@@ -10,7 +10,7 @@
 
 	let { data } = $props();
 
-	let chosenSemester = $derived(data.account.semesterId);
+	let chosenSemester = $derived(data.sessionUser.account.semesterId);
 
 	const assignmentsData = cachedGracefulRemoteQuery(
 		{ name: "getAssignments", version: 1 },
