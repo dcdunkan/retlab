@@ -3,7 +3,7 @@ import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login } from "$lib/generated/models";
 import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
-import { db, invalidateSessionCache, schema } from "$lib/server/db";
+import { db, schema } from "$lib/server/db";
 import type { ClientSettingsState } from "$lib/server/schema";
 import { error } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -38,8 +38,6 @@ export const updateTweaks = command(settingsSchema, async (data) => {
 			set: updated,
 			target: [schema.settings.collegeId, schema.settings.accountUsername]
 		});
-
-	await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 });
 
 export const getSessions = query(async () => {
@@ -48,6 +46,22 @@ export const getSessions = query(async () => {
 		return error(401, "Unauthorized");
 	}
 	const sessionUser = event.locals.sessionUser;
+
+	await db
+		.select({
+			id: schema.sessions.id,
+			deviceInfo: schema.sessions.deviceInfo,
+			deviceType: schema.sessions.deviceType,
+			createdAt: schema.sessions.createdAt
+		})
+		.from(schema.sessions)
+		.where(
+			and(
+				eq(schema.sessions.collegeId, sessionUser.college.id),
+				eq(schema.sessions.accountUsername, sessionUser.account.username)
+			)
+		)
+		.$withCache();
 
 	return await db.query.sessions.findMany({
 		where: and(
@@ -104,7 +118,6 @@ export const refreshHardCache = command(async () => {
 					)
 				)
 				.returning();
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 
 			// todo: is it really useful?
 			// event.locals.session.account = {
@@ -131,7 +144,6 @@ export const logoutSession = command(z.object({ session_id: z.string() }), async
 		.delete(schema.sessions)
 		.where(eq(schema.sessions.id, args.session_id))
 		.returning();
-	await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 
 	await api.post(sessionUser.college.baseUrl + ApiEndPoints.LOGOUT_URL, {
 		headers: { Authorization: "Bearer " + session.accessToken },
@@ -149,7 +161,6 @@ export const logoutCurrentSession = command(async () => {
 
 	const sessionUser = event.locals.sessionUser;
 	await db.delete(schema.sessions).where(eq(schema.sessions.id, sessionUser.session.id));
-	await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 	await api.post(sessionUser.college.baseUrl + ApiEndPoints.LOGOUT_URL, {
 		headers: { Authorization: "Bearer " + sessionUser.session.accessToken },
 		json: {
@@ -189,7 +200,6 @@ export const destroyAccount = command(async () => {
 				eq(schema.accounts.username, sessionUser.account.username)
 			)
 		);
-	await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 
 	await Promise.all(
 		sessions.map((session) => {

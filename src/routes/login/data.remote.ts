@@ -4,13 +4,13 @@ import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login, SuccessResponse } from "$lib/generated/models";
 import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
+import { db, schema } from "$lib/server/db";
 import { getDeviceInfo } from "$lib/server/device-info";
+import type { Account } from "$lib/server/schema";
 import type { JWTPayloadData } from "$lib/types";
 import { invalid, redirect } from "@sveltejs/kit";
-import { loginSchema } from "./login-schema";
-import { db, invalidateSessionCache, schema } from "$lib/server/db";
 import { eq } from "drizzle-orm";
-import type { Account } from "$lib/server/schema";
+import { loginSchema } from "./login-schema";
 
 export const loginForm = form(loginSchema, async (data, issue) => {
 	const event = getRequestEvent();

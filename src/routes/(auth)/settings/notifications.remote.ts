@@ -11,7 +11,8 @@ import {
 	type EncryptedEnvelope,
 	type PublicKeys
 } from "$lib/server/crypto";
-import { db, invalidateSessionCache, schema } from "$lib/server/db";
+import { db, schema } from "$lib/server/db";
+import { redis } from "$lib/server/redis";
 import type { NotificationServerSettingsState } from "$lib/server/schema";
 import { error } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -21,7 +22,6 @@ import urlJoin from "url-join";
 import z, { ZodError } from "zod/v4";
 import { type $ZodType } from "zod/v4/core";
 import { notificationServerSchema, serverConfigSchema } from "./settings-schema";
-import { redis } from "$lib/server/redis";
 
 function isNotificationServerError(
 	code: string
@@ -242,7 +242,6 @@ export const getNotificationServerVapidKey = query(async () => {
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 		}
 
 		return response.result.vapidKey;
@@ -329,7 +328,6 @@ export const registerNotificationServer = form(notificationServerSchema, async (
 					schema.notificationServerSettings.accountUsername
 				]
 			});
-		await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 
 		return {
 			serverUrl: data.serverUrl,
@@ -371,7 +369,6 @@ export const unregisterFromNotificationServer = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return true;
 		}
 
@@ -384,7 +381,6 @@ export const unregisterFromNotificationServer = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -404,7 +400,6 @@ export const unregisterFromNotificationServer = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return true;
 		}
 
@@ -466,7 +461,6 @@ export const subscribeToNotificationServer = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -512,7 +506,6 @@ export const hasSubscribedToNSWithEndpoint = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -565,7 +558,6 @@ export const unsubscribeFromNotificationServer = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(400, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
@@ -614,7 +606,6 @@ export const getConfiguration = query(async () => {
 					eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 				)
 			);
-		await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 		return error(400, {
 			code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 			message: "Must be registered in the notification server"
@@ -676,7 +667,6 @@ export const setConfiguration = command(
 						eq(schema.notificationServerSettings.accountUsername, sessionUser.account.username)
 					)
 				);
-			await invalidateSessionCache(sessionUser.session.id).catch(console.error);
 			return error(401, {
 				code: ErrorCodes.NotificationServer.UNAUTHORIZED,
 				message: "Must be registered in the notification server"
