@@ -1,3 +1,4 @@
+import { DAY, SECOND } from "$lib";
 import { ApiEndPoints } from "$lib/generated/api-endpoints.js";
 import { makeSessionBoundProxy } from "$lib/server/etlab.js";
 import type {
@@ -28,10 +29,13 @@ export const load = async (event) => {
 			mooc_status: string;
 			additional_elective: string;
 		}[]
-	>({
-		method: "GET",
-		endpoint: ApiEndPoints.SEM_LIST_URL
-	});
+	>(
+		{
+			method: "GET",
+			endpoint: ApiEndPoints.SEM_LIST_URL
+		},
+		{ useL1Cache: true, L1ExpiryInSeconds: (2 * DAY) / SECOND }
+	);
 
 	const processedSemesters = semesters.ok
 		? semesters.data.map(

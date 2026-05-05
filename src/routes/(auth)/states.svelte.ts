@@ -94,7 +94,10 @@ function createResolvableState<T>() {
 }
 
 export function cachedGracefulRemoteQuery<I, O>(
-	cacheInfo: { name: string; version: number },
+	cacheInfo: {
+		name: string;
+		version: number;
+	},
 	remoteQuery: RemoteQueryFunction<I, O>
 ) {
 	let loading = $state.raw<boolean>(true);

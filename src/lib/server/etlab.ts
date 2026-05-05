@@ -80,11 +80,15 @@ type ProxyRequest = {
 	endpoint: string;
 	body?: unknown;
 };
+type ProxyRequestOptions = {
+	useL1Cache?: boolean;
+	L1ExpiryInSeconds?: number;
+};
 
 export function makeSessionBoundProxy(
 	session: NonNullable<App.Locals["session"]>
-): <T>(req: ProxyRequest) => Promise<ProxyResponse<T>> {
-	return <T>(req: ProxyRequest) => {
+): <T>(req: ProxyRequest, options?: ProxyRequestOptions) => Promise<ProxyResponse<T>> {
+	return <T>(req: ProxyRequest, options?: ProxyRequestOptions) => {
 		return proxyEtRequest<T>(
 			{
 				collegeBaseUrl: session.account.college.baseUrl,
@@ -92,7 +96,8 @@ export function makeSessionBoundProxy(
 				username: session.account.username
 			},
 			session.accessToken,
-			req
+			req,
+			options
 		);
 	};
 }
@@ -105,10 +110,9 @@ export async function proxyEtRequest<T>(
 	},
 	etlabAccessToken: string,
 	req: ProxyRequest,
-	options: {
-		useL1Cache: boolean;
-	} = {
-		useL1Cache: true
+	options: ProxyRequestOptions = {
+		useL1Cache: true,
+		L1ExpiryInSeconds: FRESH_CACHE_EXPIRY_IN_S
 	}
 ): Promise<ProxyResponse<T>> {
 	const now = Date.now();
@@ -168,11 +172,11 @@ export async function proxyEtRequest<T>(
 
 	if (response.ok && parsedJson != null) {
 		// store in both caches and then return the result
-		if (options.useL1Cache) {
+		if (options.useL1Cache === true) {
 			await redis.set(
 				`pc:${cacheKey}`,
 				{ data: parsedJson, fetchedAt: now },
-				{ ex: FRESH_CACHE_EXPIRY_IN_S }
+				{ ex: options.L1ExpiryInSeconds ?? FRESH_CACHE_EXPIRY_IN_S }
 			);
 		}
 		const updatedData = {
