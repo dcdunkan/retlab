@@ -38,7 +38,6 @@
 			settingsState.set(DEFAULT_SETTINGS);
 		}
 		settingsState.resolve();
-		console.log(1);
 
 		const cacheStorageIdb = await openIdb("cache-storage", 1, [
 			{ name: "et-res-cache", options: { keyPath: "key" } }
@@ -53,7 +52,6 @@
 			cacheStorageIdb,
 			etlabResponseCache
 		});
-		console.log(2);
 
 		// Resolve notification server settings:
 		if (data.sessionUser.notificationServerSettings != null) {
@@ -62,7 +60,6 @@
 				vapidKey: data.sessionUser.notificationServerSettings.vapidKey
 			});
 		}
-		console.log(3);
 
 		// unsubscribe zombie subscriptions:
 		async function unsubscribeLocalPushSubscription() {
@@ -120,7 +117,6 @@
 			console.error("Error while trying to unsubscribe notifications");
 			console.error(error);
 		}
-		console.log(4);
 		notificationServerSettingsState.resolve();
 	});
 
