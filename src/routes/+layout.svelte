@@ -30,6 +30,16 @@
 	<link rel="manifest" href="/site.webmanifest" />
 </svelte:head>
 
+<!-- <svelte:window
+	onbeforeinstallprompt={(event) => {
+		event.preventDefault();
+		deferredInstallPromptEvent.set(
+			// @ts-expect-error not yet a standard, understandable
+			event
+		);
+	}}
+/> -->
+
 <Toaster
 	position="bottom-right"
 	toastOptions={{

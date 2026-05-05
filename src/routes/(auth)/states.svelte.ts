@@ -1,14 +1,14 @@
 // Why not just simply export the state? Read more here:
 // https://mainmatter.com/blog/2025/03/11/global-state-in-svelte-5/
 
+import { cyrb53, ETLAB_RESPONSE_FRESH_EXPIRY, ETLAB_RESPONSE_STALE_EXPIRY } from "$lib";
+import { IDBStore } from "$lib/indexeddb";
 import type {
 	ClientNotificationServerSettingsState,
 	ClientSettingsState
 } from "$lib/server/schema";
 import { isHttpError, isValidationError, type RemoteQueryFunction } from "@sveltejs/kit";
 import { DEFAULT_SETTINGS } from "./settings/default-settings";
-import { cyrb53, ETLAB_RESPONSE_FRESH_EXPIRY, ETLAB_RESPONSE_STALE_EXPIRY } from "$lib";
-import { IDBStore } from "$lib/indexeddb";
 
 export const settingsState = createSettings();
 
@@ -170,3 +170,20 @@ export function cachedGracefulRemoteQuery<I, O>(
 		}
 	};
 }
+
+// function writableState<T>(initialValue: T) {
+// 	let value = $state<T>(initialValue);
+// 	return {
+// 		get value() {
+// 			return value;
+// 		},
+// 		set(newValue: T) {
+// 			value = newValue;
+// 		}
+// 	};
+// }
+
+// type BeforeInstallPromptEvent = Event & {
+// 	prompt(): Promise<{ outcome: "accepted" | "dismissed" }>;
+// };
+// export const deferredInstallPromptEvent = writableState<BeforeInstallPromptEvent | null>(null);

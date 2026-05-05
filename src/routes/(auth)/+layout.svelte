@@ -14,12 +14,12 @@
 	import { page } from "$app/state";
 	import type { Pathname } from "$app/types";
 	import { getLocalSubscription } from "$lib/browser";
+	import { IDBStore, openIdb } from "$lib/indexeddb";
+	import type { IconComponentProps } from "phosphor-svelte";
 	import { onMount, type Component } from "svelte";
 	import type { LayoutProps } from "./$types";
-	import { idb, notificationServerSettingsState, settingsState } from "./states.svelte";
 	import { DEFAULT_SETTINGS } from "./settings/default-settings";
-	import type { IconComponentProps } from "phosphor-svelte";
-	import { IDBStore, openIdb } from "$lib/indexeddb";
+	import { idb, notificationServerSettingsState, settingsState } from "./states.svelte";
 
 	let { data, children }: LayoutProps = $props();
 

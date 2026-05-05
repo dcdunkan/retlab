@@ -137,7 +137,7 @@
 	{#if tweaks != null}
 		<div class="mt-4 divide-y-2 border-2">
 			<div class="flex justify-between gap-4 px-4 py-3">
-				<div class="space-y-2">
+				<div class="space-y-1">
 					<div class="font-bold">Attendance percentage cutoff</div>
 
 					<p class="text-sm">
@@ -224,7 +224,7 @@
 			</div>
 
 			<div class="flex justify-between gap-4 px-4 py-3">
-				<div class="space-y-2">
+				<div class="space-y-1">
 					<div class="font-bold">Expand attendance subject cards</div>
 
 					<p class="text-sm">
@@ -327,11 +327,44 @@
 	<div class="mt-4 divide-y-2 border-2">
 		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
-				<div>
-					<div class="font-bold">Refresh hard-cache</div>
-					<p class="text-sm font-medium text-blue-600">
-						Last updated at <b>{timeFormatter.format(hardCacheLastUpdatedAt)}</b>
-					</p>
+				<div class="flex justify-between gap-4">
+					<div>
+						<div class="font-bold">Refresh hard-cache</div>
+						<p class="text-sm font-medium text-blue-600">
+							Last updated at <b>{timeFormatter.format(hardCacheLastUpdatedAt)}</b>
+						</p>
+					</div>
+
+					<Button
+						variant="outline"
+						disabled={refreshingHardCache}
+						onclick={async () => {
+							refreshingHardCache = true;
+							const toastId = toast.loading("Refreshing hard-cache...");
+							try {
+								const lastUpdatedAt = await remotes.refreshHardCache();
+								hardCacheLastUpdatedAt = lastUpdatedAt;
+								toast.success("Refreshed hard-cache", { id: toastId });
+							} catch (error) {
+								if (isHttpError(error)) {
+									toast.error("Hard-cache refresh failed", {
+										description: error.body.message,
+										id: toastId
+									});
+								} else {
+									toast.error("Something went wrong", { id: toastId });
+								}
+							} finally {
+								refreshingHardCache = false;
+							}
+						}}
+					>
+						{#if refreshingHardCache}
+							<SpinnerIcon class="animate-spin" /> Refreshing...
+						{:else}
+							Refresh hard-cache
+						{/if}
+					</Button>
 				</div>
 
 				<p class="text-sm">
@@ -342,37 +375,6 @@
 					<b>because they often return 429 & 500</b>. So, these are hard-cached, and refreshed on
 					demand & periodically.
 				</p>
-
-				<Button
-					variant="outline"
-					disabled={refreshingHardCache}
-					onclick={async () => {
-						refreshingHardCache = true;
-						const toastId = toast.loading("Refreshing hard-cache...");
-						try {
-							const lastUpdatedAt = await remotes.refreshHardCache();
-							hardCacheLastUpdatedAt = lastUpdatedAt;
-							toast.success("Refreshed hard-cache", { id: toastId });
-						} catch (error) {
-							if (isHttpError(error)) {
-								toast.error("Hard-cache refresh failed", {
-									description: error.body.message,
-									id: toastId
-								});
-							} else {
-								toast.error("Something went wrong", { id: toastId });
-							}
-						} finally {
-							refreshingHardCache = false;
-						}
-					}}
-				>
-					{#if refreshingHardCache}
-						<SpinnerIcon class="animate-spin" /> Refreshing...
-					{:else}
-						Refresh hard-cache
-					{/if}
-				</Button>
 			</div>
 		</div>
 	</div>

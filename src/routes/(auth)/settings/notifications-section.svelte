@@ -397,6 +397,34 @@
 							If at least one of these shows up as not checked, then it means you can't enable
 							notifications or if already enabled, you won't recieve them reliably.
 						</p>
+
+						{#if checks.data.pwa !== "in-use"}
+							<p>
+								It is also suggested to install Ret<span class="font-bold text-blue-500">*</span> as a
+								PWA on your device, to get notifications more reliably (still not a 100% native experience
+								though). Also, the app becomes more easily accessible to you if you do install it as a
+								PWA.
+							</p>
+
+							<!-- <Button
+								shadow="none"
+								variant="outline"
+								disabled={deferredInstallPromptEvent.value == null}
+								onclick={async () => {
+									if (
+										deferredInstallPromptEvent.value == null ||
+										!("prompt" in deferredInstallPromptEvent.value) ||
+										typeof deferredInstallPromptEvent.value.prompt !== "function"
+									) {
+										return toast.error("Seems like install prompt wasn't caught.");
+									}
+
+									await deferredInstallPromptEvent.value.prompt();
+								}}
+							>
+								<TrayArrowDownIcon weight="bold" /> Install PWA
+							</Button> -->
+						{/if}
 					</div>
 				</div>
 			</div>

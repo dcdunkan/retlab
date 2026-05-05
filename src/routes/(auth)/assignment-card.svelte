@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { isValidDate } from "$lib";
-	import Button from "$lib/components/button.svelte";
-	import type * as models from "$lib/generated/models";
 	import DownloadSimpleIcon from "phosphor-svelte/lib/DownloadSimpleIcon";
 	import UploadSimpleIcon from "phosphor-svelte/lib/UploadSimpleIcon";
 	import EyeIcon from "phosphor-svelte/lib/EyeIcon";
 	import TrashIcon from "phosphor-svelte/lib/TrashIcon";
+
+	import { isValidDate } from "$lib";
+	import Button from "$lib/components/button.svelte";
+	import type * as models from "$lib/generated/models";
 	import sanitizeHtml from "sanitize-html";
 	import { MediaQuery } from "svelte/reactivity";
 	import { slide } from "svelte/transition";
@@ -58,7 +59,7 @@
 							e.stopPropagation();
 						}}
 					>
-						<DownloadSimpleIcon />
+						<DownloadSimpleIcon weight="bold" />
 					</Button>
 				{/if}
 				{#if assignment.upload}
@@ -72,7 +73,7 @@
 								e.stopPropagation();
 							}}
 						>
-							<UploadSimpleIcon />
+							<UploadSimpleIcon weight="bold" />
 						</Button>
 					{:else}
 						<!-- already uploaded -->
@@ -86,7 +87,7 @@
 								e.stopPropagation();
 							}}
 						>
-							<EyeIcon />
+							<EyeIcon weight="bold" />
 						</Button>
 					{/if}
 				{/if}
@@ -145,7 +146,7 @@
 								e.stopPropagation();
 							}}
 						>
-							<TrashIcon />
+							<TrashIcon weight="bold" />
 							{#if isLarge.current}
 								Delete
 							{/if}
