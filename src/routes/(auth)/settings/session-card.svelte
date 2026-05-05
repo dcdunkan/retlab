@@ -42,7 +42,7 @@
 		{/if}
 
 		<div>
-			<div class="font-serif font-bold">{session.deviceInfo}</div>
+			<div class="text-sm font-bold">{session.deviceInfo}</div>
 			<p class="text-sm text-muted-foreground">
 				Created at <b>{timeFormatter.format(session.createdAt)}</b>
 			</p>

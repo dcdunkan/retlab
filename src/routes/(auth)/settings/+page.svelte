@@ -138,9 +138,7 @@
 		<div class="mt-4 divide-y-2 border-2">
 			<div class="flex justify-between gap-4 px-4 py-3">
 				<div class="space-y-2">
-					<div>
-						<div class="font-serif font-bold">Attendance percentage cutoff</div>
-					</div>
+					<div class="font-semibold">Attendance percentage cutoff</div>
 
 					<p class="text-sm">
 						Adjust the percent cutoff for safe attendance range, so the attendance page can show
@@ -227,9 +225,7 @@
 
 			<div class="flex justify-between gap-4 px-4 py-3">
 				<div class="space-y-2">
-					<div>
-						<div class="font-serif font-bold">Expand attendance subject cards</div>
-					</div>
+					<div class="font-semibold">Expand attendance subject cards</div>
 
 					<p class="text-sm">
 						Configure how the subject cards in the attendance page should be shown. It can be
@@ -303,7 +299,11 @@
 					}
 				}}
 			>
-				<FloppyDiskBackIcon weight="fill" /> Save changes
+				{#if tweaks.saving}
+					<SpinnerIcon weight="bold" class="animate-spin" /> Saving changes...
+				{:else}
+					<FloppyDiskBackIcon weight="fill" /> Save changes
+				{/if}
 			</Button>
 		</div>
 	{:else}
@@ -328,7 +328,7 @@
 		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
 				<div>
-					<div class="font-serif font-bold">Refresh hard-cache</div>
+					<div class="font-bold">Refresh hard-cache</div>
 					<p class="text-sm font-medium text-blue-600">
 						Last updated at <b>{timeFormatter.format(hardCacheLastUpdatedAt)}</b>
 					</p>
@@ -432,7 +432,7 @@
 		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
 				<div>
-					<div class="font-serif font-bold">Logout from your account</div>
+					<div class="font-bold">Logout from your account</div>
 					<p class="text-sm font-medium text-blue-600">
 						You logged in at <b>{timeFormatter.format(data.sessionUser.session.createdAt)}</b>
 					</p>
@@ -450,7 +450,7 @@
 		<div class="flex justify-between gap-4 bg-red-300 px-4 py-3">
 			<div class="space-y-2">
 				<div>
-					<div class="font-serif font-bold">Destroy your account</div>
+					<div class="font-bold">Destroy your account</div>
 				</div>
 				<p class="text-sm text-black/80">
 					Delete your Retlab account, and everything with it. This doesn't do anything to your

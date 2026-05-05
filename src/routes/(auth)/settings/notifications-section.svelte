@@ -296,7 +296,7 @@
 		<div class="mt-4 divide-y-2 border-2 bg-gray-100">
 			<div class="flex justify-between gap-4 px-4 py-4">
 				<div class="space-y-2">
-					<div class="font-serif font-bold">Setup checklist</div>
+					<div class="font-bold">Setup checklist</div>
 
 					<div class="space-y-2 text-sm">
 						<!-- <div class="flex place-items-start gap-2">
@@ -428,7 +428,7 @@
 				<div class="flex justify-between gap-4 px-4 py-3">
 					<div class="w-full space-y-2">
 						<div>
-							<div class="font-serif font-bold">Notification server</div>
+							<div class="font-bold">Notification server</div>
 							<!-- <p class="text-sm font-medium text-blue-600"></p> -->
 						</div>
 
@@ -630,9 +630,9 @@
 
 				<div class="flex justify-between gap-4 px-4 py-3">
 					<div class="space-y-2">
-						<div class="font-serif font-bold">
+						<div class="font-bold">
 							Enable notifications
-							<span class="font-sans">({notificationsSubscriptionState})</span>
+							<span class="text-muted-foreground">({notificationsSubscriptionState})</span>
 						</div>
 						<!-- <p class="text-sm font-medium text-blue-600"></p> -->
 

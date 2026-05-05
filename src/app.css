@@ -6,8 +6,8 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-	--font-sans: Recursive, sans-serif;
-	--font-serif: Lora, serif;
+	--font-sans: "Recursive Sans Casual", sans-serif;
+	--font-serif: "Lora", serif;
 
 	--box-shadow-x: var(--spacing);
 	--box-shadow-y: var(--spacing);
