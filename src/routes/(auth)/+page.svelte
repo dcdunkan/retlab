@@ -11,6 +11,8 @@
 	import * as remotes from "./dashboard.remote";
 	import { cachedGracefulRemoteQuery } from "./states.svelte";
 	import { onMount } from "svelte";
+	import pressSound_opus from "$lib/assets/press-sound.opus";
+	import { useSound } from "svelte-attach-sound";
 
 	let assignmentsData = cachedGracefulRemoteQuery(
 		{ name: "getDueAssignments", version: 1 },
@@ -19,6 +21,8 @@
 	onMount(async () => {
 		await assignmentsData.load();
 	});
+
+	const clickSfx = useSound(pressSound_opus, ["click"], { volume: 0.75 });
 </script>
 
 <svelte:head>
@@ -35,9 +39,13 @@
 </section>
 
 <div>
-	<Button class="transition-none">Relax</Button>
-	<Button variant="destructive" class="transition-all duration-75">Relax</Button>
-	<Button variant="outline" class="transition-all duration-150">Relax</Button>
+	<Button class="transition-none" {@attach clickSfx()}>Relax (0ms)</Button>
+	<Button variant="destructive" class="transition-all duration-75" {@attach clickSfx()}>
+		Relax (75ms)
+	</Button>
+	<Button variant="outline" class="transition-all duration-150" {@attach clickSfx()}>
+		Relax (150ms)
+	</Button>
 </div>
 
 <div>
