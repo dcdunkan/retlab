@@ -34,7 +34,7 @@
 
 	type NotificationSubscriptionState = "checking" | "unregistered" | "disabled" | "enabled";
 	interface NotificationChecksStatus {
-		// pwa: "in-use" | "not in-use";
+		pwa: "in-use" | "not in-use";
 		serviceWorker: "unsupported" | "installed" | "active" | "inactive";
 		push: "unsupported" | "unsubscribed" | "denied" | "subscribed";
 		notifications: "unsupported" | "should prompt" | "granted" | "denied";
@@ -158,19 +158,19 @@
 
 	async function getChecksDetails(): Promise<NotificationChecksStatus> {
 		const status: NotificationChecksStatus = {
-			// pwa: "not in-use",
+			pwa: "not in-use",
 			serviceWorker: "unsupported",
 			push: "unsupported",
 			notifications: "unsupported"
 		};
 
-		// if (
-		// 	window.matchMedia("(display-mode: standalone)").matches ||
-		// 	// @ts-expect-error window.navigator.standalone is like safari only or somthhng
-		// 	window.navigator.standalone === true
-		// ) {
-		// 	status.pwa = "in-use";
-		// }
+		if (
+			window.matchMedia("(display-mode: standalone)").matches ||
+			// @ts-expect-error window.navigator.standalone is like safari only or somthhng
+			window.navigator.standalone === true
+		) {
+			status.pwa = "in-use";
+		}
 
 		const NOTIFICATION_SERVICE_WORKER = "/service-worker.js";
 		const serviceWorkerUrl = new URL(NOTIFICATION_SERVICE_WORKER, page.url).href;
@@ -299,27 +299,6 @@
 					<div class="font-bold">Setup checklist</div>
 
 					<div class="space-y-2 text-sm">
-						<!-- <div class="flex place-items-start gap-2">
-							{#if checks.data.pwa === "in-use"}
-								<CheckIcon weight="bold" class="shrink-0 text-green-600" />
-							{:else}
-								<XIcon weight="bold" class="shrink-0 text-red-700" />
-							{/if}
-
-							<div class="space-y-1">
-								<div>
-									Using the PWA (<span class="font-bold">{checks.data.pwa}</span>)
-								</div>
-
-								{#if checks.data.pwa !== "in-use"}
-									<p class="text-xs">
-										You must install &amp; use the app as PWA in order to have the periodic
-										background sync work and get notifications.
-									</p>
-								{/if}
-							</div>
-						</div> -->
-
 						<div class="flex place-items-start gap-2">
 							{#if checks.data.serviceWorker === "active"}
 								<CheckIcon weight="bold" class="shrink-0 text-green-600" />

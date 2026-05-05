@@ -138,7 +138,7 @@
 		<div class="mt-4 divide-y-2 border-2">
 			<div class="flex justify-between gap-4 px-4 py-3">
 				<div class="space-y-2">
-					<div class="font-semibold">Attendance percentage cutoff</div>
+					<div class="font-bold">Attendance percentage cutoff</div>
 
 					<p class="text-sm">
 						Adjust the percent cutoff for safe attendance range, so the attendance page can show
@@ -225,7 +225,7 @@
 
 			<div class="flex justify-between gap-4 px-4 py-3">
 				<div class="space-y-2">
-					<div class="font-semibold">Expand attendance subject cards</div>
+					<div class="font-bold">Expand attendance subject cards</div>
 
 					<p class="text-sm">
 						Configure how the subject cards in the attendance page should be shown. It can be
