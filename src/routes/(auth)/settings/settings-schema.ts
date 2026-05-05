@@ -17,13 +17,16 @@ export const settingsSchema = z
 	.strict();
 
 export const notificationServerSchema = z.object({
+	serverUrl: z.url({
+		protocol: /^https?$/,
+		error: "Must be a valid HTTP URL"
+	}),
 	accountPassword: z
 		.string({
 			error: "Password is required"
 		})
 		.nonempty({ error: "Password cannot be empty" })
-		.max(256, { error: "Password seems tooo long" }),
-	serverUrl: z.httpUrl({ error: "Must be a valid HTTP URL" })
+		.max(256, { error: "Password seems tooo long" })
 });
 
 const idType = z.string().nonempty().max(128);

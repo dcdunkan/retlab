@@ -5,15 +5,15 @@
 	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import * as remotes from "./attendance.remote";
+	import { onMount } from "svelte";
 
 	const attendanceData = cachedGracefulRemoteQuery(
 		{ name: "getAttendance", version: 1 },
 		remotes.getAttendance
 	);
-	$effect.pre(() => {
-		attendanceData.load();
+	onMount(async () => {
+		await attendanceData.load();
 	});
-
 	let attendancePercentThresholds = $derived(
 		[settingsState.value.attendancePercentMin, settingsState.value.attendancePercentMax].map(
 			(p) => p / 100

@@ -10,14 +10,14 @@
 	import AssignmentCard from "./assignment-card.svelte";
 	import * as remotes from "./dashboard.remote";
 	import { cachedGracefulRemoteQuery } from "./states.svelte";
+	import { onMount } from "svelte";
 
 	let assignmentsData = cachedGracefulRemoteQuery(
 		{ name: "getDueAssignments", version: 1 },
 		remotes.getDueAssignments
 	);
-
-	$effect(() => {
-		assignmentsData.load();
+	onMount(async () => {
+		await assignmentsData.load();
 	});
 </script>
 

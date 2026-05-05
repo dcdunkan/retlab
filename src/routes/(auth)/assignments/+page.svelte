@@ -6,6 +6,7 @@
 	import AssignmentCard from "../assignment-card.svelte";
 	import { cachedGracefulRemoteQuery } from "../states.svelte";
 	import * as remotes from "./assignments.remote";
+	import { onMount } from "svelte";
 
 	let { data } = $props();
 
@@ -16,8 +17,8 @@
 		remotes.getAssignments
 	);
 
-	$effect.pre(() => {
-		assignmentsData.load({ semester_id: chosenSemester });
+	onMount(async () => {
+		await assignmentsData.load({ semester_id: chosenSemester });
 	});
 
 	const overview = $derived(
@@ -212,7 +213,10 @@
 		value: semester.id.toString()
 	}))}
 	value={chosenSemester.toString()}
-	onValueChange={(v) => (chosenSemester = Number.parseInt(v))}
+	onValueChange={(v) => {
+		chosenSemester = Number.parseInt(v);
+		assignmentsData.load({ semester_id: chosenSemester });
+	}}
 >
 	{#snippet trigger(label)}
 		{label}

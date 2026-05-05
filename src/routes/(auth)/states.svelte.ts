@@ -108,6 +108,50 @@ export function cachedGracefulRemoteQuery<I, O>(
 		);
 	}
 
+	async function loadFn(input: I) {
+		loading = true;
+		data = undefined;
+		error = undefined;
+
+		const now = Date.now();
+		const cacheKey = computeCacheKey(JSON.stringify(input));
+
+		if (idb.resolved) {
+			const cached = await idb.value.etlabResponseCache.get(cacheKey);
+			if (cached != null && cached.timestamp + ETLAB_RESPONSE_FRESH_EXPIRY > now) {
+				data = cached.data as O;
+				loading = false;
+				return;
+			}
+		}
+
+		try {
+			data = await remoteQuery(input);
+			if (idb.resolved) {
+				await idb.value.etlabResponseCache.put({
+					key: cacheKey,
+					data: data,
+					timestamp: now
+				});
+			}
+		} catch (err) {
+			error = err;
+			if (!isHttpError(err) && !isValidationError(err) && idb.resolved) {
+				const cached = await idb.value.etlabResponseCache.get(cacheKey);
+				if (cached != null) {
+					if (cached.timestamp + ETLAB_RESPONSE_STALE_EXPIRY > now) {
+						data = cached.data as O;
+						return;
+					} else {
+						await idb.value.etlabResponseCache.delete(cacheKey);
+					}
+				}
+			}
+		} finally {
+			loading = false;
+		}
+	}
+
 	return {
 		get loading() {
 			return loading;
@@ -119,47 +163,7 @@ export function cachedGracefulRemoteQuery<I, O>(
 			return data;
 		},
 		async load(input: I) {
-			loading = true;
-			data = undefined;
-			error = undefined;
-
-			const now = Date.now();
-			const cacheKey = computeCacheKey(JSON.stringify(input));
-
-			if (idb.resolved) {
-				const cached = await idb.value.etlabResponseCache.get(cacheKey);
-				if (cached != null && cached.timestamp + ETLAB_RESPONSE_FRESH_EXPIRY > now) {
-					data = cached.data as O;
-					loading = false;
-					return;
-				}
-			}
-
-			try {
-				data = await remoteQuery(input);
-				if (idb.resolved) {
-					await idb.value.etlabResponseCache.put({
-						key: cacheKey,
-						data: data,
-						timestamp: now
-					});
-				}
-			} catch (err) {
-				error = err;
-				if (!isHttpError(err) && !isValidationError(err) && idb.resolved) {
-					const cached = await idb.value.etlabResponseCache.get(cacheKey);
-					if (cached != null) {
-						if (cached.timestamp + ETLAB_RESPONSE_STALE_EXPIRY > now) {
-							data = cached.data as O;
-							return;
-						} else {
-							await idb.value.etlabResponseCache.delete(cacheKey);
-						}
-					}
-				}
-			} finally {
-				loading = false;
-			}
+			return loadFn(input);
 		}
 	};
 }

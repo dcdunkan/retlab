@@ -18,6 +18,7 @@
 
 	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
 	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
+	import { onMount } from "svelte";
 
 	let { data }: PageProps = $props();
 
@@ -30,11 +31,12 @@
 		{ name: "getSessions", version: 1 },
 		remotes.getSessions
 	);
+	onMount(async () => {
+		await sessions.load();
+	});
+
 	type Session = NonNullable<typeof sessions.data>[number];
 	const isCurrentSession = (s: Session) => s.id == data.session.id;
-	$effect(() => {
-		sessions.load();
-	});
 
 	let refreshingHardCache = $state(false);
 	let hardCacheLastUpdatedAt = $derived(data.account.lastUpdatedAt);
