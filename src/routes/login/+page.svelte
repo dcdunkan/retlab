@@ -1,16 +1,13 @@
 <script lang="ts">
-	import Box from "$lib/components/box";
-	import { loginForm } from "./data.remote";
-	import Button from "$lib/components/button.svelte";
-	import { loginSchema } from "./login-schema";
-
 	import HeartIcon from "phosphor-svelte/lib/HeartIcon";
 	import SealWarningIcon from "phosphor-svelte/lib/SealWarningIcon";
-	import type { PageProps } from "./$types";
-	import { onMount } from "svelte";
-	import { getLocalSubscription } from "$lib/browser";
 
-	let { data }: PageProps = $props();
+	import { getLocalSubscription } from "$lib/browser";
+	import Box from "$lib/components/box";
+	import Button from "$lib/components/button.svelte";
+	import { onMount } from "svelte";
+	import { getColleges, loginForm } from "./data.remote";
+	import { loginSchema } from "./login-schema";
 
 	onMount(async () => {
 		const subscription = await getLocalSubscription();
@@ -46,7 +43,7 @@
 			onchange={() => loginForm.validate({})}
 		>
 			<option disabled selected>Choose institution</option>
-			{#each data.colleges as college (college.id)}
+			{#each await getColleges() as college (college.id)}
 				<option value={`${college.id}`}>{college.name}</option>
 			{/each}
 		</select>

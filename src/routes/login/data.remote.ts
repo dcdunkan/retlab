@@ -1,4 +1,4 @@
-import { form, getRequestEvent } from "$app/server";
+import { form, getRequestEvent, prerender } from "$app/server";
 import { DAY, MINUTE } from "$lib";
 import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login, SuccessResponse } from "$lib/generated/models";
@@ -11,6 +11,16 @@ import type { JWTPayloadData } from "$lib/types";
 import { invalid, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { loginSchema } from "./login-schema";
+
+export const getColleges = prerender(async () => {
+	return await db
+		.select({
+			id: schema.colleges.id,
+			name: schema.colleges.name
+		})
+		.from(schema.colleges)
+		.$withCache();
+});
 
 export const loginForm = form(loginSchema, async (data, issue) => {
 	const event = getRequestEvent();
