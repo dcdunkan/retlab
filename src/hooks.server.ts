@@ -57,13 +57,13 @@ export const handle = async ({ event, resolve }) => {
 
 	// if the user have been authenticated:
 	if (event.locals.sessionId != null) {
-		console.log("auth successful");
+		// console.log("auth successful");
 		if (event.route.id == "/login") {
 			// todo: refactor for all "non-protected" routes
 			redirect(307, "/");
 		}
 
-		console.log("finding session");
+		// console.log("finding session");
 		// todo: jws & no shity
 
 		const [dbSession] = await db
@@ -148,9 +148,9 @@ export const handle = async ({ event, resolve }) => {
 		if (event.url.pathname.startsWith("/api")) {
 			return resolve(event);
 		}
-		console.log("unauthorized");
+		// console.log("unauthorized");
 		if (event.route.id == "/login") {
-			console.log("at login");
+			// console.log("at login");
 			return resolve(event);
 		}
 		redirect(307, "/login");

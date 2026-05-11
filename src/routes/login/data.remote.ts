@@ -13,8 +13,6 @@ import { eq } from "drizzle-orm";
 import { loginSchema } from "./login-schema";
 
 export const loginForm = form(loginSchema, async (data, issue) => {
-	console.log("reached");
-
 	const event = getRequestEvent();
 
 	// note: some shitty bug, todo: check whether this was fixed
