@@ -6,8 +6,11 @@
 	import Box from "$lib/components/box";
 	import Button from "$lib/components/button.svelte";
 	import { onMount } from "svelte";
-	import { getColleges, loginForm } from "./data.remote";
+	import { loginForm } from "./data.remote";
 	import { loginSchema } from "./login-schema";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
 
 	onMount(async () => {
 		const subscription = await getLocalSubscription();
@@ -43,7 +46,7 @@
 			onchange={() => loginForm.validate({})}
 		>
 			<option disabled selected>Choose institution</option>
-			{#each await getColleges() as college (college.id)}
+			{#each data.colleges as college (college.id)}
 				<option value={`${college.id}`}>{college.name}</option>
 			{/each}
 		</select>
