@@ -11,5 +11,3 @@ export const load = async () => {
 
 	return { colleges };
 };
-
-export const prerender = true;
