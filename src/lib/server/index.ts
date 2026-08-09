@@ -4,7 +4,8 @@ import crypto from "node:crypto";
 import { textEncoder } from "./constants";
 
 export const api = ky.extend({
-	throwHttpErrors: false
+	throwHttpErrors: false,
+	timeout: 30_000
 });
 
 function base64url(bytes: Uint8Array): string {
