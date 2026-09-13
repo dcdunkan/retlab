@@ -1,0 +1,92 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## 2026.09.13
+
+This update includes an enhanced theming system and an official theme set: Retman (Light & Dark).
+
+### Added
+
+- Added "Retman Dark", official dark theme.
+- Added a new appearance tweak to switch themes.
+- Added Retlab information footer.
+
+### Changed
+
+- Improved light theme, now consistently themed across the application and components.
+- Updated all components to be accessible and themed correctly.
+- Changed the login screen institution select component to a combobox to allow searching.
+- Fixed the college ID selection schema to handle empty inputs.
+- Set length limits to username and password inputs in login screen.
+
+## [0.5.0] - 2026-05-04
+
+### Added
+
+- Added several layers of cache for database calls and Etlab API calls, which should smoothen the experience.
+- Client-side caching and PWA support that allows offline usage. (not 100 % refined)
+
+### Changed
+
+- Added click sound effect to relax buttons to make it interactive as there is nothing in the dashboard now.
+- Changed some tiny contents of the UI.
+- Adjusted the variation settings of the UI font to make it look more playful.
+- Login page now loads very quick because of it's now prerendered.
+
+## [0.4.0] - 2026-05-03
+
+### Added
+
+- Added support for polling based notification servers.
+  You can deploy and connect your own notification server using [ret-nots](https://github.com/dcdunkan/retlab-notifications),
+  the official notification server implementation (still minimal in implementation).
+
+## [0.3.0] - 2026-03-26
+
+### Added
+
+- New tweak for expanding the subject cards in the attendance page by default based on a criteria chosen.
+  It can be configured to expand the subject cards that are under the safe range or under the excellent range.
+- Leave 50% empty space below the contents for convenient reading.
+- Added a button for toggling duty-leave mode in the attendance page.
+
+### Fixed
+
+- Attendance cutoff limit was not limited correctly in the app, so that it showed up as valid, but wasn't getting saved.
+- Fixed a database schematic error, that may have caused some incorrect behavior.
+
+### Changed
+
+- Icon set was changed from [Lucide](https://lucide.dev) to [Phosphor Icons](https://phosphoricons.com).
+
+## [0.2.0] - 2026-01-13
+
+### Added
+
+- Users can now adjust the percentage cutoffs for helpful messages in the attendance pages.
+
+## [0.1.1] - 2026-01-08
+
+### Fixed
+
+- Invalid value used for calculating the attendance percentages and total number of classes.
+
+## [0.1.0] - 2026-01-04
+
+### Added
+
+- Settings page with option for refreshing hard-cache and managing sessions and devices.
+- Implemented a generic dialog component that are used throughout the application.
+
+## [0.0.0] - 2026-01-01
+
+### Added
+
+- Page for viewing all assignments with different grouping and sorting options.
+- Page for viewing attendance per subjects.

@@ -19,8 +19,14 @@
 
 <Dialog bind:open showCloseIcon={false} interactOutsideBehavior="ignore">
 	{#snippet trigger()}
-		<DialogPrimitive.Trigger class={buttonVariants({ variant: "destructive" })}>
-			DESTROY
+		<DialogPrimitive.Trigger
+			class={buttonVariants({
+				variant: "destructive",
+				size: "sm",
+				class: "font-bold italic"
+			})}
+		>
+			DESTROY!!!
 		</DialogPrimitive.Trigger>
 	{/snippet}
 

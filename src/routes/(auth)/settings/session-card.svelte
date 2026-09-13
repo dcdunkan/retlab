@@ -33,17 +33,17 @@
 <div class="flex justify-between gap-4 px-4 py-3">
 	<div class="flex place-items-center gap-4 space-y-2">
 		{#if session.deviceType == "LAPTOP"}
-			<LaptopIcon class="size-6" />
+			<LaptopIcon class="size-6" weight="bold" />
 		{:else if session.deviceType == "MOBILE"}
-			<DeviceMobileIcon class="size-6" />
+			<DeviceMobileIcon class="size-6" weight="bold" />
 		{:else}
 			<!-- unknown -->
-			<QuestionIcon class="size-6" />
+			<QuestionIcon class="size-6" weight="bold" />
 		{/if}
 
 		<div>
 			<div class="text-sm font-bold">{session.deviceInfo}</div>
-			<p class="text-sm text-muted-foreground">
+			<p class="text-xs">
 				Created at <b>{timeFormatter.format(session.createdAt)}</b>
 			</p>
 		</div>
@@ -51,7 +51,7 @@
 
 	{#if showLogout}
 		<Button
-			size={loggingOut ? "icon" : "default"}
+			size={loggingOut ? "icon-sm" : "sm"}
 			variant="destructive"
 			shadow="none"
 			disabled={loggingOut}

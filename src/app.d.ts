@@ -1,13 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
 import type { ErrorCode } from "$lib/errors";
-import type {
-	Account,
-	College,
-	NotificationServerSettings,
-	Session,
-	Settings
-} from "$lib/server/schema";
 
 // import type { login } from '$lib/generated/models';
 

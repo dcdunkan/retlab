@@ -2,10 +2,11 @@ import { NS_TOKEN_SECRET } from "$env/static/private";
 import ky from "ky";
 import crypto from "node:crypto";
 import { textEncoder } from "./constants";
+import { SECOND } from "$lib";
 
 export const api = ky.extend({
 	throwHttpErrors: false,
-	timeout: 30_000
+	timeout: 30 * SECOND
 });
 
 function base64url(bytes: Uint8Array): string {

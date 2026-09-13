@@ -19,6 +19,7 @@
 	import { LoadState, type LoadData } from "$lib/types";
 	import { isHttpError } from "@sveltejs/kit";
 	import { toast } from "svelte-sonner";
+	import { slide } from "svelte/transition";
 	import { notificationServerSettingsState } from "../states.svelte";
 	import ConfigureNotificationsDialog from "./configure-notifications-dialog.svelte";
 	import {
@@ -31,6 +32,7 @@
 		unsubscribeFromNotificationServer
 	} from "./notifications.remote";
 	import { notificationServerSchema } from "./settings-schema";
+	import Input from "$lib/components/input.svelte";
 
 	type NotificationSubscriptionState = "checking" | "unregistered" | "disabled" | "enabled";
 	interface NotificationChecksStatus {
@@ -70,6 +72,8 @@
 	});
 	let notificationsSubscriptionState = $state<NotificationSubscriptionState>("checking");
 	let notificationSwitchEnabled = $derived(notificationsSubscriptionState === "enabled");
+
+	let isSetupChecklistOpen = $derived(!canEnableNotifications);
 
 	$effect(() => {
 		runNotificationChecks();
@@ -284,7 +288,7 @@
 	{:else if checks.state === LoadState.Resolved}
 		<div class="space-y-2">
 			<p class="text-sm">
-				<b class="text-amber-800">
+				<b class="text-warning-foreground">
 					This feature will only be active until Etlab make their notifications work again.
 				</b>
 				Implementing reliable notifications are tricky. Retlab don't have access to the backend of Etlab,
@@ -293,19 +297,38 @@
 			</p>
 		</div>
 
-		<div class="mt-4 divide-y-2 border-2 bg-gray-100">
-			<div class="flex justify-between gap-4 px-4 py-4">
-				<div class="space-y-2">
-					<div class="font-bold">Setup checklist</div>
+		<div class="mt-4 divide-y-2 divide-border border-2 border-border">
+			<div class="w-full">
+				<button
+					class="flex w-full place-items-center gap-2 px-4 py-2"
+					onclick={() => {
+						isSetupChecklistOpen = !isSetupChecklistOpen;
+					}}
+				>
+					{#if canEnableNotifications}
+						<CheckIcon weight="bold" class="shrink-0 text-success-foreground" />
+					{:else}
+						<XIcon weight="bold" class="shrink-0 text-error-foreground" />
+					{/if}
+					<div class="flex-1 text-left font-bold">Setup checklist</div>
+					<div class="text-right text-xs text-muted-foreground">
+						{#if isSetupChecklistOpen}
+							collapse
+						{:else}
+							expand
+						{/if}
+					</div>
+				</button>
 
-					<div class="space-y-2 text-sm">
+				{#if isSetupChecklistOpen}
+					<div class="space-y-2 px-4 pb-2 text-sm" transition:slide>
 						<div class="flex place-items-start gap-2">
 							{#if checks.data.serviceWorker === "active"}
-								<CheckIcon weight="bold" class="shrink-0 text-green-600" />
+								<CheckIcon weight="bold" class="shrink-0 text-success-foreground" />
 							{:else if checks.data.serviceWorker === "unsupported"}
-								<WarningIcon weight="bold" class="shrink-0 text-amber-500" />
+								<WarningIcon weight="bold" class="shrink-0 text-warning-foreground" />
 							{:else}
-								<XIcon weight="bold" class="shrink-0 text-red-700" />
+								<XIcon weight="bold" class="shrink-0 text-error-foreground" />
 							{/if}
 
 							<div class="space-y-1">
@@ -323,11 +346,11 @@
 
 						<div class="flex place-items-start gap-2">
 							{#if checks.data.push === "subscribed" || checks.data.push === "unsubscribed"}
-								<CheckIcon weight="bold" class="shrink-0 text-green-600" />
+								<CheckIcon weight="bold" class="shrink-0 text-success-foreground" />
 							{:else if checks.data.push === "unsupported"}
-								<WarningIcon weight="bold" class="shrink-0 text-amber-500" />
+								<WarningIcon weight="bold" class="shrink-0 text-warning-foreground" />
 							{:else}
-								<XIcon weight="bold" class="shrink-0 text-red-700" />
+								<XIcon weight="bold" class="shrink-0 text-error-foreground" />
 							{/if}
 
 							<div class="space-y-1">
@@ -347,13 +370,13 @@
 
 						<div class="flex place-items-start gap-2">
 							{#if checks.data.notifications === "granted"}
-								<CheckIcon weight="bold" class="shrink-0 text-green-600" />
+								<CheckIcon weight="bold" class="shrink-0 text-success-foreground" />
 							{:else if checks.data.notifications === "unsupported"}
-								<WarningIcon weight="bold" class="shrink-0 text-amber-500" />
+								<WarningIcon weight="bold" class="shrink-0 text-warning-foreground" />
 							{:else if checks.data.notifications === "should prompt"}
 								<BellRingingIcon weight="bold" class="shrink-0" />
 							{:else}
-								<XIcon weight="bold" class="shrink-0 text-red-700" />
+								<XIcon weight="bold" class="shrink-0 text-error-foreground" />
 							{/if}
 
 							<div class="space-y-1">
@@ -369,7 +392,7 @@
 									</p>
 								{/if}
 								{#if checks.data.notifications === "denied"}
-									<p class="text-xs font-bold text-blue-500">
+									<p class="text-xs font-bold text-ret-accent">
 										You either have previously denied the permission or it was denied by default so
 										the request cannot be triggered. Here is how you can allow the permission: If on
 										Android, open app info and allow notification permission. Idk about iOS.
@@ -400,10 +423,9 @@
 
 						{#if checks.data.pwa !== "in-use"}
 							<p>
-								It is also suggested to install Ret<span class="font-bold text-blue-500">*</span> as a
-								PWA on your device, to get notifications more reliably (still not a 100% native experience
-								though). Also, the app becomes more easily accessible to you if you do install it as a
-								PWA.
+								It is also suggested to install Ret as a PWA on your device, to get notifications
+								more reliably (still not a 100% native experience though). Also, the app becomes
+								more easily accessible to you if you do install it as a PWA.
 							</p>
 
 							<!-- <Button
@@ -426,17 +448,16 @@
 							</Button> -->
 						{/if}
 					</div>
-				</div>
+				{/if}
 			</div>
 		</div>
 
 		{#if notificationServerSettingsState.resolved}
-			<div class="mt-4 divide-y-2 border-2">
+			<div class="mt-4 divide-y-2 divide-border border-2 border-border">
 				<div class="flex justify-between gap-4 px-4 py-3">
 					<div class="w-full space-y-2">
 						<div>
 							<div class="font-bold">Notification server</div>
-							<!-- <p class="text-sm font-medium text-blue-600"></p> -->
 						</div>
 
 						{#if notificationServerSettingsState.value == null}
@@ -479,29 +500,43 @@
 										}
 									})}
 								class="space-y-2"
-								oninput={() => registerNotificationServer.validate({ includeUntouched: true })}
+								oninput={() =>
+									registerNotificationServer.validate({
+										includeUntouched: false,
+										preflightOnly: true
+									})}
 							>
-								<input
+								<Input
 									{...registerNotificationServer.fields.serverUrl.as("url")}
 									class="w-full text-sm"
 									placeholder="Server URL"
+									oninput={() =>
+										registerNotificationServer.validate({
+											includeUntouched: false,
+											preflightOnly: true
+										})}
 									aria-invalid={registerNotificationServer.fields.serverUrl.issues() != null}
 								/>
 
 								{#each registerNotificationServer.fields.serverUrl.issues() as issue, i (i)}
-									<p class="text-sm text-red-600">{issue.message}</p>
+									<p class="text-sm text-error-foreground">{issue.message}</p>
 								{/each}
 
-								<input
+								<Input
 									{...registerNotificationServer.fields.accountPassword.as("password")}
 									class="w-full text-sm"
 									autocomplete="current-password"
 									placeholder="Etlab account password"
+									oninput={() =>
+										registerNotificationServer.validate({
+											includeUntouched: false,
+											preflightOnly: true
+										})}
 									aria-invalid={registerNotificationServer.fields.accountPassword.issues() != null}
 								/>
 
 								{#each registerNotificationServer.fields.accountPassword.issues() as issue, i (i)}
-									<p class="text-sm text-red-600">{issue.message}</p>
+									<p class="text-sm text-error-foreground">{issue.message}</p>
 								{/each}
 
 								<Button type="submit" disabled={isRegisteringInServer}>
@@ -513,7 +548,7 @@
 								</Button>
 
 								{#each registerNotificationServer.fields.issues() as issue, i (i)}
-									<p class="text-sm text-red-600">{issue.message}</p>
+									<p class="text-sm text-error-foreground">{issue.message}</p>
 								{/each}
 							</form>
 						{:else}
@@ -536,7 +571,7 @@
 							</p>
 
 							{#if shouldAllowForcedUnregistration}
-								<p class="text-sm text-red-600">
+								<p class="text-sm text-error-foreground">
 									<b>
 										If you click unregister, you would be registering forcefully, which removes your
 										subscription even if it fails to let the server know.
@@ -641,7 +676,7 @@
 							Enable notifications
 							<span class="text-muted-foreground">({notificationsSubscriptionState})</span>
 						</div>
-						<!-- <p class="text-sm font-medium text-blue-600"></p> -->
+						<!-- <p class="text-sm font-medium text-ret-accent"></p> -->
 
 						<p class="text-sm">
 							By enabling, you can connect the current device to the configured notification server

@@ -49,21 +49,19 @@
 	let onActivated = () => (open = !open);
 </script>
 
-<div class="border-2 border-b-0 last:border-b-2">
-	{#if open}
-		<div transition:slide class="flex">
-			<div
-				data-percent={percent}
-				data-type="bg"
-				style="--percent: {percent}; height: 4px; width: {percent}%;"
-				class="bottom-0 left-0 transition-all ease-out"
-			></div>
-			<div
-				style="height: 4px; width: calc(100 - {percent})%;"
-				class="bottom-0 left-0 bg-muted transition-all ease-out"
-			></div>
-		</div>
-	{/if}
+<div class="border-2 border-b-0 border-border last:border-b-2">
+	<div transition:slide class="flex">
+		<div
+			data-percent={percent}
+			data-type="bg"
+			style="--percent: {percent}; height: 4px; width: {percent}%;"
+			class="bottom-0 left-0 transition-all ease-out"
+		></div>
+		<div
+			style="height: 4px; flex: 1;"
+			class="bottom-0 left-0 bg-muted transition-all ease-out"
+		></div>
+	</div>
 
 	<div
 		class="flex space-x-2 px-3 py-2"
@@ -92,40 +90,40 @@
 	</div>
 
 	{#if open}
-		<div transition:slide class="w-full bg-muted text-sm">
-			<div class="border-t-2 border-dashed px-3 py-2">
+		<div transition:slide class="w-full bg-muted/50 text-sm">
+			<div class="border-t-2 border-dashed border-border px-3 py-2">
 				{#if subjectStats.classes <= 0}
 					<span class="text-muted-foreground">No classes recorded yet.</span>
 				{:else if minStats.needed > 0}
-					<b class="text-red-600">Critical!</b>
+					<b class="text-error-foreground">Critical!</b>
 
 					Attend at least <b>{minStats.needed}</b> more
 					{pluralize(minStats.needed, "class", "classes")} to stay eligible.
 				{:else if minStats.cuttable > 0}
 					{#if maxStats.needed > 0}
-						<span class="text-green-600">Safe.</span>
+						<span class="text-success-foreground">Safe.</span>
 
 						You may skip <b>{minStats.cuttable}</b>
 						{pluralize(minStats.cuttable, "class", "classes")}. Attend <b>{maxStats.needed}</b> more to
 						reach excellent attendance.
 					{:else if maxStats.cuttable > 0}
-						<b class="text-emerald-600">Excellent!</b>
+						<b class="text-success-foreground">Excellent!</b>
 
 						You may skip <b>{minStats.cuttable}</b>
 						{pluralize(minStats.cuttable, "class", "classes")}. You can skip up to
 						<b>{maxStats.cuttable}</b> and still remain excellent.
 					{:else}
-						<b class="text-amber-600">Excellent (tight).</b>
+						<b class="text-warning-foreground">Excellent (tight).</b>
 
 						You may skip <b>{minStats.cuttable}</b>
 						{pluralize(minStats.cuttable, "class", "classes")}, but no more.
 					{/if}
 				{:else if maxStats.needed > 0}
-					<b class="text-amber-600">Barely safe.</b>
+					<b class="text-warning-foreground">Barely safe.</b>
 
 					Do not skip classes. Attend <b>{maxStats.needed}</b> more to reach excellent attendance.
 				{:else}
-					<b class="text-amber-600">At minimum limit.</b>
+					<b class="text-warning-foreground">At minimum limit.</b>
 					Do not skip any classes.
 				{/if}
 			</div>
@@ -135,6 +133,6 @@
 
 <style>
 	[data-percent] {
-		background-color: hsl(var(--percent) 100% 35%) !important;
+		background-color: hsl(var(--percent) 100% 30%) !important;
 	}
 </style>

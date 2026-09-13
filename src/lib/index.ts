@@ -1,3 +1,4 @@
+import { z, type ZodType } from "zod";
 import { LoadState, type LoadPending, type LoadRejected, type LoadResolved } from "./types";
 
 export const l = {
@@ -132,4 +133,14 @@ export const PROXY_RESPONSE_CACHE_STATUS = {
 
 export function bearer(token: string) {
 	return "Bearer " + token;
+}
+
+// Modified from: https://github.com/colinhacks/zod/issues/2461#issuecomment-1695172867
+export function zodStrictNumber(piped: ZodType<number, number | null>, error?: string) {
+	return z
+		.string(error)
+		.transform((value) => (value === "" ? null : value))
+		.refine((value) => value === null || !isNaN(Number(value)), error)
+		.transform((value) => (value === null ? null : Number(value)))
+		.pipe(piped);
 }

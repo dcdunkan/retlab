@@ -188,7 +188,7 @@
 			class={clsx(
 				"border-y-2 px-3 text-sm text-nowrap",
 				semester.id == chosenSemester
-					? "clicked-button-shadow bg-blue-400 pt-1 pb-2"
+					? "clicked-button-shadow bg-ret-accent pt-1 pb-2"
 					: "unclicked-button-shadow py-2 ",
 				i > 0 && chosenSemester == data.semesters[i - 1].id
 					? // if the previous one is the chosen one
@@ -217,11 +217,8 @@
 		chosenSemester = Number.parseInt(v);
 		assignmentsData.load({ semester_id: chosenSemester });
 	}}
->
-	{#snippet trigger(label)}
-		{label}
-	{/snippet}
-</Select>
+	class="w-full justify-between"
+/>
 
 <!-- <Dialog buttonText="click">
 	{#snippet title()}
@@ -242,41 +239,43 @@
 		{overview.due} due, {overview.completed} completed
 	</div>
 
-	<Select
-		type="single"
-		items={Object.entries(groupByOptions).map(([type, option]) => ({
-			label: option.label,
-			value: type
-		}))}
-		bind:value={groupBy}
-		onValueChange={(v) => (groupBy = v as GroupByOption)}
-	>
-		{#snippet trigger(label)}
-			{#if label}
-				Group by {label}
-			{:else}
-				Group by
-			{/if}
-		{/snippet}
-	</Select>
+	<div class="grid gap-2 sm:grid-cols-2">
+		<Select
+			type="single"
+			items={Object.entries(groupByOptions).map(([type, option]) => ({
+				label: option.label,
+				value: type
+			}))}
+			bind:value={groupBy}
+			onValueChange={(v) => (groupBy = v as GroupByOption)}
+		>
+			{#snippet single({ placeholder, selected })}
+				{#if selected != null}
+					<b>Group by</b> {selected.label}
+				{:else}
+					{placeholder}
+				{/if}
+			{/snippet}
+		</Select>
 
-	<Select
-		type="single"
-		items={Object.entries(sortByOptions).map(([type, option]) => ({
-			label: option.label,
-			value: type
-		}))}
-		bind:value={sortBy}
-		onValueChange={(v) => (sortBy = v as SortByOption)}
-	>
-		{#snippet trigger(label)}
-			{#if label}
-				Sort by {label}
-			{:else}
-				Sort by
-			{/if}
-		{/snippet}
-	</Select>
+		<Select
+			type="single"
+			items={Object.entries(sortByOptions).map(([type, option]) => ({
+				label: option.label,
+				value: type
+			}))}
+			bind:value={sortBy}
+			onValueChange={(v) => (sortBy = v as SortByOption)}
+		>
+			{#snippet single({ placeholder, selected })}
+				{#if selected != null}
+					<b>Sort by</b> {selected.label}
+				{:else}
+					{placeholder}
+				{/if}
+			{/snippet}
+		</Select>
+	</div>
 
 	<div class="space-y-6">
 		{#each Object.entries(groupByOptions[groupBy].fn(assignmentsData.data)) as [groupKey, assignmentGroup] (groupKey)}

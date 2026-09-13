@@ -1,0 +1,406 @@
+{
+  "Serif": {
+    "$value": [
+      "Lora"
+    ],
+    "$type": "fontFamilies",
+    "$description": ""
+  },
+  "success": {
+    "foreground": {
+      "$value": "#0d542b",
+      "$type": "color",
+      "$description": ""
+    },
+    "border": {
+      "$value": "#0d542b",
+      "$type": "color",
+      "$description": ""
+    },
+    "background": {
+      "$value": "#b9f8cf",
+      "$type": "color",
+      "$description": ""
+    },
+    "shadow": {
+      "$value": "#0c4e28",
+      "$type": "color",
+      "$description": ""
+    }
+  },
+  "light": {
+    "$value": "300",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "xs": {
+    "$value": "12",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "source-serif-4": {
+    "$value": [
+      "Source Serif 4"
+    ],
+    "$type": "fontFamilies",
+    "$description": ""
+  },
+  "warning": {
+    "foreground": {
+      "$value": "#bb4d00",
+      "$type": "color",
+      "$description": ""
+    },
+    "background": {
+      "$value": "#fef3c6",
+      "$type": "color",
+      "$description": ""
+    },
+    "shadow": {
+      "$value": "#9e4100",
+      "$type": "color",
+      "$description": ""
+    },
+    "border": {
+      "$value": "#bb4d00",
+      "$type": "color",
+      "$description": ""
+    }
+  },
+  "extrabold": {
+    "$value": "800",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "3xl": {
+    "$value": "30",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "border-b-2": {
+    "$value": [
+      {
+        "offsetX": "0",
+        "offsetY": "2",
+        "blur": "0",
+        "spread": "0",
+        "color": "#000000"
+      }
+    ],
+    "$type": "shadow",
+    "$description": ""
+  },
+  "4xl": {
+    "$value": "36",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "7xl": {
+    "$value": "72",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "border": {
+    "$value": "#000000",
+    "$type": "color",
+    "$description": ""
+  },
+  "info": {
+    "background": {
+      "$value": "#dbeafe",
+      "$type": "color",
+      "$description": ""
+    },
+    "foreground": {
+      "$value": "#1c398e",
+      "$type": "color",
+      "$description": ""
+    },
+    "border": {
+      "$value": "#1c398e",
+      "$type": "color",
+      "$description": ""
+    },
+    "shadow": {
+      "$value": "#19327b",
+      "$type": "color",
+      "$description": ""
+    }
+  },
+  "2xl": {
+    "$value": "24",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "extralight": {
+    "$value": "200",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "error": {
+    "background": {
+      "$value": "#ffc9c9",
+      "$type": "color",
+      "$description": ""
+    },
+    "foreground": {
+      "$value": "#82181a",
+      "$type": "color",
+      "$description": ""
+    },
+    "border": {
+      "$value": "#82181a",
+      "$type": "color",
+      "$description": ""
+    },
+    "shadow": {
+      "$value": "#751618",
+      "$type": "color",
+      "$description": ""
+    }
+  },
+  "9xl": {
+    "$value": "128",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "base": {
+    "$value": "16",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "foreground": {
+    "$value": "#000000",
+    "$type": "color",
+    "$description": "Text color"
+  },
+  "medium": {
+    "$value": "500",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "blocky-shadow": {
+    "normal": {
+      "$value": [
+        {
+          "offsetX": "0",
+          "offsetY": "4",
+          "blur": "0",
+          "spread": "0",
+          "color": "#000000"
+        }
+      ],
+      "$type": "shadow",
+      "$description": "Blocky neobrutalism style shadow for blocks"
+    },
+    "error": {
+      "$value": [
+        {
+          "offsetX": "4",
+          "offsetY": "4",
+          "blur": "0",
+          "spread": "0",
+          "color": "#751618"
+        }
+      ],
+      "$type": "shadow",
+      "$description": "Blocky neobrutalism style shadow for blocks"
+    },
+    "success": {
+      "$value": [
+        {
+          "offsetX": "4",
+          "offsetY": "4",
+          "blur": "0",
+          "spread": "0",
+          "color": "#0c4e28"
+        }
+      ],
+      "$type": "shadow",
+      "$description": "Blocky neobrutalism style shadow for blocks"
+    },
+    "info": {
+      "$value": [
+        {
+          "offsetX": "4",
+          "offsetY": "4",
+          "blur": "0",
+          "spread": "0",
+          "color": "#19327b"
+        }
+      ],
+      "$type": "shadow",
+      "$description": "Blocky neobrutalism style shadow for blocks"
+    },
+    "warning": {
+      "$value": [
+        {
+          "offsetX": "4",
+          "offsetY": "4",
+          "blur": "0",
+          "spread": "0",
+          "color": "#9e4100"
+        }
+      ],
+      "$type": "shadow",
+      "$description": "Blocky neobrutalism style shadow for blocks"
+    }
+  },
+  "shadow": {
+    "$value": "#101010",
+    "$type": "color",
+    "$description": ""
+  },
+  "8xl": {
+    "$value": "96",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "lg": {
+    "$value": "18",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "ret": {
+    "bg": {
+      "unsafe": {
+        "$value": "#ffa2a2",
+        "$type": "color",
+        "$description": ""
+      },
+      "safe": {
+        "$value": "#7bf1a8",
+        "$type": "color",
+        "$description": ""
+      },
+      "golden": {
+        "$value": "#ffd230",
+        "$type": "color",
+        "$description": ""
+      }
+    }
+  },
+  "xl": {
+    "$value": "20",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "6xl": {
+    "$value": "60",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "5xl": {
+    "$value": "48",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "black": {
+    "$value": "900",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "border-b-1": {
+    "$value": [
+      {
+        "offsetX": "0",
+        "offsetY": "1",
+        "blur": "0",
+        "spread": "0",
+        "color": "#000000"
+      }
+    ],
+    "$type": "shadow",
+    "$description": ""
+  },
+  "regular": {
+    "$value": "400",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "italic": {
+    "bold": {
+      "$value": "700 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "regular": {
+      "$value": "400 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "light": {
+      "$value": "300 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "medium": {
+      "$value": "500 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "semibold": {
+      "$value": "600 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "black": {
+      "$value": "900 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "extrabold": {
+      "$value": "800 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    },
+    "extralight": {
+      "$value": "200 Italic",
+      "$type": "fontWeights",
+      "$description": ""
+    }
+  },
+  "semibold": {
+    "$value": "600",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "background": {
+    "$value": "#fafafa",
+    "$type": "color",
+    "$description": "Background color"
+  },
+  "bold": {
+    "$value": "700",
+    "$type": "fontWeights",
+    "$description": ""
+  },
+  "sm": {
+    "$value": "14",
+    "$type": "fontSizes",
+    "$description": ""
+  },
+  "Sans": {
+    "$value": [
+      "Recursive Sans Casual Static"
+    ],
+    "$type": "fontFamilies",
+    "$description": ""
+  },
+  "button": {
+    "destructive": {
+      "background": {
+        "$value": "#ff6467",
+        "$type": "color",
+        "$description": ""
+      }
+    },
+    "primary": {
+      "background": {
+        "$value": "#51a2ff",
+        "$type": "color",
+        "$description": ""
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@
 	import AttendanceCard from "./attendance-card.svelte";
 	import * as remotes from "./attendance.remote";
 	import { onMount } from "svelte";
+	import Button from "$lib/components/button.svelte";
 
 	const attendanceData = cachedGracefulRemoteQuery(
 		{ name: "getAttendance", version: 1 },
@@ -42,13 +43,14 @@
 	<div class="flex flex-col justify-between gap-4 sm:flex-row">
 		<h1 class="text-5xl font-bold">{totalPercent} %</h1>
 
-		<button
-			class="flex h-fit w-fit place-items-center gap-1 rounded-xs border border-mauve-600 bg-mauve-500 px-1 py-0 text-sm text-mauve-50 shadow-inner"
+		<Button
+			variant="outline"
+			size="sm"
 			onclick={() => (attendanceMode = attendanceMode === "duty_leave" ? "normal" : "duty_leave")}
 		>
 			<b>duty leave mode:</b>
 			{attendanceMode === "duty_leave" ? "on" : "off"}
-		</button>
+		</Button>
 	</div>
 
 	<div class="grid grid-flow-row">

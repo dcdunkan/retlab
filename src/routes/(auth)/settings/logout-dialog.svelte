@@ -19,7 +19,7 @@
 
 <Dialog bind:open showCloseIcon={false} interactOutsideBehavior="ignore">
 	{#snippet trigger()}
-		<DialogPrimitive.Trigger class={buttonVariants({ variant: "destructive" })}>
+		<DialogPrimitive.Trigger class={buttonVariants({ variant: "destructive", size: "sm" })}>
 			Logout
 		</DialogPrimitive.Trigger>
 	{/snippet}

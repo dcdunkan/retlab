@@ -268,6 +268,7 @@ export const registerNotificationServer = form(notificationServerSchema, async (
 	const vapidKeyResponse = await makeNsRequest(data.serverUrl, "GET vapid-key", {
 		schema: z.object({ vapidKey: z.string() })
 	});
+	console.log(vapidKeyResponse);
 	if (!vapidKeyResponse.ok || !vapidKeyResponse.result.vapidKey) {
 		return error(400, {
 			code: ErrorCodes.NotificationServer.HEALTH_CHECK_FAILED,

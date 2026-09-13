@@ -16,6 +16,7 @@
 	import { toast } from "svelte-sonner";
 	import { SvelteSet } from "svelte/reactivity";
 	import { getConfiguration, setConfiguration } from "./notifications.remote";
+	import Input from "$lib/components/input.svelte";
 
 	let {
 		open = $bindable(false)
@@ -167,7 +168,7 @@
 				at
 				<a
 					href={configuration.data.serverConfig.contact}
-					class="text-primary underline hover:text-blue-500"
+					class="text-primary underline hover:text-ret-accent"
 				>
 					<b>{configuration.data.serverConfig.contact}</b>
 				</a>.
@@ -293,7 +294,7 @@
 										>
 									{/if}
 								{:else if option.type === "integer"}
-									<input
+									<Input
 										id="nots-config:{optionKey}"
 										class="w-full p-1 text-sm"
 										type="number"
@@ -313,7 +314,7 @@
 
 							{#if saveErrors[optionKey] != null}
 								{#each saveErrors[optionKey] as e, i (i)}
-									<p class="text-sm font-semibold text-red-600">{e}</p>
+									<p class="text-sm font-semibold text-error-foreground">{e}</p>
 								{/each}
 							{/if}
 						</div>

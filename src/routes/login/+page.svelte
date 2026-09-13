@@ -1,6 +1,10 @@
 <script lang="ts">
 	import HeartIcon from "phosphor-svelte/lib/HeartIcon";
-	import SealWarningIcon from "phosphor-svelte/lib/SealWarningIcon";
+	import GithubLogoIcon from "phosphor-svelte/lib/GithubLogoIcon";
+	import GraduationCapIcon from "phosphor-svelte/lib/GraduationCapIcon";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
+	import AtIcon from "phosphor-svelte/lib/AtIcon";
+	import AsteriskSimpleIcon from "phosphor-svelte/lib/AsteriskSimpleIcon";
 
 	import { getLocalSubscription } from "$lib/browser";
 	import Box from "$lib/components/box";
@@ -9,13 +13,19 @@
 	import { loginForm } from "./data.remote";
 	import { loginSchema } from "./login-schema";
 	import type { PageProps } from "./$types";
+	import Input from "$lib/components/input.svelte";
+	import Combobox from "$lib/components/combobox.svelte";
 
 	let { data }: PageProps = $props();
 
 	onMount(async () => {
-		const subscription = await getLocalSubscription();
-		if (subscription != null) {
-			await subscription.unsubscribe();
+		try {
+			const subscription = await getLocalSubscription();
+			if (subscription != null) {
+				await subscription.unsubscribe();
+			}
+		} catch {
+			// ignore
 		}
 	});
 </script>
@@ -24,33 +34,34 @@
 	<title>Login to Retlab</title>
 </svelte:head>
 
-<section class="mb-6 flex place-items-start gap-2 border-2 border-amber-400 bg-amber-200 p-2">
-	<SealWarningIcon weight="fill" size="1.5em" class="block shrink-0 text-amber-600" />
-	<p class="text-xs font-medium text-amber-900">
-		Retlab is under heavy construction at the moment. You may see features and tweaks come and go
-		and work unreliably. I am currently working on bringing notifications support and PWA stuff.
-		<b>DO NOT TRY THOSE YET even if you are prompted to do so.</b>
-	</p>
-</section>
-
 <div class="mb-4 space-y-4">
-	<h1 class="text-3xl">Login to Retlab</h1>
+	<h1 class="text-4xl">Login to Retlab</h1>
 	<p>Login with your Etlab credentials to use Retlab.</p>
 </div>
 
 <form {...loginForm.preflight(loginSchema)} class="flex flex-col space-y-2">
 	<div class="space-y-1">
-		<select
-			class="w-full"
-			{...loginForm.fields.collegeId.as("select")}
-			onchange={() => loginForm.validate({})}
-		>
-			<option disabled selected>Choose institution</option>
-			{#each data.colleges as college (college.id)}
-				<option value={`${college.id}`}>{college.name}</option>
-			{/each}
-		</select>
-		<ul class="text-sm text-red-600">
+		<Combobox
+			type="single"
+			name={loginForm.fields.collegeId.as("select").name}
+			value={loginForm.fields.collegeId.value()}
+			onValueChange={(value) => {
+				loginForm.fields.collegeId.set(value);
+				loginForm.validate({ includeUntouched: false, preflightOnly: true });
+			}}
+			icon={GraduationCapIcon}
+			inputProps={{
+				"aria-invalid": loginForm.fields.collegeId.issues() != undefined,
+				placeholder: "Choose institution"
+			}}
+			items={data.colleges.map((college) => ({
+				label: college.name,
+				value: college.id.toString()
+			}))}
+			allowDeselect={false}
+		/>
+
+		<ul class="text-sm text-error-foreground">
 			{#each loginForm.fields.collegeId.issues() as issue, i (i)}
 				<li>{issue.message}</li>
 			{/each}
@@ -58,14 +69,15 @@
 	</div>
 
 	<div class="space-y-1">
-		<input
+		<Input
 			autocomplete="off"
 			class="w-full"
 			{...loginForm.fields.username.as("text")}
 			placeholder="Username"
-			oninput={() => loginForm.validate({})}
+			oninput={() => loginForm.validate({ includeUntouched: false, preflightOnly: true })}
+			icon={AtIcon}
 		/>
-		<ul class="text-sm text-red-600">
+		<ul class="text-sm text-error-foreground">
 			{#each loginForm.fields.username.issues() as issue, i (i)}
 				<li>{issue.message}</li>
 			{/each}
@@ -73,14 +85,15 @@
 	</div>
 
 	<div class="space-y-1">
-		<input
+		<Input
 			autocomplete="off"
 			class="w-full"
 			{...loginForm.fields.password.as("password")}
 			placeholder="Shhh..."
-			oninput={() => loginForm.validate({})}
+			oninput={() => loginForm.validate({ includeUntouched: false, preflightOnly: true })}
+			icon={AsteriskSimpleIcon}
 		/>
-		<ul class="text-sm text-red-600">
+		<ul class="text-sm text-error-foreground">
 			{#each loginForm.fields.password.issues() as issue, i (i)}
 				<li>{issue.message}</li>
 			{/each}
@@ -89,23 +102,38 @@
 
 	{#if loginForm.fields.issues()?.length}
 		<Box.Error>
-			{#each loginForm.fields.issues() as issue, i (i)}
-				<li>{issue.message}</li>
-			{/each}
+			<ul class="list-inside list-[square] text-sm text-error-foreground">
+				{#each loginForm.fields.issues() as issue, i (i)}
+					<li>{issue.message}</li>
+				{/each}
+			</ul>
 		</Box.Error>
 	{/if}
 
 	<Button {...loginForm.fields.action.as("submit", "login")} disabled={!!loginForm.pending}>
-		Login
+		{#if !!loginForm.pending}
+			<SpinnerIcon class="animate-spin" /> Logging in... hold on
+		{:else}
+			Login
+		{/if}
 	</Button>
 </form>
 
-<section class="mt-6 flex place-items-center gap-2 border-2 border-muted-foreground p-2">
-	<HeartIcon weight="fill" size="2em" class="text-rose-600/70" />
-	<div class="text-xs font-medium text-muted-foreground">
-		Retlab is open-source btw! Checkout the source code on GitHub:
-		<a href="https://github.com/dcdunkan/retlab" class="text-primary underline hover:text-blue-500">
+<section class="relative mt-6 border-t-2 py-3">
+	<span
+		class="absolute top-0 left-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-1 bg-background px-2 leading-none text-ret-favourite"
+	>
+		<HeartIcon weight="fill" class="block shrink-0 text-ret-favourite" />
+		<GithubLogoIcon weight="fill" class="block shrink-0 text-foreground" />
+	</span>
+	<p class="text-sm">
+		Retlab is open-source btw&excl; Checkout the source code on GitHub:
+		<a
+			target="_blank"
+			href="https://github.com/dcdunkan/retlab"
+			class="font-medium underline hover:text-ret-accent"
+		>
 			https://github.com/dcdunkan/retlab
-		</a>. Any kind of help with the development is appreciated :)
-	</div>
+		</a>. Any kind of help with the development is appreciated :&rpar;
+	</p>
 </section>

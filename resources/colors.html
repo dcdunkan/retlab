@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Color Tokens</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:13px/1.5 monospace;padding:20px;background:#111;color:#eee}
+  #top{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+  label{display:flex;align-items:center;gap:6px;cursor:pointer}
+  #info{font-size:12px;opacity:.7;min-height:1.5em}
+  #grid{display:grid;grid-template-columns:repeat(7,48px);gap:4px}
+  .cell{width:48px;height:48px;border-radius:6px;cursor:pointer;transition:transform .1s}
+  .cell:hover{transform:scale(1.12);z-index:1;position:relative}
+  .cell.active{outline:2px solid #fff;outline-offset:2px}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:#333;color:#fff;padding:6px 14px;border-radius:20px;
+    font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="top">
+  <label><input type="checkbox" id="mode" onchange="toggleMode()"> oklch</label>
+  <div id="info">click color to copy</div>
+</div>
+<div id="grid"><div class="cell" style="background:#eeeeee" data-hex="#eeeeee" data-oklch="oklch(0.950 0 0)"
+      onclick="pick(this)" title="neutral-200"></div>
+<div class="cell" style="background:#c5c5c5" data-hex="#c5c5c5" data-oklch="oklch(0.822 0 0)"
+      onclick="pick(this)" title="neutral-300"></div>
+<div class="cell" style="background:#9d9d9d" data-hex="#9d9d9d" data-oklch="oklch(0.695 0 0)"
+      onclick="pick(this)" title="neutral-400"></div>
+<div class="cell" style="background:#777777" data-hex="#777777" data-oklch="oklch(0.568 0 0)"
+      onclick="pick(this)" title="neutral-500"></div>
+<div class="cell" style="background:#535353" data-hex="#535353" data-oklch="oklch(0.441 0 0)"
+      onclick="pick(this)" title="neutral-600"></div>
+<div class="cell" style="background:#313131" data-hex="#313131" data-oklch="oklch(0.314 0 0)"
+      onclick="pick(this)" title="neutral-700"></div>
+<div class="cell" style="background:#131313" data-hex="#131313" data-oklch="oklch(0.187 0 0)"
+      onclick="pick(this)" title="neutral-800"></div>
+<div class="cell" style="background:#ffddda" data-hex="#ffddda" data-oklch="oklch(0.93 0.04 25)"
+      onclick="pick(this)" title="coral-200"></div>
+<div class="cell" style="background:#ffc0ba" data-hex="#ffc0ba" data-oklch="oklch(0.87 0.08 25)"
+      onclick="pick(this)" title="coral-300"></div>
+<div class="cell" style="background:#ff9e96" data-hex="#ff9e96" data-oklch="oklch(0.8 0.12 25)"
+      onclick="pick(this)" title="coral-400"></div>
+<div class="cell" style="background:#f7766f" data-hex="#f7766f" data-oklch="oklch(0.71 0.16 25)"
+      onclick="pick(this)" title="coral-500"></div>
+<div class="cell" style="background:#bc5953" data-hex="#bc5953" data-oklch="oklch(0.58 0.13 25)"
+      onclick="pick(this)" title="coral-600"></div>
+<div class="cell" style="background:#8d413d" data-hex="#8d413d" data-oklch="oklch(0.47 0.1 25)"
+      onclick="pick(this)" title="coral-700"></div>
+<div class="cell" style="background:#582623" data-hex="#582623" data-oklch="oklch(0.34 0.08 25)"
+      onclick="pick(this)" title="coral-800"></div>
+<div class="cell" style="background:#fae1cb" data-hex="#fae1cb" data-oklch="oklch(0.92 0.04 65)"
+      onclick="pick(this)" title="orange-200"></div>
+<div class="cell" style="background:#f5c89d" data-hex="#f5c89d" data-oklch="oklch(0.86 0.08 65)"
+      onclick="pick(this)" title="orange-300"></div>
+<div class="cell" style="background:#efaa64" data-hex="#efaa64" data-oklch="oklch(0.79 0.12 65)"
+      onclick="pick(this)" title="orange-400"></div>
+<div class="cell" style="background:#e38800" data-hex="#e38800" data-oklch="oklch(0.71 0.16 65)"
+      onclick="pick(this)" title="orange-500"></div>
+<div class="cell" style="background:#ad6700" data-hex="#ad6700" data-oklch="oklch(0.58 0.13 65)"
+      onclick="pick(this)" title="orange-600"></div>
+<div class="cell" style="background:#824c01" data-hex="#824c01" data-oklch="oklch(0.47 0.1 65)"
+      onclick="pick(this)" title="orange-700"></div>
+<div class="cell" style="background:#512d00" data-hex="#512d00" data-oklch="oklch(0.34 0.08 65)"
+      onclick="pick(this)" title="orange-800"></div>
+<div class="cell" style="background:#f7e3c9" data-hex="#f7e3c9" data-oklch="oklch(0.92 0.04 75)"
+      onclick="pick(this)" title="amber-200"></div>
+<div class="cell" style="background:#efcb99" data-hex="#efcb99" data-oklch="oklch(0.86 0.08 75)"
+      onclick="pick(this)" title="amber-300"></div>
+<div class="cell" style="background:#e6af5d" data-hex="#e6af5d" data-oklch="oklch(0.79 0.12 75)"
+      onclick="pick(this)" title="amber-400"></div>
+<div class="cell" style="background:#d88e00" data-hex="#d88e00" data-oklch="oklch(0.7 0.16 75)"
+      onclick="pick(this)" title="amber-500"></div>
+<div class="cell" style="background:#a56b00" data-hex="#a56b00" data-oklch="oklch(0.58 0.13 75)"
+      onclick="pick(this)" title="amber-600"></div>
+<div class="cell" style="background:#7c5000" data-hex="#7c5000" data-oklch="oklch(0.47 0.1 75)"
+      onclick="pick(this)" title="amber-700"></div>
+<div class="cell" style="background:#4c3000" data-hex="#4c3000" data-oklch="oklch(0.33 0.08 75)"
+      onclick="pick(this)" title="amber-800"></div>
+<div class="cell" style="background:#f2e4c8" data-hex="#f2e4c8" data-oklch="oklch(0.92 0.04 85)"
+      onclick="pick(this)" title="golden-200"></div>
+<div class="cell" style="background:#e8cd97" data-hex="#e8cd97" data-oklch="oklch(0.86 0.08 85)"
+      onclick="pick(this)" title="golden-300"></div>
+<div class="cell" style="background:#dcb359" data-hex="#dcb359" data-oklch="oklch(0.79 0.12 85)"
+      onclick="pick(this)" title="golden-400"></div>
+<div class="cell" style="background:#cc9500" data-hex="#cc9500" data-oklch="oklch(0.7 0.16 85)"
+      onclick="pick(this)" title="golden-500"></div>
+<div class="cell" style="background:#9b7100" data-hex="#9b7100" data-oklch="oklch(0.57 0.13 85)"
+      onclick="pick(this)" title="golden-600"></div>
+<div class="cell" style="background:#745300" data-hex="#745300" data-oklch="oklch(0.47 0.1 85)"
+      onclick="pick(this)" title="golden-700"></div>
+<div class="cell" style="background:#483200" data-hex="#483200" data-oklch="oklch(0.33 0.08 85)"
+      onclick="pick(this)" title="golden-800"></div>
+<div class="cell" style="background:#d4ecd4" data-hex="#d4ecd4" data-oklch="oklch(0.92 0.04 145)"
+      onclick="pick(this)" title="green-200"></div>
+<div class="cell" style="background:#afdcb0" data-hex="#afdcb0" data-oklch="oklch(0.85 0.08 145)"
+      onclick="pick(this)" title="green-300"></div>
+<div class="cell" style="background:#83c985" data-hex="#83c985" data-oklch="oklch(0.77 0.12 145)"
+      onclick="pick(this)" title="green-400"></div>
+<div class="cell" style="background:#4eb256" data-hex="#4eb256" data-oklch="oklch(0.68 0.16 145)"
+      onclick="pick(this)" title="green-500"></div>
+<div class="cell" style="background:#3a8740" data-hex="#3a8740" data-oklch="oklch(0.56 0.13 145)"
+      onclick="pick(this)" title="green-600"></div>
+<div class="cell" style="background:#2a652f" data-hex="#2a652f" data-oklch="oklch(0.45 0.1 145)"
+      onclick="pick(this)" title="green-700"></div>
+<div class="cell" style="background:#173d1a" data-hex="#173d1a" data-oklch="oklch(0.32 0.08 145)"
+      onclick="pick(this)" title="green-800"></div>
+<div class="cell" style="background:#d0edd8" data-hex="#d0edd8" data-oklch="oklch(0.92 0.04 155)"
+      onclick="pick(this)" title="emerald-200"></div>
+<div class="cell" style="background:#a6ddb8" data-hex="#a6ddb8" data-oklch="oklch(0.85 0.08 155)"
+      onclick="pick(this)" title="emerald-300"></div>
+<div class="cell" style="background:#71cb93" data-hex="#71cb93" data-oklch="oklch(0.77 0.12 155)"
+      onclick="pick(this)" title="emerald-400"></div>
+<div class="cell" style="background:#21b46b" data-hex="#21b46b" data-oklch="oklch(0.68 0.16 155)"
+      onclick="pick(this)" title="emerald-500"></div>
+<div class="cell" style="background:#188950" data-hex="#188950" data-oklch="oklch(0.56 0.13 155)"
+      onclick="pick(this)" title="emerald-600"></div>
+<div class="cell" style="background:#10663b" data-hex="#10663b" data-oklch="oklch(0.45 0.1 155)"
+      onclick="pick(this)" title="emerald-700"></div>
+<div class="cell" style="background:#063e22" data-hex="#063e22" data-oklch="oklch(0.32 0.08 155)"
+      onclick="pick(this)" title="emerald-800"></div>
+<div class="cell" style="background:#c9ede2" data-hex="#c9ede2" data-oklch="oklch(0.92 0.04 175)"
+      onclick="pick(this)" title="turquoise-200"></div>
+<div class="cell" style="background:#97decb" data-hex="#97decb" data-oklch="oklch(0.85 0.08 175)"
+      onclick="pick(this)" title="turquoise-300"></div>
+<div class="cell" style="background:#4fccb0" data-hex="#4fccb0" data-oklch="oklch(0.77 0.12 175)"
+      onclick="pick(this)" title="turquoise-400"></div>
+<div class="cell" style="background:#00b591" data-hex="#00b591" data-oklch="oklch(0.68 0.16 175)"
+      onclick="pick(this)" title="turquoise-500"></div>
+<div class="cell" style="background:#008a6e" data-hex="#008a6e" data-oklch="oklch(0.55 0.13 175)"
+      onclick="pick(this)" title="turquoise-600"></div>
+<div class="cell" style="background:#006751" data-hex="#006751" data-oklch="oklch(0.45 0.1 175)"
+      onclick="pick(this)" title="turquoise-700"></div>
+<div class="cell" style="background:#003f31" data-hex="#003f31" data-oklch="oklch(0.32 0.08 175)"
+      onclick="pick(this)" title="turquoise-800"></div>
+<div class="cell" style="background:#c7ecf5" data-hex="#c7ecf5" data-oklch="oklch(0.92 0.04 215)"
+      onclick="pick(this)" title="sky-200"></div>
+<div class="cell" style="background:#92dbed" data-hex="#92dbed" data-oklch="oklch(0.85 0.08 215)"
+      onclick="pick(this)" title="sky-300"></div>
+<div class="cell" style="background:#43c8e4" data-hex="#43c8e4" data-oklch="oklch(0.77 0.12 215)"
+      onclick="pick(this)" title="sky-400"></div>
+<div class="cell" style="background:#00afd5" data-hex="#00afd5" data-oklch="oklch(0.68 0.16 215)"
+      onclick="pick(this)" title="sky-500"></div>
+<div class="cell" style="background:#0085a2" data-hex="#0085a2" data-oklch="oklch(0.56 0.13 215)"
+      onclick="pick(this)" title="sky-600"></div>
+<div class="cell" style="background:#006379" data-hex="#006379" data-oklch="oklch(0.45 0.1 215)"
+      onclick="pick(this)" title="sky-700"></div>
+<div class="cell" style="background:#003c4b" data-hex="#003c4b" data-oklch="oklch(0.32 0.08 215)"
+      onclick="pick(this)" title="sky-800"></div>
+<div class="cell" style="background:#c9ebf9" data-hex="#c9ebf9" data-oklch="oklch(0.92 0.04 225)"
+      onclick="pick(this)" title="cerulean-200"></div>
+<div class="cell" style="background:#97daf5" data-hex="#97daf5" data-oklch="oklch(0.85 0.08 225)"
+      onclick="pick(this)" title="cerulean-300"></div>
+<div class="cell" style="background:#51c5ef" data-hex="#51c5ef" data-oklch="oklch(0.78 0.12 225)"
+      onclick="pick(this)" title="cerulean-400"></div>
+<div class="cell" style="background:#00ace3" data-hex="#00ace3" data-oklch="oklch(0.69 0.16 225)"
+      onclick="pick(this)" title="cerulean-500"></div>
+<div class="cell" style="background:#0083ad" data-hex="#0083ad" data-oklch="oklch(0.56 0.13 225)"
+      onclick="pick(this)" title="cerulean-600"></div>
+<div class="cell" style="background:#006182" data-hex="#006182" data-oklch="oklch(0.45 0.1 225)"
+      onclick="pick(this)" title="cerulean-700"></div>
+<div class="cell" style="background:#003b50" data-hex="#003b50" data-oklch="oklch(0.32 0.08 225)"
+      onclick="pick(this)" title="cerulean-800"></div>
+<div class="cell" style="background:#cceafc" data-hex="#cceafc" data-oklch="oklch(0.92 0.04 235)"
+      onclick="pick(this)" title="steel-200"></div>
+<div class="cell" style="background:#9ed8fa" data-hex="#9ed8fa" data-oklch="oklch(0.85 0.08 235)"
+      onclick="pick(this)" title="steel-300"></div>
+<div class="cell" style="background:#61c3f8" data-hex="#61c3f8" data-oklch="oklch(0.78 0.12 235)"
+      onclick="pick(this)" title="steel-400"></div>
+<div class="cell" style="background:#00a8ef" data-hex="#00a8ef" data-oklch="oklch(0.69 0.16 235)"
+      onclick="pick(this)" title="steel-500"></div>
+<div class="cell" style="background:#0080b6" data-hex="#0080b6" data-oklch="oklch(0.56 0.13 235)"
+      onclick="pick(this)" title="steel-600"></div>
+<div class="cell" style="background:#005f89" data-hex="#005f89" data-oklch="oklch(0.46 0.1 235)"
+      onclick="pick(this)" title="steel-700"></div>
+<div class="cell" style="background:#003a55" data-hex="#003a55" data-oklch="oklch(0.33 0.08 235)"
+      onclick="pick(this)" title="steel-800"></div>
+<div class="cell" style="background:#d4e7ff" data-hex="#d4e7ff" data-oklch="oklch(0.92 0.04 255)"
+      onclick="pick(this)" title="azure-200"></div>
+<div class="cell" style="background:#afd3ff" data-hex="#afd3ff" data-oklch="oklch(0.86 0.08 255)"
+      onclick="pick(this)" title="azure-300"></div>
+<div class="cell" style="background:#83bcff" data-hex="#83bcff" data-oklch="oklch(0.78 0.12 255)"
+      onclick="pick(this)" title="azure-400"></div>
+<div class="cell" style="background:#539ffe" data-hex="#539ffe" data-oklch="oklch(0.7 0.16 255)"
+      onclick="pick(this)" title="azure-500"></div>
+<div class="cell" style="background:#3e79c2" data-hex="#3e79c2" data-oklch="oklch(0.57 0.13 255)"
+      onclick="pick(this)" title="azure-600"></div>
+<div class="cell" style="background:#2d5a92" data-hex="#2d5a92" data-oklch="oklch(0.46 0.1 255)"
+      onclick="pick(this)" title="azure-700"></div>
+<div class="cell" style="background:#18365b" data-hex="#18365b" data-oklch="oklch(0.33 0.08 255)"
+      onclick="pick(this)" title="azure-800"></div>
+<div class="cell" style="background:#e3e3ff" data-hex="#e3e3ff" data-oklch="oklch(0.92 0.04 285)"
+      onclick="pick(this)" title="lavender-200"></div>
+<div class="cell" style="background:#cccbff" data-hex="#cccbff" data-oklch="oklch(0.86 0.08 285)"
+      onclick="pick(this)" title="lavender-300"></div>
+<div class="cell" style="background:#b3b0ff" data-hex="#b3b0ff" data-oklch="oklch(0.79 0.12 285)"
+      onclick="pick(this)" title="lavender-400"></div>
+<div class="cell" style="background:#9990ff" data-hex="#9990ff" data-oklch="oklch(0.71 0.16 285)"
+      onclick="pick(this)" title="lavender-500"></div>
+<div class="cell" style="background:#746dc3" data-hex="#746dc3" data-oklch="oklch(0.58 0.13 285)"
+      onclick="pick(this)" title="lavender-600"></div>
+<div class="cell" style="background:#565193" data-hex="#565193" data-oklch="oklch(0.47 0.1 285)"
+      onclick="pick(this)" title="lavender-700"></div>
+<div class="cell" style="background:#34315c" data-hex="#34315c" data-oklch="oklch(0.34 0.08 285)"
+      onclick="pick(this)" title="lavender-800"></div>
+<div class="cell" style="background:#f1dffa" data-hex="#f1dffa" data-oklch="oklch(0.93 0.04 315)"
+      onclick="pick(this)" title="fuchsia-200"></div>
+<div class="cell" style="background:#e6c5f6" data-hex="#e6c5f6" data-oklch="oklch(0.87 0.08 315)"
+      onclick="pick(this)" title="fuchsia-300"></div>
+<div class="cell" style="background:#daa5f1" data-hex="#daa5f1" data-oklch="oklch(0.8 0.12 315)"
+      onclick="pick(this)" title="fuchsia-400"></div>
+<div class="cell" style="background:#c882e7" data-hex="#c882e7" data-oklch="oklch(0.72 0.16 315)"
+      onclick="pick(this)" title="fuchsia-500"></div>
+<div class="cell" style="background:#9962b0" data-hex="#9962b0" data-oklch="oklch(0.59 0.13 315)"
+      onclick="pick(this)" title="fuchsia-600"></div>
+<div class="cell" style="background:#724884" data-hex="#724884" data-oklch="oklch(0.48 0.1 315)"
+      onclick="pick(this)" title="fuchsia-700"></div>
+<div class="cell" style="background:#462b52" data-hex="#462b52" data-oklch="oklch(0.34 0.08 315)"
+      onclick="pick(this)" title="fuchsia-800"></div>
+<div class="cell" style="background:#fcdded" data-hex="#fcdded" data-oklch="oklch(0.93 0.04 345)"
+      onclick="pick(this)" title="mulberry-200"></div>
+<div class="cell" style="background:#f9c0df" data-hex="#f9c0df" data-oklch="oklch(0.87 0.08 345)"
+      onclick="pick(this)" title="mulberry-300"></div>
+<div class="cell" style="background:#f49ecf" data-hex="#f49ecf" data-oklch="oklch(0.8 0.12 345)"
+      onclick="pick(this)" title="mulberry-400"></div>
+<div class="cell" style="background:#e877ba" data-hex="#e877ba" data-oklch="oklch(0.72 0.16 345)"
+      onclick="pick(this)" title="mulberry-500"></div>
+<div class="cell" style="background:#b1598e" data-hex="#b1598e" data-oklch="oklch(0.59 0.13 345)"
+      onclick="pick(this)" title="mulberry-600"></div>
+<div class="cell" style="background:#85426a" data-hex="#85426a" data-oklch="oklch(0.48 0.1 345)"
+      onclick="pick(this)" title="mulberry-700"></div>
+<div class="cell" style="background:#522641" data-hex="#522641" data-oklch="oklch(0.34 0.08 345)"
+      onclick="pick(this)" title="mulberry-800"></div></div>
+<div id="toast"></div>
+<script>
+  let useOklch = false;
+  let active = null;
+  function toggleMode() {
+    useOklch = document.getElementById('mode').checked;
+    if (active) updateInfo(active);
+  }
+  function pick(el) {
+    if (active) active.classList.remove('active');
+    active = el;
+    el.classList.add('active');
+    const val = useOklch ? el.dataset.oklch : el.dataset.hex;
+    navigator.clipboard.writeText(val).catch(()=>{});
+    updateInfo(el);
+    toast('Copied: ' + val);
+  }
+  function updateInfo(el) {
+    document.getElementById('info').textContent =
+      el.dataset.hex + '  ·  ' + el.dataset.oklch;
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+</script>
+</body>
+</html>

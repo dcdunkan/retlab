@@ -3,6 +3,7 @@
 	import XIcon from "phosphor-svelte/lib/XIcon";
 	import type { Snippet } from "svelte";
 	import { buttonVariants } from "./button.svelte";
+	import { cn } from "$lib/cn-utils";
 
 	let {
 		open = $bindable(false),
@@ -37,17 +38,17 @@
 
 	<Dialog.Portal>
 		<Dialog.Overlay
-			class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+			class="fixed inset-0 z-50 bg-foreground/30 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
 		/>
 		<Dialog.Content
 			interactOutsideBehavior={interactOutsideBehavior ?? "close"}
-			class={[
+			class={cn(
 				"fixed top-[50%] left-[50%] z-50 max-h-[90svh] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%]",
-				"flex flex-col gap-4 border-2 bg-background p-5 shadow-sshadow",
+				"flex flex-col gap-4 border-2 bg-background p-5 shadow-block-shadow",
 				"outline-hidden data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
 				"sm:max-w-122.5 md:w-full",
 				className
-			]}
+			)}
 			{...restProps}
 		>
 			<div class="flex flex-col gap-1 text-center sm:text-start">
@@ -55,7 +56,7 @@
 					{@render title()}
 				</Dialog.Title>
 				{#if description}
-					<Dialog.Description class="text-sm text-muted-foreground">
+					<Dialog.Description class="text-sm">
 						{@render description()}
 					</Dialog.Description>
 				{/if}

@@ -148,6 +148,10 @@ export const handle = async ({ event, resolve }) => {
 		if (event.url.pathname.startsWith("/api")) {
 			return resolve(event);
 		}
+		if (event.url.pathname.startsWith("/canvas")) {
+			return resolve(event);
+		}
+
 		// console.log("unauthorized");
 		if (event.route.id == "/login") {
 			// console.log("at login");

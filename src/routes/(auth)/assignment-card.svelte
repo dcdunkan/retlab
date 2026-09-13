@@ -36,7 +36,7 @@
 	const isLarge = new MediaQuery("min-width: 32rem");
 </script>
 
-<div class="border-2 border-b-0 last:border-b-2">
+<div class="border-2 border-b-0 border-border last:border-b-2">
 	<div role="button" tabindex="0" onclick={onActivated} onkeydown={onActivated} class="px-3 py-2">
 		<div class="flex place-items-center justify-between gap-4">
 			<div>
@@ -95,7 +95,7 @@
 		</div>
 
 		{#if assignment._parsed.is_due}
-			<div class="mt-2 text-sm text-red-800">
+			<div class="mt-2 text-sm text-error-foreground">
 				Submit before {tzFormatter.format(assignment._parsed.last_date)}
 			</div>
 		{/if}
@@ -103,13 +103,13 @@
 		<!-- {#if open}
 			<div transition:slide class="mt-2 space-x-1 text-sm *:border-r *:pr-2 *:last:border-r-0">
 				{#if assignment.url != ""}
-					<a class="text-blue-700 hover:underline" href={assignment.url}>View assignment</a>
+					<a class="text-ret-accent hover:underline" href={assignment.url}>View assignment</a>
 				{/if}
 				{#if assignment.upload}
 					{#if assignment.uploaded_file == "" || assignment.uploaded_file == new URL(college.base_url).origin}
-						<a class="text-blue-700 hover:underline" href={assignment.url}>Submit assignment</a>
+						<a class="text-ret-accent hover:underline" href={assignment.url}>Submit assignment</a>
 					{:else}
-						<a class="text-blue-700 hover:underline" href={assignment.uploaded_file}
+						<a class="text-ret-accent hover:underline" href={assignment.uploaded_file}
 							>View submission</a
 						>
 					{/if}
@@ -120,7 +120,7 @@
 
 	{#if open}
 		<div transition:slide class="bg-muted text-sm">
-			<div class="border-t-2 border-dashed">
+			<div class="border-t-2 border-dashed border-border">
 				<!-- todo: find a way to include these classes in the parent without the transition duration acting. -->
 			</div>
 			<div class="space-y-2 px-3 py-2">

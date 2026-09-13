@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { negateFn } from "$lib";
 	import Box from "$lib/components/box";
-	import Button from "$lib/components/button.svelte";
+	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Select from "$lib/components/select.svelte";
 	import { type ExpandAttendanceSubjectCardsOption } from "$lib/types";
 	import { isHttpError } from "@sveltejs/kit";
@@ -15,10 +15,15 @@
 	import * as remotes from "./settings.remote.js";
 	import NotificationSection from "./notifications-section.svelte";
 	import { DEFAULT_SETTINGS } from "./default-settings";
+	import { onMount } from "svelte";
 
 	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
 	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
-	import { onMount } from "svelte";
+	import HeartIcon from "phosphor-svelte/lib/HeartIcon";
+	import GithubLogoIcon from "phosphor-svelte/lib/GithubLogoIcon";
+	import PaletteIcon from "phosphor-svelte/lib/PaletteIcon";
+	import Input from "$lib/components/input.svelte";
+	import { setMode, userPrefersMode } from "mode-watcher";
 
 	let { data }: PageProps = $props();
 
@@ -120,6 +125,8 @@
 			};
 		}
 	});
+
+	let heartFilled = $state(false);
 </script>
 
 <svelte:head>
@@ -132,10 +139,10 @@
 
 <section>
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Tweaks</h2>
-	<p class="text-sm">Tweak some of the application behavior.</p>
+	<p class="text-sm">Tweak some of the application behavior & appearance.</p>
 
 	{#if tweaks != null}
-		<div class="mt-4 divide-y-2 border-2">
+		<div class="mt-4 divide-y-2 divide-border border-2 border-border">
 			<div class="flex justify-between gap-4 px-4 py-3">
 				<div class="space-y-1">
 					<div class="font-bold">Attendance percentage cutoff</div>
@@ -156,12 +163,12 @@
 								class="relative h-3 w-full grow cursor-pointer overflow-hidden border-2 bg-background"
 							>
 								<span
-									class="absolute h-full bg-red-300"
+									class="absolute h-full bg-ret-unsafe"
 									style="left: 0; right: {99 - tweaks.attendanceCutoffs.current[0]}%"
 								></span>
-								<Slider.Range class="h-full bg-green-300" />
+								<Slider.Range class="h-full bg-ret-safe" />
 								<span
-									class="absolute h-full bg-amber-300"
+									class="absolute h-full bg-ret-excellent"
 									style="right: 0; left: {tweaks.attendanceCutoffs.current[1] + 1}%"
 								></span>
 							</span>
@@ -191,7 +198,7 @@
 
 						<ul class="list-inside list-[square] text-sm">
 							<li>
-								Above or equal to <input
+								Above or equal to <Input
 									id="tweaks-safe-range-value"
 									disabled={tweaks.saving}
 									type="number"
@@ -199,13 +206,13 @@
 									max={tweaks.attendanceCutoffs.current[1]}
 									step="1"
 									bind:value={tweaks.attendanceCutoffs.current[0]}
-									class="p-0 pl-1"
+									class="p-0 pl-1 font-bold"
 								/>
 								% is considered
-								<b class="text-green-600">safe</b>.
+								<b class="text-success-foreground">safe</b>.
 							</li>
 							<li>
-								Above or equal to <input
+								Above or equal to <Input
 									id="tweaks-excellence-range-value"
 									disabled={tweaks.saving}
 									type="number"
@@ -213,10 +220,10 @@
 									max="99"
 									step="1"
 									bind:value={tweaks.attendanceCutoffs.current[1]}
-									class="p-0 pl-1"
+									class="p-0 pl-1 font-bold"
 								/>
 								% is considered
-								<b class="text-amber-500">excellent</b>!
+								<b class="text-ret-excellent-foreground">excellent</b>!
 							</li>
 						</ul>
 					</div>
@@ -224,32 +231,54 @@
 			</div>
 
 			<div class="flex justify-between gap-4 px-4 py-3">
-				<div class="space-y-1">
-					<div class="font-bold">Expand attendance subject cards</div>
+				<div class="space-y-2">
+					<div class="space-y-1">
+						<div class="font-bold">Expand attendance subject cards</div>
+						<p class="text-sm">
+							Configure how the subject cards in the attendance page should be shown. It can be
+							adjusted to only expand the critical ones!
+						</p>
+					</div>
 
-					<p class="text-sm">
-						Configure how the subject cards in the attendance page should be shown. It can be
-						adjusted to only expand the critical ones!
-					</p>
+					<Select
+						type="single"
+						items={Object.entries(expandAttendanceSubjectCardsOptions).map(([value, label]) => ({
+							label: label,
+							value: value,
+							disabled: false
+						}))}
+						bind:value={tweaks.expandAttendanceSubjectCards.current}
+						class="w-full justify-between"
+					/>
 				</div>
+			</div>
 
-				<Select
-					type="single"
-					items={Object.entries(expandAttendanceSubjectCardsOptions).map(([value, label]) => ({
-						label: label,
-						value: value,
-						disabled: false
-					}))}
-					bind:value={tweaks.expandAttendanceSubjectCards.current}
-				>
-					{#snippet trigger(label)}
-						{#if label != null}
-							{label}
-						{:else}
-							GHeyyy
-						{/if}
-					{/snippet}
-				</Select>
+			<div class="flex justify-between gap-4 px-4 py-3">
+				<div class="w-full space-y-2">
+					<div class="flex justify-between gap-4">
+						<div>
+							<div class="font-bold">Theme mode</div>
+							<p class="text-sm font-medium text-ret-accent">Retman is the official theme.</p>
+						</div>
+
+						<Select
+							type="single"
+							onValueChange={(value) => {
+								if (value === "light" || value === "dark" || value === "system") setMode(value);
+								else toast.error("Invalid value for theme mode");
+							}}
+							items={[
+								{ label: "Light", value: "light" },
+								{ label: "Dark", value: "dark" },
+								{ label: "System", value: "system" }
+							]}
+							value={userPrefersMode.current}
+							class={buttonVariants.variants.size.sm}
+						/>
+					</div>
+
+					<p class="text-sm">Change application theme mode.</p>
+				</div>
 			</div>
 		</div>
 
@@ -324,19 +353,21 @@
 		cache here, if your details seems wrong. -->
 	</p>
 
-	<div class="mt-4 divide-y-2 border-2">
+	<!-- todo: add options to clear stale & local cache -->
+	<div class="mt-4 divide-y-2 divide-border border-2 border-border">
 		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
 				<div class="flex justify-between gap-4">
 					<div>
 						<div class="font-bold">Refresh hard-cache</div>
-						<p class="text-sm font-medium text-blue-600">
+						<p class="text-sm font-medium text-ret-accent">
 							Last updated at <b>{timeFormatter.format(hardCacheLastUpdatedAt)}</b>
 						</p>
 					</div>
 
 					<Button
 						variant="outline"
+						size="sm"
 						disabled={refreshingHardCache}
 						onclick={async () => {
 							refreshingHardCache = true;
@@ -392,7 +423,7 @@
 
 	<div class="mt-4 space-y-2">
 		<h3 class="text-lg italic">This session</h3>
-		<div class="border-2 bg-blue-100">
+		<div class="border-2 border-border">
 			<SessionCard session={data.sessionUser.session} showLogout={false} />
 		</div>
 
@@ -402,7 +433,7 @@
 			{@const otherSessions = sessions.data.filter(negateFn(isCurrentSession))}
 			<h3 class="text-lg italic">Other sessions</h3>
 			{#if otherSessions.length > 0}
-				<div class="max-h-64 divide-y-2 overflow-scroll border-2">
+				<div class="max-h-64 divide-y-2 overflow-scroll border-2 border-border">
 					{#each otherSessions as session (session.id)}
 						<SessionCard
 							{session}
@@ -430,12 +461,12 @@
 <section class="space-y-4">
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Account</h2>
 
-	<div class="divide-y-2 border-2">
+	<div class="divide-y-2 divide-border border-2 border-border">
 		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
 				<div>
 					<div class="font-bold">Logout from your account</div>
-					<p class="text-sm font-medium text-blue-600">
+					<p class="text-sm font-medium text-ret-accent">
 						You logged in at <b>{timeFormatter.format(data.sessionUser.session.createdAt)}</b>
 					</p>
 				</div>
@@ -449,12 +480,12 @@
 			<LogoutDialog />
 		</div>
 
-		<div class="flex justify-between gap-4 bg-red-300 px-4 py-3">
+		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
 				<div>
 					<div class="font-bold">Destroy your account</div>
 				</div>
-				<p class="text-sm text-black/80">
+				<p class="text-sm">
 					Delete your Retlab account, and everything with it. This doesn't do anything to your
 					actual Etlab account.
 				</p>
@@ -462,4 +493,53 @@
 			<DestroyAccountDialog />
 		</div>
 	</div>
+</section>
+
+<section>
+	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Playground</h2>
+	<p class="text-sm">Not a real playground yet. But, very <b>Soon&trade;</b>.</p>
+
+	<div class="mt-4 divide-y-2 divide-border border-2 border-border">
+		<div class="flex justify-between gap-4 px-4 py-3">
+			<div class="space-y-2">
+				<div class="flex justify-between gap-4">
+					<div>
+						<div class="font-bold">Canvas</div>
+						<p class="text-sm font-medium text-ret-accent">Try out the components!</p>
+					</div>
+					<Button variant="outline" href="/canvas" size="sm">
+						<PaletteIcon weight="bold" />
+						Show me
+					</Button>
+				</div>
+
+				<p class="text-sm">
+					Canvas is basically a design / development page used for viewing all the components and
+					colors in a single page, so it's easy to make changes that affects all of them. So, expect
+					half-baked low-quality and broken implementations if you plan to look in there.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="relative border-t-2 border-border py-3">
+	<button
+		class="absolute top-0 left-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-1 bg-background px-2 leading-none text-ret-favourite"
+		onclick={() => (heartFilled = !heartFilled)}
+	>
+		<HeartIcon weight={heartFilled ? "fill" : "bold"} class="block shrink-0 text-ret-favourite" />
+		<GithubLogoIcon weight={heartFilled ? "bold" : "fill"} class="block shrink-0 text-foreground" />
+	</button>
+	<p class="text-sm">
+		Finding retlab useful? It's fully open-source by the way&excl; You can check out the source code
+		on GitHub:
+		<a
+			target="_blank"
+			href="https://github.com/dcdunkan/retlab"
+			class="font-medium underline hover:text-ret-accent"
+		>
+			https://github.com/dcdunkan/retlab
+		</a>. Any kind of help with the development is appreciated :&rpar;
+	</p>
 </section>

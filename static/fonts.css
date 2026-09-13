@@ -1,4 +1,20 @@
 @font-face {
+  font-family: 'Ysabeau Office';
+  src: url('/fonts/YsabeauOffice-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ysabeau Office';
+  src: url('/fonts/YsabeauOffice-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
   font-family: 'Lora';
   src: url('/fonts/Lora-Variable.woff2') format('woff2'),
        url('/fonts/Lora-Variable.woff') format('woff'),
@@ -30,5 +46,13 @@
   src: url('/fonts/Recursive_VF_1.085.woff2') format('woff2');
   font-weight: 300 1000;
   font-variation-settings: "MONO" 0, "CASL" 0.7, "CRSV" 0.5;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Recursive Mono';
+  src: url('/fonts/Recursive_VF_1.085.woff2') format('woff2');
+  font-weight: 300 1000;
+  font-variation-settings: "MONO" 1, "CASL" 0.1, "CRSV" 0.5;
   font-display: swap;
 }

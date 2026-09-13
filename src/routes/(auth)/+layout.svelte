@@ -107,6 +107,7 @@
 
 			return false;
 		}
+
 		try {
 			const unsubscribed = await unsubscribeLocalPushSubscription();
 			if (unsubscribed) {
@@ -144,13 +145,13 @@
 </script>
 
 <div class="min-h-screen w-full">
-	<nav class="sticky top-0 z-50 border-b-2 bg-background/50 backdrop-blur-lg">
+	<nav class="sticky top-0 z-50 border-b-2 border-border bg-background/50 backdrop-blur-lg">
 		<div class="mx-auto flex max-w-prose place-items-center justify-between px-4 py-2">
 			<div>
 				{#each pieces as piece, i (i)}
 					{#if i == pieces.length - 1}
 						{#if piece.label}
-							<span>{piece.label}</span>
+							<span class="font-medium">{piece.label}</span>
 						{/if}
 						{#if piece.icon}
 							<piece.icon weight="bold" />
@@ -171,19 +172,20 @@
 			{/if}
 		</div>
 	</nav>
-	<main class="mx-auto max-w-prose space-y-6 p-4">
-		{@render children()}
 
-		<footer>
-			<div class="text-center text-xs text-muted-foreground">
-				ret build <a
-					target="_blank"
-					href="https://github.com/dcdunkan/retlab/tree/{__GIT_SHA__}"
-					class="hover:text-primary"
-				>
-					{__GIT_SHORT_SHA__}
-				</a>
-			</div>
-		</footer>
+	<main class="mx-auto max-w-prose space-y-6 px-4 pt-4">
+		{@render children()}
 	</main>
+
+	<footer class="mt-3 px-4 pb-4">
+		<div class="text-center text-xs font-medium text-muted-foreground">
+			ret build <a
+				target="_blank"
+				href="https://github.com/dcdunkan/retlab/tree/{__GIT_SHA__}"
+				class="underline hover:text-ret-accent"
+			>
+				{__GIT_SHORT_SHA__}
+			</a>
+		</div>
+	</footer>
 </div>

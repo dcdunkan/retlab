@@ -1,0 +1,26 @@
+[
+  {
+    "id": "6b03afed-abf0-80af-8007-fa94b4aa1c99",
+    "name": "Light",
+    "group": "Retman",
+    "description": "",
+    "isSource": false,
+    "selectedTokenSets": {
+      "Global": "enabled",
+      "Retman/Light": "enabled",
+      "Colors": "enabled"
+    }
+  },
+  {
+    "id": "6b03afed-abf0-80af-8007-fa94f1cfbd76",
+    "name": "Dark",
+    "group": "Retman",
+    "description": "",
+    "isSource": false,
+    "selectedTokenSets": {
+      "Retman/Dark": "enabled",
+      "Global": "enabled",
+      "Colors": "enabled"
+    }
+  }
+]

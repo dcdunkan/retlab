@@ -7,23 +7,22 @@
 
 	export const buttonVariants = tv({
 		base: clsx(
-			"inline-flex shrink-0 items-center justify-center gap-2 rounded-none select-none text-sm font-medium whitespace-nowrap outline-none",
-			"focus-visible:border-black focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-			"border-2 border-black text-black",
+			"cursor-pointer inline-flex shrink-0 items-center justify-center gap-2 rounded-none select-none text-sm font-medium whitespace-nowrap outline-none",
+			"focus-visible:border-border focus-visible:ring-[3px] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:border-ret-destructive aria-invalid:ring-ret-destructive/20 dark:aria-invalid:ring-ret-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+			"border-2 text-foreground border-border",
 			"transition-all duration-75"
 		),
 		variants: {
 			shadow: {
 				default:
-					"shadow-sshadow active:translate-x-shadowx active:translate-y-shadowy active:shadow-none",
+					"shadow-block-shadow active:translate-x-shadow-x active:translate-y-shadow-y active:shadow-none",
 				none: "shadow-none"
 			},
 			variant: {
-				default: "bg-blue-400 hover:bg-blue-400/90",
-				destructive: "bg-red-400 hover:bg-red-400/90",
+				default: "bg-ret-primary hover:bg-ret-primary/90 border-ret-primary-border",
+				destructive: "bg-ret-destructive hover:bg-ret-destructive/90 border-ret-destructive-border",
 				outline: "bg-background hover:bg-foreground/10",
 				ghost: "shadow-none border-none bg-inherit hover:bg-foreground/10"
-				// secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-xs",
 				// link: "text-primary underline-offset-4 hover:underline"
 			},
 			size: {
@@ -32,9 +31,22 @@
 				lg: "h-10 px-6 has-[>svg]:px-4",
 				icon: "size-9",
 				"icon-sm": "size-8",
+				"icon-xsm": "size-6",
 				"icon-lg": "size-10"
 			}
 		},
+		compoundVariants: [
+			{
+				variant: "default",
+				shadow: "default",
+				class: "shadow-ret-primary-block-shadow"
+			},
+			{
+				variant: "destructive",
+				shadow: "default",
+				class: "shadow-ret-destructive-block-shadow"
+			}
+		],
 		defaultVariants: {
 			shadow: "default",
 			variant: "default",
