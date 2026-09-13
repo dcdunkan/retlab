@@ -40,7 +40,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--block-shadow: oklch(0.314 0 0); /* 700 */
 
 	--muted: oklch(0.95 0 0); /* 300 */
-	--muted-foreground: oklch(0.695 0 0); /* 400 */
+	--muted-foreground: oklch(0.575 0 0); /* 400 */
 	/* --muted-border: todo */
 
 	--success: oklch(92.5% 0.084 155.995); /* green-200 */
