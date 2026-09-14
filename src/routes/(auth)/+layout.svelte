@@ -39,20 +39,6 @@
 		}
 		settingsState.resolve();
 
-		const cacheStorageIdb = await openIdb("cache-storage", 1, [
-			{ name: "et-res-cache", options: { keyPath: "key" } }
-		]);
-		const etlabResponseCache = new IDBStore<{
-			key: string;
-			data: unknown;
-			timestamp: number;
-		}>(cacheStorageIdb, "et-res-cache");
-
-		idb.set({
-			cacheStorageIdb,
-			etlabResponseCache
-		});
-
 		// Resolve notification server settings:
 		if (data.sessionUser.notificationServerSettings != null) {
 			notificationServerSettingsState.set({
@@ -108,17 +94,38 @@
 			return false;
 		}
 
-		try {
-			const unsubscribed = await unsubscribeLocalPushSubscription();
-			if (unsubscribed) {
-				console.log("Unsubscribed invalid push subscription");
-				notificationServerSettingsState.set(null);
-			}
-		} catch (error) {
-			console.error("Error while trying to unsubscribe notifications");
-			console.error(error);
+		async function loadIdb() {
+			const cacheStorageIdb = await openIdb("cache-storage", 1, [
+				{ name: "et-res-cache", options: { keyPath: "key" } }
+			]);
+
+			const etlabResponseCache = new IDBStore<{
+				key: string;
+				data: unknown;
+				timestamp: number;
+			}>(cacheStorageIdb, "et-res-cache");
+
+			idb.set({
+				cacheStorageIdb,
+				etlabResponseCache
+			});
 		}
-		notificationServerSettingsState.resolve();
+
+		async function unsubscribeLocalPushSubscriptionIfExpired() {
+			try {
+				const unsubscribed = await unsubscribeLocalPushSubscription();
+				if (unsubscribed) {
+					console.log("Unsubscribed invalid push subscription");
+					notificationServerSettingsState.set(null);
+				}
+			} catch (error) {
+				console.error("Error while trying to unsubscribe notifications");
+				console.error(error);
+			}
+			notificationServerSettingsState.resolve();
+		}
+
+		await Promise.allSettled([loadIdb(), unsubscribeLocalPushSubscriptionIfExpired()]);
 	});
 
 	let pieces: {

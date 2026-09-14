@@ -14,6 +14,8 @@ export async function openIdb(
 	return new Promise<IDBDatabase>((resolve, reject) => {
 		const request = indexedDB.open(name, version);
 
+		console.log("Requesting indexeddb:", request.readyState);
+
 		request.onupgradeneeded = (event) => {
 			const db = (event.target as IDBOpenDBRequest).result;
 			for (const store of stores) {
