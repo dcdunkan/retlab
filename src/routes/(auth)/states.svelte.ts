@@ -4,8 +4,10 @@
 import { cyrb53, ETLAB_RESPONSE_FRESH_EXPIRY, ETLAB_RESPONSE_STALE_EXPIRY } from "$lib";
 import { IDBStore } from "$lib/indexeddb";
 import type {
+	ClientWebAccessSettingsState,
 	ClientNotificationServerSettingsState,
-	ClientSettingsState
+	ClientSettingsState,
+	DeviceType
 } from "$lib/server/schema";
 import { isHttpError, isValidationError, type RemoteQueryFunction } from "@sveltejs/kit";
 import { DEFAULT_SETTINGS } from "./settings/default-settings";
@@ -35,6 +37,25 @@ function createSettings() {
 	};
 }
 
+export const auth = createResolvableState<{
+	session: {
+		id: string;
+		deviceInfo: string | null;
+		deviceType: DeviceType;
+		createdAt: Date;
+	};
+	account: {
+		username: string;
+		semesterId: number;
+		lastUpdatedAt: Date;
+	};
+	college: {
+		id: number;
+		name: string;
+		baseUrl: string;
+	};
+}>();
+
 export const notificationServerSettingsState = createNotificationSettings();
 
 function createNotificationSettings() {
@@ -56,6 +77,8 @@ function createNotificationSettings() {
 		}
 	};
 }
+
+export const webAccessSettingsState = createResolvableState<ClientWebAccessSettingsState>();
 
 export const idb = createResolvableState<{
 	cacheStorageIdb: IDBDatabase;
@@ -87,38 +110,55 @@ function createResolvableState<T>() {
 	} as {
 		resolve(): void;
 		set(newValue: T): void;
-	} & (
-		| { readonly resolved: true; readonly value: T }
-		| { readonly resolved: false; readonly value: undefined }
-	);
+	} & ({ readonly resolved: true; readonly value: T } | { readonly resolved: false });
 }
 
+type CacheUserInfo = {
+	college: {
+		id: number;
+	};
+	account: {
+		username: string;
+	};
+};
+
+export type CachedLoadData<RQ> =
+	RQ extends RemoteQueryFunction<infer I, infer O>
+		? {
+				readonly loading: boolean;
+				readonly error: unknown;
+				readonly data: O | undefined;
+				load(user: CacheUserInfo, input: I): Promise<void>;
+			}
+		: never;
+
 // todo: include user info in cache key
+// todo: make sure to clear idb on logout
 export function cachedGracefulRemoteQuery<I, O>(
 	cacheInfo: {
 		name: string;
 		version: number;
 	},
 	remoteQuery: RemoteQueryFunction<I, O>
-) {
+): CachedLoadData<RemoteQueryFunction<I, O>> {
 	let loading = $state.raw<boolean>(true);
-	let data = $state.raw<O>();
+	let data = $state<O>();
 	let error = $state.raw<unknown>();
 
-	function computeCacheKey(stringifiedInput: string) {
+	function computeCacheKey(cacheUser: CacheUserInfo, stringifiedInput: string) {
 		return (
-			`${cacheInfo.name}:${cacheInfo.version}` +
+			`${cacheUser.college.id}-${cacheUser.account.username}:${cacheInfo.name}:${cacheInfo.version}` +
 			(typeof stringifiedInput !== "string" ? "" : ":" + cyrb53(stringifiedInput))
 		);
 	}
 
-	async function loadFn(input: I) {
+	async function loadFn(cacheUser: CacheUserInfo, input: I) {
 		loading = true;
 		data = undefined;
 		error = undefined;
 
 		const now = Date.now();
-		const cacheKey = computeCacheKey(JSON.stringify(input));
+		const cacheKey = computeCacheKey(cacheUser, JSON.stringify(input));
 
 		if (idb.resolved) {
 			const cached = await idb.value.etlabResponseCache.get(cacheKey);
@@ -138,6 +178,7 @@ export function cachedGracefulRemoteQuery<I, O>(
 					timestamp: now
 				});
 			}
+			error = null;
 		} catch (err) {
 			error = err;
 			if (!isHttpError(err) && !isValidationError(err) && idb.resolved) {
@@ -166,8 +207,8 @@ export function cachedGracefulRemoteQuery<I, O>(
 		get data() {
 			return data;
 		},
-		async load(input: I) {
-			return loadFn(input);
+		async load(user: CacheUserInfo, input: I) {
+			return await loadFn(user, input);
 		}
 	};
 }

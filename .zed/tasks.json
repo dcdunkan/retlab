@@ -1,0 +1,17 @@
+// Project tasks configuration. See https://zed.dev/docs/tasks for documentation.
+//
+// Example:
+[
+	{
+		"label": "run dev",
+		"show_command": true,
+		"command": "pnpm run dev --host",
+		"use_new_terminal": true,
+		"reveal": "no_focus",
+		"allow_concurrent_runs": false,
+		"reveal_target": "dock",
+		"hide": "never",
+		"show_summary": true,
+		"save": "none"
+	}
+]

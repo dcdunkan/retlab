@@ -98,6 +98,13 @@ export const handle = async ({ event, resolve }) => {
 					authToken: schema.notificationServerSettings.authToken,
 					vapidKey: schema.notificationServerSettings.vapidKey,
 					etlabAccessToken: schema.notificationServerSettings.etlabAccessToken
+				},
+				webAccessSettings: {
+					setupAt: schema.webAccessSettings.setupAt,
+					hashSalt: schema.webAccessSettings.hashSalt,
+					encryptionNonce: schema.webAccessSettings.encryptionNonce,
+					encryptionAuthTag: schema.webAccessSettings.encryptionAuthTag,
+					encryptedPassword: schema.webAccessSettings.encryptedPassword
 				}
 			})
 			.from(schema.sessions)
@@ -123,11 +130,18 @@ export const handle = async ({ event, resolve }) => {
 					eq(schema.notificationServerSettings.collegeId, schema.accounts.collegeId)
 				)
 			)
+			.leftJoin(
+				schema.webAccessSettings,
+				and(
+					eq(schema.webAccessSettings.accountUsername, schema.accounts.username),
+					eq(schema.webAccessSettings.collegeId, schema.accounts.collegeId)
+				)
+			)
 			.where(eq(schema.sessions.id, event.locals.sessionId))
 			.limit(1)
 			.$withCache({
 				tag: sessionCacheTag(event.locals.sessionId),
-				config: { ex: (14 * DAY) / SECOND }
+				config: { ex: (1 * DAY) / SECOND }
 			});
 
 		if (dbSession == null) {
@@ -141,7 +155,8 @@ export const handle = async ({ event, resolve }) => {
 			account: dbSession.account,
 			college: dbSession.college,
 			settings: dbSession.settings,
-			notificationServerSettings: dbSession.notificationServerSettings
+			notificationServerSettings: dbSession.notificationServerSettings,
+			webAccessSettings: dbSession.webAccessSettings
 		};
 		return resolve(event);
 	} else {

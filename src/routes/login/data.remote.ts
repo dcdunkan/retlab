@@ -10,6 +10,7 @@ import type { Account } from "$lib/server/schema";
 import type { JWTPayloadData } from "$lib/types";
 import { invalid, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
+import { isHTTPError, isKyError } from "ky";
 import { loginSchema } from "./login-schema";
 
 export const loginForm = form(loginSchema, async (data, issue) => {
@@ -31,10 +32,18 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 				username: data.username,
 				password: data.password
 				// todo: hostel support
-			} satisfies login.LoginRequest
+			} satisfies login.LoginRequest,
+			timeout: 30 * 1000
 		})
 		.json()
-		.catch(() => invalid(issue("Something went wrong")));
+		.catch((err) => {
+			if (isKyError(err) && isHTTPError(err)) {
+				invalid(issue(`Couldn't login, returned ${err.response.status}`));
+			} else {
+				console.error(err);
+				invalid(issue("Couldn't login: Something went wrong"));
+			}
+		});
 
 	if (typeof loginDetails.error == "string") {
 		invalid(issue(loginDetails.error));
@@ -51,7 +60,7 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 	if (dashResponse.ok) {
 		const parsed: dash.DashResponse = await dashResponse.json();
 		if (parsed.error || parsed.login == false) {
-			console.error(parsed); // something went wrong, will do later.
+			// console.error(parsed); // something went wrong, will do later.
 			dashDetails = null;
 		} else {
 			dashDetails = parsed;
@@ -104,6 +113,19 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 			collegeId: schema.accounts.collegeId,
 			username: schema.accounts.username
 		});
+
+	// const [account] = await db
+	// 	.select({
+	// 		collegeId: schema.accounts.collegeId,
+	// 		username: schema.accounts.username
+	// 	})
+	// 	.from(schema.accounts)
+	// 	.where(
+	// 		and(
+	// 			eq(schema.accounts.collegeId, data.collegeId),
+	// 			eq(schema.accounts.username, data.username)
+	// 		)
+	// 	);
 
 	const userAgent = event.request.headers.get("User-Agent");
 	const deviceInfo = getDeviceInfo(userAgent);

@@ -1,0 +1,2947 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
+<!-- 
+        __                             .__         
+  _____/  |_ __ ____  _  _______       |__| ____   
+_/ __ \   __\  |  \ \/ \/ /\__  \      |  |/    \  
+\  ___/|  | |  |  /\     /  / __ \_    |  |   |  \ 
+ \___  >__| |____/  \/\_/  (____  / /\ |__|___|  / 
+     \/                         \/  \/         \/  
+ -->	
+<link rel="stylesheet" type="text/css" href="/assets/a5f312c1/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/assets/a5f312c1/css/bootstrap-yii.css" />
+<link rel="stylesheet" type="text/css" href="/assets/5961d2eb/chosen.css" />
+<style type="text/css">
+/*<![CDATA[*/
+
+
+.spinner {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -50px; /* half width of the spinner gif */
+	margin-top: -50px; /* half height of the spinner gif */
+	text-align:center;
+	z-index:9999909;
+	overflow: auto;
+	width: 100px; /* width of the spinner gif */
+	height: 102px; /*hight of the spinner gif +2px to fix IE8 issue */
+}
+#blocker {width:100%; height:100%; display:block; background-color:black; opacity:0.3;  z-index:9999908; position: fixed;top: 0;left: 0;}
+
+/*]]>*/
+</style>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/e51a8773/jquery.min.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript">
+/*<![CDATA[*/
+ $.ajaxSetup({data: {"YII_CSRF_TOKEN": "UHMxRFJ6SnFsMWxJa012dXNYS2tJazg1NGdTVjhsdFRQE3jzxqpiauOxQPI7pXIERhBLN8r_isaaKcLD3nzUsQ=="},cache:false});
+/*]]>*/
+</script>
+<title>etlab | Academic analysis of SWARAG SIBY</title>
+<!-- KaTeX CSS + JS for math equation rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="/source/etlab.css?v=1687368800">
+<link href="/source/theme-grey.css" rel="stylesheet" type="text/css" title="theme-grey" class="theme-css"/>
+<!--<link href="/source/theme-blue.css" rel="alternate stylesheet" type="text/css" title="theme-blue"  />
+<link href="/source/theme-red.css" rel="alternate stylesheet" type="text/css" title="theme-red"  />-->
+	 <style>
+        html, body {
+            height:100%;
+        }       
+		body { height:-moz-calc(100% - 113px); height:-webkit-calc(100% - 113px); height:calc(100% - 113px);  }  
+.wrapper {  min-height:100%; height:auto; margin:0; padding:0; display:block; }
+    </style>
+	</head>
+	<body>
+	<div class="wrapper">
+		    <div id="header">
+        <h1><img src="/images/etuwa-icon.png" alt="" /></h1>
+        <div id="date-time">
+            <!-- <div class="dash-date"></div>
+            <div class="dash-time"></div> -->
+			<!-- Collge name -->
+			<div class="dash-date" style="width: 600px !important;">TKM College of Engineering</div>
+        </div>
+    </div>
+				<div id="user-nav" class="navbar">
+            <ul class="nav btn-group">
+                <li class="btn btn-inverse dropdown"><a href="#" data-toggle="dropdown" data-target="#menu-profile" class="dropdown-toggle"><i class="icon icon-user"></i> <span class="text">SWARAG SIBY</span> <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+													<li><a href="/student/profile">Profile</a></li>
+												<li></li>
+																<li><a href="/user/changepassword">Change Password</a></li>
+					                     </ul>
+				</li>
+                <li class="btn btn-inverse dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages" class="dropdown-toggle"><i class="icon icon-envelope"></i> <span class="text">Messages&nbsp;</span> <span class="notify">&nbsp;0&nbsp;</span> &nbsp;<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/user/messages">Inbox</a></li>
+                        <li><a href="/user/sentitems">Sent Items</a></li>
+                    </ul>
+                </li>
+                <li class="btn btn-mini btn-inverse"><a title="" href="/user/logout"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a></li>
+            </ul>
+        </div>
+                    <div id="sidebar">
+						<ul id="yw0">
+<li><a href="/user/dashboard"><i class="icon icon-home"></i><span class="forLargeWidth">Dashboard</span><span class="forSmallWidth">Dashboard</span></a></li>
+<li><a href="/student/attendance"><i class="icon icon-th-list"></i><span class="forLargeWidth">Attendance</span><span class="forSmallWidth">Attendance</span></a></li>
+<li><a href="/student/results"><i class="icon icon-edit"></i><span class="forLargeWidth">Results</span><span class="forSmallWidth">Results</span></a></li>
+<li><a href="/student/timetable"><i class="icon icon-th-large"></i><span class="forLargeWidth">TimeTable</span><span class="forSmallWidth">TimeTable</span></a></li>
+<li><a href="/student/assignments"><i class="icon icon-th"></i><span class="forLargeWidth">Assignments</span><span class="forSmallWidth">Assignments</span></a></li>
+<li><a href="/student/materials"><i class="icon icon-th"></i><span class="forLargeWidth">Materials</span><span class="forSmallWidth">Materials</span></a></li>
+<li><a href="/usermanual/viewmanual"><i class="icon icon-th"></i><span class="forLargeWidth">User Manual</span><span class="forSmallWidth">User Manual</span></a></li>
+</ul>					</div>
+        
+                <!--<div id="style-switcher">-->
+        <!--    <i class="icon-arrow-left icon-white"></i>-->
+        <!--    <span>Style:</span>-->
+        <!--    <a id="grey-theme-button" href="#theme-grey" style="background-color: #555555;border-color: #aaaaaa;"></a>-->
+        <!--    <a id="blue-theme-button" href="#theme-blue" style="background-color: #2D2F57;"></a>-->
+        <!--    <a id="red-theme-button" href="#theme-red" style="background-color: #673232;"></a>-->
+        <!--</div>-->
+			
+		
+		<div id="content">
+			<div id="content-header">
+			</div>
+							<div id="breadcrumb">
+<a data-original-title="Go to Home" href="/" class="tip-bottom"><i class="icon-home"></i> Home</a><a href="#" class="current">Academic Analysis</a></div>						<div class="container-fluid">
+									<!--<div style="background-color: #f8d7da;color: #721c24;padding: 15px 20px;border: 1px solid #f5c6cb;border-radius: 8px;font-family: Arial, sans-serif;font-size: 18px;font-weight: bold;text-align: center;margin: 20px 0;">
+						⚠️ Your subscription is due for renewal. Please renew to ensure uninterrupted service.
+					</div>-->
+								<div class="row-fluid">  
+				<div class="span12" id="yw1"></div> 
+				</div>
+								<!-- Attendance Permission Request Modal -->
+<div id="attendanceRequestModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="attendanceRequestModalLabel" aria-hidden="true" style="width: 750px; margin-left: -375px; z-index: 10500; display: none; background: #fff; border-radius: 6px; border: 1px solid #ccc; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+	<div class="modal-header" style="padding: 9px 15px; border-bottom: 1px solid #eee; background: #f5f5f5;">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="float: right; font-size: 20px; font-weight: bold; line-height: 20px; color: #000; text-shadow: 0 1px 0 #fff; opacity: .2; border: 0; background: transparent; cursor: pointer;">&times;</button>
+		<h3 id="attendanceRequestModalLabel" style="margin: 0; line-height: 30px; font-size: 18px;">Send Attendance Request</h3>
+	</div>
+	<div class="modal-body" id="attendanceRequestModalBody" style="max-height: 500px; padding: 15px; overflow-y: auto;">
+		<div style="text-align: center; padding: 20px;">
+			<img src="/images/ajax-loader.gif" alt="Loading..."/> Loading...
+		</div>
+	</div>
+</div>
+
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript">
+(function() {
+	function ensureModalContainer() {
+		var modal = document.getElementById('attendanceRequestModal');
+		if (!modal) {
+			modal = document.createElement('div');
+			modal.id = 'attendanceRequestModal';
+			modal.className = 'modal hide fade';
+			modal.tabIndex = -1;
+			modal.setAttribute('role', 'dialog');
+			modal.setAttribute('aria-hidden', 'true');
+			modal.style.cssText = 'width: 750px; margin-left: -375px; z-index: 10500; display: none; background: #fff; border-radius: 6px; border: 1px solid #ccc; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: fixed; top: 10%; left: 50%;';
+			modal.innerHTML = '<div class="modal-header" style="padding: 9px 15px; border-bottom: 1px solid #eee; background: #f5f5f5;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="float: right; font-size: 20px; font-weight: bold; line-height: 20px; color: #000; opacity: .4; border: 0; background: transparent; cursor: pointer;">&times;</button><h3 id="attendanceRequestModalLabel" style="margin: 0; line-height: 30px; font-size: 18px;">Send Attendance Request</h3></div><div class="modal-body" id="attendanceRequestModalBody" style="max-height: 500px; padding: 15px; overflow-y: auto;"><div style="text-align: center; padding: 20px;">Loading...</div></div>';
+			document.body.appendChild(modal);
+		}
+		return modal;
+	}
+
+	function showModal(requestUrl) {
+		var modal = ensureModalContainer();
+		var modalBody = document.getElementById('attendanceRequestModalBody');
+		if (!modalBody) return;
+
+		modalBody.setAttribute('data-url', requestUrl);
+		modalBody.innerHTML = '<div style="text-align: center; padding: 30px;"><img src="/images/ajax-loader.gif" alt="Loading..."/> Loading request form...</div>';
+
+		if (typeof window.jQuery !== 'undefined' && typeof window.jQuery.fn.modal === 'function') {
+			window.jQuery(modal).modal('show');
+		} else {
+			modal.style.display = 'block';
+			modal.classList.add('in');
+			var backdrop = document.getElementById('attendanceRequestModalBackdrop');
+			if (!backdrop) {
+				backdrop = document.createElement('div');
+				backdrop.id = 'attendanceRequestModalBackdrop';
+				backdrop.className = 'modal-backdrop fade in';
+				backdrop.style.cssText = 'position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 10400; background-color: #000; opacity: 0.5;';
+				document.body.appendChild(backdrop);
+			} else {
+				backdrop.style.display = 'block';
+			}
+		}
+
+		var xhr = new XMLHttpRequest();
+		var separator = requestUrl.indexOf('?') !== -1 ? '&' : '?';
+		var urlWithAjax = requestUrl + separator + 'ajax=1';
+		xhr.open('GET', urlWithAjax, true);
+		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		xhr.onload = function() {
+			if (xhr.status >= 200 && xhr.status < 400) {
+				// Strip any stylesheet link tags to prevent main page sidebar/layout reflow distortion
+				var cleanHtml = xhr.responseText.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+				modalBody.innerHTML = cleanHtml;
+				var scripts = modalBody.getElementsByTagName('script');
+				for (var i = 0; i < scripts.length; i++) {
+					try {
+						eval(scripts[i].innerText || scripts[i].textContent);
+					} catch (err) {}
+				}
+			} else {
+				modalBody.innerHTML = '<div class="alert alert-error">Failed to load request content.</div>';
+			}
+		};
+		xhr.onerror = function() {
+			modalBody.innerHTML = '<div class="alert alert-error">Network error. Failed to load content.</div>';
+		};
+		xhr.send();
+	}
+
+	function closeModal() {
+		var modal = document.getElementById('attendanceRequestModal');
+		if (modal) {
+			if (typeof window.jQuery !== 'undefined' && typeof window.jQuery.fn.modal === 'function') {
+				window.jQuery(modal).modal('hide');
+			}
+			modal.style.display = 'none';
+			modal.classList.remove('in');
+		}
+		var backdrop = document.getElementById('attendanceRequestModalBackdrop');
+		if (backdrop) {
+			backdrop.style.display = 'none';
+		}
+	}
+
+	document.addEventListener('click', function(e) {
+		var target = e.target;
+		if (!target) return;
+
+		if (target.matches('[data-dismiss="modal"], .close, #attendanceRequestModalBackdrop')) {
+			closeModal();
+			return;
+		}
+
+		while (target && target.tagName !== 'A') {
+			target = target.parentElement;
+		}
+		if (!target) return;
+
+		var href = target.getAttribute('href');
+		if (!href || href === '#' || href.indexOf('javascript:') === 0) return;
+
+		var lowerHref = href.toLowerCase();
+		if (lowerHref.indexOf('sendpermissionrequest') !== -1 || (lowerHref.indexOf('sendrequest') !== -1 && lowerHref.indexOf('viewrequest') === -1 && lowerHref.indexOf('approverequest') === -1)) {
+			e.preventDefault();
+			showModal(href);
+		}
+	}, true);
+
+	document.addEventListener('submit', function(e) {
+		var form = e.target;
+		var modalBody = document.getElementById('attendanceRequestModalBody');
+		if (!modalBody || !modalBody.contains(form)) return;
+
+		e.preventDefault();
+		var actionUrl = form.getAttribute('action') || modalBody.getAttribute('data-url') || location.href;
+		
+		var formData = new FormData(form);
+		formData.append('ajax', '1');
+
+		var oldMsg = document.getElementById('modal-submit-msg');
+		if (oldMsg) oldMsg.parentNode.removeChild(oldMsg);
+
+		var infoDiv = document.createElement('div');
+		infoDiv.id = 'modal-submit-msg';
+		infoDiv.className = 'alert alert-info';
+		infoDiv.textContent = 'Submitting request...';
+		modalBody.insertBefore(infoDiv, modalBody.firstChild);
+
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', actionUrl, true);
+		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		xhr.onload = function() {
+			var msgDiv = document.getElementById('modal-submit-msg');
+			if (msgDiv) msgDiv.parentNode.removeChild(msgDiv);
+
+			var isJson = false;
+			var data = null;
+			try {
+				data = JSON.parse(xhr.responseText);
+				isJson = true;
+			} catch(err) {}
+
+			if (isJson && data) {
+				if (data.status === 'success' || data.success) {
+					modalBody.innerHTML = '<div class="alert alert-success">' + (data.message || 'Request submitted successfully.') + '</div>';
+					setTimeout(function() {
+						closeModal();
+						window.location.reload();
+					}, 1500);
+				} else if (data.status === 'error' || data.error || data.status === false) {
+					var errDiv = document.createElement('div');
+					errDiv.id = 'modal-submit-msg';
+					errDiv.className = 'alert alert-error';
+					errDiv.textContent = data.message || data.error || 'Failed to process request.';
+					modalBody.insertBefore(errDiv, modalBody.firstChild);
+				} else {
+					var cleanResponse = xhr.responseText.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+					modalBody.innerHTML = cleanResponse;
+				}
+			} else {
+				var cleanResponse = xhr.responseText.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+				modalBody.innerHTML = cleanResponse;
+			}
+		};
+		xhr.onerror = function() {
+			var msgDiv = document.getElementById('modal-submit-msg');
+			if (msgDiv) msgDiv.parentNode.removeChild(msgDiv);
+			alert('Error processing request.');
+		};
+		xhr.send(formData);
+	}, true);
+})();
+</script>
+
+                <!-- ajax loader image ---->				
+				<div id="blocker" style="display:none;">	
+					<div id="spinner" class="spinner" style="display:none;">
+						<img id="img-spinner" src="/images/ajax-loader.gif" alt="Loading"/>
+					</div>
+				</div>
+					<div class="row-fluid">
+		<div class="span12">
+			<style>
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+    position: relative;
+}
+.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+}
+.accordion.active:after {
+    content: '\2212';
+}
+.active, .accordion:hover {
+    background-color: #ccc;
+}
+.panel {
+    padding: 0 10px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: solid 1px;
+}
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+.main {
+    background-color: #eaf5f5;
+    color: #0a0a0a;
+    border: solid #ecdede 1px;
+    width: 250px;
+}
+tr:nth-child(even){background-color: #f2f2f2}
+th {
+    background-color: #7d8484;
+    color: #fff;
+    border-color: #e5eaea;
+}
+.rTable {
+    display: table;
+    width: 100%;
+}
+.rTableRow {
+    display: table-row;
+}
+.rTableHead {
+    background-color: #4CAF50;
+    color: white;
+}
+.rTableCell, .rTableHead {
+    display: table-cell;
+    padding: 3px 10px;
+    border: 1px solid #999999;
+    width: 160px;
+}
+
+.backlog-container {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+.backlog-header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2a3f5f;
+}
+.semester-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 15px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+.backlog-item {
+    margin-left: 20px;
+    margin-bottom: 5px;
+    color: #555;
+}
+.not-passed {
+    color: red;
+    font-style: italic;
+}
+.passed {
+    color: green;
+}
+.pass-chance {
+    font-size: 13px;
+    color: #666;
+    margin-left: 10px;
+}
+</style>
+
+
+
+
+	<div class="widget-box">
+		<div class="widget-title">
+			<span class="icon"><i class="icon-signal"></i></span>			<h5>
+				Academic Analysis of SWARAG SIBY (CSE 2K23B)			</h5>
+					</div>
+				<div class="widget-content ">
+				
+<div class="col-md-8">
+              <button class="accordion" style="margin-bottom:6px">
+        <table style="width:98%">
+            <thead>
+            <tr>
+                <th class="main">Ist Semester</th>
+                <th class="main">Attendance: 284/303 (94%)</th>
+                <th class="main">SGPA: 9.53</th>
+                <th class="main">Earned Credit: 19</th>
+                <th class="main">Cumulative Credit: 19</th>
+                <th class="main">CGPA: 9.53</th>
+                <th class="main">Result:
+                    <font style="color:green">PASSED</font>                </th>
+            </tr>
+            </thead>
+        </table>
+    </button>
+    <div class="panel">
+        <table class="mytable" style="margin-top: 10px; margin-bottom: 10px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Attendance</th>
+                <th>Internal Marks</th>
+                <th>Grade</th>
+                <th>Earned Credit</th>
+                <th>Result</th>
+                <th> Chance </th>
+                <th>GPA</th>
+            </tr>
+            </thead>
+            <tbody>
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MAT101 - Calculus and Linear Algebra</td>
+                <td>37/40 (93%)</td>
+                <td>40                <td>S</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Calculus and Linear Algebra</div>
+                            <div class="rTableCell">37/40</div>
+                            <div class="rTableCell">32.49/40</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Calculus and Linear Algebra</div>
+                            <div class="rTableCell">40/40</div>
+                            <div class="rTableCell">34.33/40</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23PYP102 - Engineering Physics</td>
+                <td>46/46 (100%)</td>
+                <td>59                <td>S</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Engineering Physics</div>
+                            <div class="rTableCell">37/40</div>
+                            <div class="rTableCell">32.05/40</div>
+                            <div class="rTableCell">4</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Engineering Physics</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">31.93/40</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23EST104 - Fundamentals of Electrical  Engineering</td>
+                <td>32/34 (94%)</td>
+                <td>40                <td>B+</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Fundamentals of Electrical  Engineering</div>
+                            <div class="rTableCell">39/40</div>
+                            <div class="rTableCell">30.65/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Fundamentals of Electrical  Engineering</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">26.5/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23ESP107 - Technical English for Engineers</td>
+                <td>38/39 (97%)</td>
+                <td>52                <td>A+</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Technical English for Engineers</div>
+                            <div class="rTableCell">36/40</div>
+                            <div class="rTableCell">34.38/40</div>
+                            <div class="rTableCell">5</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CST105 - Logic System Design</td>
+                <td>23/24 (96%)</td>
+                <td>94                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Logic System Design</div>
+                            <div class="rTableCell">27/30</div>
+                            <div class="rTableCell">20.51/30</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Logic System Design</div>
+                            <div class="rTableCell">28/30</div>
+                            <div class="rTableCell">22.13/30</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUL111 - Design Thinking</td>
+                <td>17/18 (94%)</td>
+                <td>46                <td>S</td>
+                <td>1</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Design Thinking</div>
+                            <div class="rTableCell">7.5/10</div>
+                            <div class="rTableCell">8.17/10</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23ESL106 - Introduction to Programming  Frameworks</td>
+                <td>23/25 (92%)</td>
+                <td>47                <td>S</td>
+                <td>1</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Introduction to Programming  Frameworks</div>
+                            <div class="rTableCell">18/20</div>
+                            <div class="rTableCell">18.99/20</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Introduction to Programming  Frameworks</div>
+                            <div class="rTableCell">20/20</div>
+                            <div class="rTableCell">17.93/20</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23ESL107 - Application Development Lab</td>
+                <td>25/25 (100%)</td>
+                <td>47                <td>S</td>
+                <td>1</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Application Development Lab</div>
+                            <div class="rTableCell">10/10</div>
+                            <div class="rTableCell">8.93/10</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MCJ110 - IDEA Lab Workshop</td>
+                <td>43/52 (83%)</td>
+                <td>96                <td>S</td>
+                <td></td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">IDEA Lab Workshop</div>
+                            <div class="rTableCell">45/50</div>
+                            <div class="rTableCell">35.83/50</div>
+                            <div class="rTableCell">4</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                                    
+            </tbody>
+        </table>
+    </div>
+            <button class="accordion" style="margin-bottom:6px">
+        <table style="width:98%">
+            <thead>
+            <tr>
+                <th class="main">IInd Semester</th>
+                <th class="main">Attendance: 256/280 (91%)</th>
+                <th class="main">SGPA: 9.30</th>
+                <th class="main">Earned Credit: 22</th>
+                <th class="main">Cumulative Credit: 41</th>
+                <th class="main">CGPA: 9.4</th>
+                <th class="main">Result:
+                    <font style="color:green">PASSED</font>                </th>
+            </tr>
+            </thead>
+        </table>
+    </button>
+    <div class="panel">
+        <table class="mytable" style="margin-top: 10px; margin-bottom: 10px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Attendance</th>
+                <th>Internal Marks</th>
+                <th>Grade</th>
+                <th>Earned Credit</th>
+                <th>Result</th>
+                <th> Chance </th>
+                <th>GPA</th>
+            </tr>
+            </thead>
+            <tbody>
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUT212 - Universal Human Values - II</td>
+                <td>27/28 (96%)</td>
+                <td>35                <td>B</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>7</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Universal Human Values - II</div>
+                            <div class="rTableCell">33/40</div>
+                            <div class="rTableCell">30.58/40</div>
+                            <div class="rTableCell">8</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Universal Human Values - II</div>
+                            <div class="rTableCell">35/40</div>
+                            <div class="rTableCell">31.15/40</div>
+                            <div class="rTableCell">11</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MAP200 - Ordinary Differential Equations and Transforms</td>
+                <td>51/54 (94%)</td>
+                <td>57                <td>S</td>
+                <td>5</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Ordinary Differential Equations and Transforms</div>
+                            <div class="rTableCell">39/40</div>
+                            <div class="rTableCell">27.65/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Ordinary Differential Equations and Transforms</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">26.28/40</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CYP203 - Engineering Chemistry</td>
+                <td>42/45 (93%)</td>
+                <td>55                <td>A+</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Engineering Chemistry</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">33.47/40</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Engineering Chemistry</div>
+                            <div class="rTableCell">26/40</div>
+                            <div class="rTableCell">27.07/40</div>
+                            <div class="rTableCell">14</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23ESP204 - Problem Solving and Programming</td>
+                <td>45/56 (80%)</td>
+                <td>55                <td>A+</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Problem Solving and Programming</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">29.81/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Problem Solving and Programming</div>
+                            <div class="rTableCell">36/40</div>
+                            <div class="rTableCell">27.1/40</div>
+                            <div class="rTableCell">4</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23ESP208 - Engineering Graphics</td>
+                <td>42/44 (95%)</td>
+                <td>59                <td>S</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Engineering Graphics</div>
+                            <div class="rTableCell">36/40</div>
+                            <div class="rTableCell">33.31/40</div>
+                            <div class="rTableCell">5</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Engineering Graphics</div>
+                            <div class="rTableCell">34/40</div>
+                            <div class="rTableCell">25.78/40</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">3</div>
+                            <div class="rTableCell">Series Exam 3</div>
+                            <div class="rTableCell">Engineering Graphics</div>
+                            <div class="rTableCell">36/40</div>
+                            <div class="rTableCell">36.83/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MCT210 - Sports and Yoga</td>
+                <td>20/22 (91%)</td>
+                <td>80                <td>A</td>
+                <td></td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Sports and Yoga</div>
+                            <div class="rTableCell">30/50</div>
+                            <div class="rTableCell">36.67/50</div>
+                            <div class="rTableCell">18</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Sports and Yoga</div>
+                            <div class="rTableCell">38/50</div>
+                            <div class="rTableCell">37.68/50</div>
+                            <div class="rTableCell">11</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23ESL209 - Manufacturing Practices</td>
+                <td>29/31 (94%)</td>
+                <td>90                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Manufacturing Practices</div>
+                            <div class="rTableCell">32/40</div>
+                            <div class="rTableCell">33.06/40</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Manufacturing Practices</div>
+                            <div class="rTableCell">25/30</div>
+                            <div class="rTableCell">24.32/30</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">3</div>
+                            <div class="rTableCell">Series Exam 3</div>
+                            <div class="rTableCell">Manufacturing Practices</div>
+                            <div class="rTableCell">15/20</div>
+                            <div class="rTableCell">13.19/20</div>
+                            <div class="rTableCell">10</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                                    
+            </tbody>
+        </table>
+    </div>
+            <button class="accordion" style="margin-bottom:6px">
+        <table style="width:98%">
+            <thead>
+            <tr>
+                <th class="main">IIIrd Semester</th>
+                <th class="main">Attendance: 313/336 (93%)</th>
+                <th class="main">SGPA: 9.00</th>
+                <th class="main">Earned Credit: 25</th>
+                <th class="main">Cumulative Credit: 66</th>
+                <th class="main">CGPA: 9.25</th>
+                <th class="main">Result:
+                    <font style="color:green">PASSED</font>                </th>
+            </tr>
+            </thead>
+        </table>
+    </button>
+    <div class="panel">
+        <table class="mytable" style="margin-top: 10px; margin-bottom: 10px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Attendance</th>
+                <th>Internal Marks</th>
+                <th>Grade</th>
+                <th>Earned Credit</th>
+                <th>Result</th>
+                <th> Chance </th>
+                <th>GPA</th>
+            </tr>
+            </thead>
+            <tbody>
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MAP301 - Advanced Linear Algebra, Complex Analysis and Partial Differential Equations</td>
+                <td>52/55 (95%)</td>
+                <td>56                <td>S</td>
+                <td>5</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Advanced Linear Algebra, Complex Analysis and Partial Differential Equations</div>
+                            <div class="rTableCell">39.5/40</div>
+                            <div class="rTableCell">27.22/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Advanced Linear Algebra, Complex Analysis and Partial Differential Equations</div>
+                            <div class="rTableCell">29/30</div>
+                            <div class="rTableCell">18.02/30</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSJ303 - Advanced Programming</td>
+                <td>76/79 (96%)</td>
+                <td>56                <td>A+</td>
+                <td>5</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Advanced Programming</div>
+                            <div class="rTableCell">28/30</div>
+                            <div class="rTableCell">20.42/30</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSP304 - Data Structures and Algorithms</td>
+                <td>61/65 (94%)</td>
+                <td>55                <td>A+</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Data Structures and Algorithms</div>
+                            <div class="rTableCell">23/30</div>
+                            <div class="rTableCell">18.74/30</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Data Structures and Algorithms</div>
+                            <div class="rTableCell">29/30</div>
+                            <div class="rTableCell">20.39/30</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSP305 - Computer Organization and Architecture</td>
+                <td>49/52 (94%)</td>
+                <td>48                <td>B</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>7</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Computer Organization and Architecture</div>
+                            <div class="rTableCell">29/30</div>
+                            <div class="rTableCell">20.14/30</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Computer Organization and Architecture</div>
+                            <div class="rTableCell">30/30</div>
+                            <div class="rTableCell">25.45/30</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUT310 - Life Skills and Professional Ethics</td>
+                <td>25/32 (78%)</td>
+                <td>35                <td>B+</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Life Skills and Professional Ethics</div>
+                            <div class="rTableCell">31/40</div>
+                            <div class="rTableCell">32.65/40</div>
+                            <div class="rTableCell">9</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Life Skills and Professional Ethics</div>
+                            <div class="rTableCell">31/40</div>
+                            <div class="rTableCell">32.22/40</div>
+                            <div class="rTableCell">10</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23EST352 - Probability, Statistics and Optimization</td>
+                <td>20/22 (91%)</td>
+                <td>97                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Probability, Statistics and Optimization</div>
+                            <div class="rTableCell">45/50</div>
+                            <div class="rTableCell">34.45/50</div>
+                            <div class="rTableCell">5</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Probability, Statistics and Optimization</div>
+                            <div class="rTableCell">50/50</div>
+                            <div class="rTableCell">41.14/50</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23EST307 - Engineering Mechanics</td>
+                <td>24/25 (96%)</td>
+                <td>93                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Engineering Mechanics</div>
+                            <div class="rTableCell">44/50</div>
+                            <div class="rTableCell">32.2/50</div>
+                            <div class="rTableCell">8</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Engineering Mechanics</div>
+                            <div class="rTableCell">43/50</div>
+                            <div class="rTableCell">33.87/50</div>
+                            <div class="rTableCell">8</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                                    
+            </tbody>
+        </table>
+    </div>
+            <button class="accordion" style="margin-bottom:6px">
+        <table style="width:98%">
+            <thead>
+            <tr>
+                <th class="main">IVth Semester</th>
+                <th class="main">Attendance: 394/424 (93%)</th>
+                <th class="main">SGPA: 9.12</th>
+                <th class="main">Earned Credit: 21</th>
+                <th class="main">Cumulative Credit: 87</th>
+                <th class="main">CGPA: 9.22</th>
+                <th class="main">Result:
+                    <font style="color:green">PASSED</font>                </th>
+            </tr>
+            </thead>
+        </table>
+    </button>
+    <div class="panel">
+        <table class="mytable" style="margin-top: 10px; margin-bottom: 10px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Attendance</th>
+                <th>Internal Marks</th>
+                <th>Grade</th>
+                <th>Earned Credit</th>
+                <th>Result</th>
+                <th> Chance </th>
+                <th>GPA</th>
+            </tr>
+            </thead>
+            <tbody>
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CST401 - Discrete Mathematics</td>
+                <td>37/38 (97%)</td>
+                <td>38                <td>A</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Discrete Mathematics</div>
+                            <div class="rTableCell">49/50</div>
+                            <div class="rTableCell">35.45/50</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Discrete Mathematics</div>
+                            <div class="rTableCell">39/50</div>
+                            <div class="rTableCell">35.28/50</div>
+                            <div class="rTableCell">9</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSP402 - Computer Networks</td>
+                <td>68/73 (93%)</td>
+                <td>54                <td>A+</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Computer Networks</div>
+                            <div class="rTableCell">32/50</div>
+                            <div class="rTableCell">30.03/50</div>
+                            <div class="rTableCell">18</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Computer Networks</div>
+                            <div class="rTableCell">45/50</div>
+                            <div class="rTableCell">32.72/50</div>
+                            <div class="rTableCell">4</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSP403 - Operating Systems</td>
+                <td>61/62 (98%)</td>
+                <td>55                <td>S</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Operating Systems</div>
+                            <div class="rTableCell">38/50</div>
+                            <div class="rTableCell">29.05/50</div>
+                            <div class="rTableCell">7</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Operating Systems</div>
+                            <div class="rTableCell">45/50</div>
+                            <div class="rTableCell">33.36/50</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSJ404 - Introduction to Database Systems</td>
+                <td>78/84 (93%)</td>
+                <td>55                <td>S</td>
+                <td>5</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Introduction to Database Systems</div>
+                            <div class="rTableCell">28/30</div>
+                            <div class="rTableCell">23.21/30</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUT455 - Management - I (Organizational Behavior)</td>
+                <td>37/44 (84%)</td>
+                <td>30                <td>B+</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Management - I (Organizational Behavior)</div>
+                            <div class="rTableCell">41/50</div>
+                            <div class="rTableCell">32.36/50</div>
+                            <div class="rTableCell">14</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Management - I (Organizational Behavior)</div>
+                            <div class="rTableCell">26.5/50</div>
+                            <div class="rTableCell">28.14/50</div>
+                            <div class="rTableCell">28</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MCT406 - Environmental Sciences</td>
+                <td>41/45 (91%)</td>
+                <td>34                <td>C</td>
+                <td>0</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>6</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Environmental Sciences</div>
+                            <div class="rTableCell">44/50</div>
+                            <div class="rTableCell">35.2/50</div>
+                            <div class="rTableCell">7</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Environmental Sciences</div>
+                            <div class="rTableCell">38/50</div>
+                            <div class="rTableCell">26.76/50</div>
+                            <div class="rTableCell">8</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23BYT407 - Biology for Engineers</td>
+                <td>23/25 (92%)</td>
+                <td>78                <td>B+</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Biology for Engineers</div>
+                            <div class="rTableCell">38/50</div>
+                            <div class="rTableCell">33.54/50</div>
+                            <div class="rTableCell">9</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Biology for Engineers</div>
+                            <div class="rTableCell">31/50</div>
+                            <div class="rTableCell">34.46/50</div>
+                            <div class="rTableCell">16</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                                    
+            </tbody>
+        </table>
+    </div>
+            <button class="accordion" style="margin-bottom:6px">
+        <table style="width:98%">
+            <thead>
+            <tr>
+                <th class="main">Vth Semester</th>
+                <th class="main">Attendance: 283/321 (88%)</th>
+                <th class="main">SGPA: 9.13</th>
+                <th class="main">Earned Credit: 20</th>
+                <th class="main">Cumulative Credit: 107</th>
+                <th class="main">CGPA: 9.2</th>
+                <th class="main">Result:
+                    <font style="color:green">PASSED</font>                </th>
+            </tr>
+            </thead>
+        </table>
+    </button>
+    <div class="panel">
+        <table class="mytable" style="margin-top: 10px; margin-bottom: 10px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Attendance</th>
+                <th>Internal Marks</th>
+                <th>Grade</th>
+                <th>Earned Credit</th>
+                <th>Result</th>
+                <th> Chance </th>
+                <th>GPA</th>
+            </tr>
+            </thead>
+            <tbody>
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CST501 - Design & Analysis of Algorithms</td>
+                <td>33/38 (87%)</td>
+                <td>36                <td>A</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Design & Analysis of Algorithms</div>
+                            <div class="rTableCell">37/40</div>
+                            <div class="rTableCell">30.99/40</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Design & Analysis of Algorithms</div>
+                            <div class="rTableCell">32/40</div>
+                            <div class="rTableCell">24.3/40</div>
+                            <div class="rTableCell">7</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CST502 - Software Engineering</td>
+                <td>30/35 (86%)</td>
+                <td>36                <td>A</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Software Engineering</div>
+                            <div class="rTableCell">31/40</div>
+                            <div class="rTableCell">30.05/40</div>
+                            <div class="rTableCell">10</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Software Engineering</div>
+                            <div class="rTableCell">31/40</div>
+                            <div class="rTableCell">29.51/40</div>
+                            <div class="rTableCell">15</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSJ504 - Advanced Web Technologies</td>
+                <td>64/72 (89%)</td>
+                <td>58                <td>S</td>
+                <td>5</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Advanced Web Technologies</div>
+                            <div class="rTableCell">30/30</div>
+                            <div class="rTableCell">21.99/30</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSP503 - Artificial Intelligence & Machine Learning</td>
+                <td>41/46 (89%)</td>
+                <td>58                <td>A+</td>
+                <td>4</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Artificial Intelligence & Machine Learning</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">27.58/40</div>
+                            <div class="rTableCell">2</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Artificial Intelligence & Machine Learning</div>
+                            <div class="rTableCell">40/40</div>
+                            <div class="rTableCell">28.91/40</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUT555 - Finance and Accounting</td>
+                <td>28/31 (90%)</td>
+                <td>37                <td>A</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Finance and Accounting</div>
+                            <div class="rTableCell">40/40</div>
+                            <div class="rTableCell">35.42/40</div>
+                            <div class="rTableCell">1</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Finance and Accounting</div>
+                            <div class="rTableCell">26/40</div>
+                            <div class="rTableCell">28.09/40</div>
+                            <div class="rTableCell">13</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23MCT506 - Constitution of India</td>
+                <td>20/23 (87%)</td>
+                <td>33                <td>A+</td>
+                <td>0</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Constitution of India</div>
+                            <div class="rTableCell">28/40</div>
+                            <div class="rTableCell">23.3/40</div>
+                            <div class="rTableCell">11</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">Constitution of India</div>
+                            <div class="rTableCell">24.5/40</div>
+                            <div class="rTableCell">23.92/40</div>
+                            <div class="rTableCell">18</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUL507 - Technical Writing</td>
+                <td>16/18 (89%)</td>
+                <td>45                <td>S</td>
+                <td>1</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Technical Writing</div>
+                            <div class="rTableCell">7/10</div>
+                            <div class="rTableCell">7.91/10</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUL508 - Soft Skills</td>
+                <td>14/16 (88%)</td>
+                <td>48                <td>S</td>
+                <td>1</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">Soft Skills</div>
+                            <div class="rTableCell">23/30</div>
+                            <div class="rTableCell">19.95/30</div>
+                            <div class="rTableCell">8</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                                    
+            </tbody>
+        </table>
+    </div>
+            <button class="accordion" style="margin-bottom:6px">
+        <table style="width:98%">
+            <thead>
+            <tr>
+                <th class="main">VIth Semester</th>
+                <th class="main">Attendance: 283/310 (91%)</th>
+                <th class="main">SGPA: 9.25</th>
+                <th class="main">Earned Credit: 18</th>
+                <th class="main">Cumulative Credit: 125</th>
+                <th class="main">CGPA: 9.21</th>
+                <th class="main">Result:
+                    <font style="color:green">PASSED</font>                </th>
+            </tr>
+            </thead>
+        </table>
+    </button>
+    <div class="panel">
+        <table class="mytable" style="margin-top: 10px; margin-bottom: 10px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Attendance</th>
+                <th>Internal Marks</th>
+                <th>Grade</th>
+                <th>Earned Credit</th>
+                <th>Result</th>
+                <th> Chance </th>
+                <th>GPA</th>
+            </tr>
+            </thead>
+            <tbody>
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CST601 - THEORY OF COMPUTATION</td>
+                <td>47/49 (96%)</td>
+                <td>37                <td>B+</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">THEORY OF COMPUTATION</div>
+                            <div class="rTableCell">33/40</div>
+                            <div class="rTableCell">27.73/40</div>
+                            <div class="rTableCell">13</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">THEORY OF COMPUTATION</div>
+                            <div class="rTableCell">38/40</div>
+                            <div class="rTableCell">25.73/40</div>
+                            <div class="rTableCell">3</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23CSP602 - INTRODUCTORY CYBER SECURITY </td>
+                <td>38/43 (88%)</td>
+                <td>57                <td>S</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">INTRODUCTORY CYBER SECURITY </div>
+                            <div class="rTableCell">33/40</div>
+                            <div class="rTableCell">26.22/40</div>
+                            <div class="rTableCell">5</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23EST608 - DIGITAL IMAGE PROCESSING</td>
+                <td>22/23 (96%)</td>
+                <td>96                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">DIGITAL IMAGE PROCESSING</div>
+                            <div class="rTableCell">37.5/40</div>
+                            <div class="rTableCell">28.37/40</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">DIGITAL IMAGE PROCESSING</div>
+                            <div class="rTableCell">35/40</div>
+                            <div class="rTableCell">27.57/40</div>
+                            <div class="rTableCell">6</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;">⯆</td>
+                <td>23HUT609 - ENTREPRENEURSHIPS AND STARTUPS</td>
+                <td>25/27 (93%)</td>
+                <td>91                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                                    <tr class="series-row" style="display:none;">
+                <td colspan="9">
+                    <div class="rTable">
+                        <div class="rTableRow">
+                            <div class="rTableHead">Sl.No.</div>
+                            <div class="rTableHead">Exam</div>
+                            <div class="rTableHead">Subject</div>
+                            <div class="rTableHead">Marks</div>
+                            <div class="rTableHead">Class Avg.</div>
+                            <div class="rTableHead">Class Rank</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">1</div>
+                            <div class="rTableCell">Series Exam 1</div>
+                            <div class="rTableCell">ENTREPRENEURSHIPS AND STARTUPS</div>
+                            <div class="rTableCell">33/40</div>
+                            <div class="rTableCell">31.54/40</div>
+                            <div class="rTableCell">7</div>
+                        </div>
+                                                                        <div class="rTableRow">
+                            <div class="rTableCell">2</div>
+                            <div class="rTableCell">Series Exam 2</div>
+                            <div class="rTableCell">ENTREPRENEURSHIPS AND STARTUPS</div>
+                            <div class="rTableCell">37/40</div>
+                            <div class="rTableCell">34.84/40</div>
+                            <div class="rTableCell">4</div>
+                        </div>
+                                            </div>
+                </td>
+            </tr>
+              
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;"></td>
+                <td>23SPJ607 - SOCIALLY RELEVANT PROJECT</td>
+                <td>19/21 (90%)</td>
+                <td>83                <td>A</td>
+                <td>0</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                          
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;"></td>
+                <td>23CSS606 - SEMINAR</td>
+                <td>44/51 (86%)</td>
+                <td>94                <td>S</td>
+                <td>2</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>10</td>
+            </tr>
+                          
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;"></td>
+                <td>23CSE6114 - ADVANCED COMPUTER ARCHITECTURE</td>
+                <td>29/32 (91%)</td>
+                <td>37                <td>A+</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>9</td>
+            </tr>
+                          
+                        <tr>
+                <td class="toggle-series" style="cursor:pointer;"></td>
+                <td>23CSI625 - BLOCKCHAIN TECHNOLOGY</td>
+                <td>33/34 (97%)</td>
+                <td>40                <td>A</td>
+                <td>3</td>
+                <td><font style="color:green">PASSED</font></td>
+                <td>
+                    1                </td>
+                <td>8.5</td>
+            </tr>
+                          
+                                    
+            </tbody>
+        </table>
+    </div>
+    <div style="background: linear-gradient(135deg, #f9f9f9, #e8f0fe); 
+            border-left: 5px solid #2980b9;
+            padding: 15px 20px; 
+            margin: 20px 0;
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: inline-block;">
+
+    <span style="font-weight: bold; font-size: 16px; color: #2e86de; margin-right: 20px;">
+        📊 CGPA: 9.21    </span>
+
+    <span style="font-weight: bold; font-size: 16px; color: #27ae60;">
+        🎓 Cumulative Credit: 125    </span>
+</div>
+<center><div class="backlog-header">Backlogs History</div></center>
+<table>
+<tr><th>Total Backlogs</th><td>0</td><th>Current Backlogs</th><td>0</td></tr>
+</table>
+</div>
+
+
+
+                            
+
+
+
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript">
+// Accordion open/close
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        panel.style.display = (panel.style.display === "block") ? "none" : "block";
+    });
+}
+
+// Toggle ⯆ and ⯅ for series exam rows
+$(document).ready(function(){
+    $(".toggle-series").on("click", function() {
+        var $icon = $(this);
+        var $row = $icon.closest("tr").next(".series-row");
+        $row.toggle();
+        $icon.text($row.is(":visible") ? "⯅" : "⯆");
+    });
+});
+</script>
+
+					
+		</div> <!-- /widget-content -->					
+	</div> <!-- /widget-box -->
+<script src="https://code.highcharts.com/highcharts.js" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+<script src="https://code.highcharts.com/modules/exporting.js" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+<script src="https://code.highcharts.com/modules/export-data.js" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+<script src="https://code.highcharts.com/modules/series-label.js" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+
+<style>
+  /* Remove underlines and force black text */
+  #container text,
+  #container_k text,
+  #container_m text {
+    text-decoration: none !important;
+    fill: black !important;
+  }
+</style>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-6 col-md-6" style="width:60%;float:left">
+      <div id="container_k"></div>
+    </div>
+    <div class="col-sm-6 col-md-6" style="width:40%;float:left">
+    <div id="container_m"></div>
+    </div>
+  </div>
+</div>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript">
+Highcharts.chart('container', {
+  chart: {
+    type: 'column'
+  },
+  title: {
+    text: 'All Semester / Subject Grade Points Scored',
+    style: {
+      color: 'black'
+    }
+  },
+  subtitle: {
+    text: 'Click the Semester columns to view respective Subjects.',
+    style: {
+      color: 'black'
+    }
+  },
+  xAxis: {
+    type: 'category',
+    labels: {
+      style: {
+        color: 'black'
+      }
+    }
+  },
+  yAxis: {
+    title: {
+      text: 'Percentage Marks Scored',
+      style: {
+        color: 'black'
+      }
+    },
+    labels: {
+      style: {
+        color: 'black'
+      }
+    }
+  },
+  legend: {
+    enabled: false
+  },
+  credits: {
+    enabled: false
+  },
+  exporting: {
+    enabled: false
+  },
+  plotOptions: {
+    series: {
+      borderWidth: 0,
+      dataLabels: {
+        enabled: true,
+        format: '{point.y:.1f}',
+        style: {
+          color: 'black'
+        }
+      }
+    }
+  },
+  tooltip: {
+    headerFormat: '<span style="font-size:11px; color:black;">{series.name}</span><br>',
+    pointFormatter() {
+      return `<span style="color:black; text-decoration:none;">${this.name}</span> SGPA Scored: <b>${((this.y))}</b><br/>`;
+    }
+  },
+  series: [
+    {
+      name: "Semester",
+      colorByPoint: true,
+      data: [
+                {
+          name: "Ist Semester",
+          y: 9.53,
+          drilldown: "Ist Semester"
+        },
+                {
+          name: "IInd Semester",
+          y: 9.30,
+          drilldown: "IInd Semester"
+        },
+                {
+          name: "IIIrd Semester",
+          y: 9.00,
+          drilldown: "IIIrd Semester"
+        },
+                {
+          name: "IVth Semester",
+          y: 9.12,
+          drilldown: "IVth Semester"
+        },
+                {
+          name: "Vth Semester",
+          y: 9.13,
+          drilldown: "Vth Semester"
+        },
+                {
+          name: "VIth Semester",
+          y: 9.25,
+          drilldown: "VIth Semester"
+        },
+                {
+          name: "VIIth Semester",
+          y: ,
+          drilldown: "VIIth Semester"
+        },
+              ]
+    }
+  ],
+  drilldown: {
+    series: [
+            {
+        name: "Ist Semester",
+        id: "Ist Semester",
+        data: [
+                    [
+            "Calculus and Linear Algebra",
+            10          ],
+                    [
+            "Engineering Physics",
+            10          ],
+                    [
+            "Fundamentals of Electrical  Engineering",
+            8          ],
+                    [
+            "Technical English for Engineers",
+            9          ],
+                    [
+            "Logic System Design",
+            10          ],
+                    [
+            "Design Thinking",
+            10          ],
+                    [
+            "Introduction to Programming  Frameworks",
+            10          ],
+                    [
+            "Application Development Lab",
+            10          ],
+                    [
+            "Engineering Physics",
+            0          ],
+                    [
+            "Technical English for Engineers",
+            0          ],
+                    [
+            "IDEA Lab Workshop",
+            10          ],
+                    [
+            "IDEA Lab Workshop",
+            0          ],
+                  ]
+      },
+            {
+        name: "IInd Semester",
+        id: "IInd Semester",
+        data: [
+                    [
+            "Universal Human Values - II",
+            7          ],
+                    [
+            "Ordinary Differential Equations and Transforms",
+            10          ],
+                    [
+            "Engineering Chemistry",
+            9          ],
+                    [
+            "Problem Solving and Programming",
+            9          ],
+                    [
+            "Engineering Graphics",
+            10          ],
+                    [
+            "Sports and Yoga",
+            8.5          ],
+                    [
+            "Ordinary Differential Equations and Transforms",
+            0          ],
+                    [
+            "Engineering Chemistry",
+            0          ],
+                    [
+            "Problem Solving and Programming",
+            0          ],
+                    [
+            "Manufacturing Practices",
+            10          ],
+                  ]
+      },
+            {
+        name: "IIIrd Semester",
+        id: "IIIrd Semester",
+        data: [
+                    [
+            "Advanced Linear Algebra, Complex Analysis and Partial Differential Equations",
+            10          ],
+                    [
+            "Advanced Programming",
+            9          ],
+                    [
+            "Data Structures and Algorithms",
+            9          ],
+                    [
+            "Computer Organization and Architecture",
+            7          ],
+                    [
+            "Life Skills and Professional Ethics",
+            8          ],
+                    [
+            "Probability, Statistics and Optimization",
+            10          ],
+                    [
+            "Engineering Mechanics",
+            10          ],
+                    [
+            "Advanced Linear Algebra, Complex Analysis and Partial Differential Equations",
+            0          ],
+                    [
+            "Advanced Programming",
+            0          ],
+                    [
+            "Data Structures and Algorithms",
+            0          ],
+                    [
+            "Computer Organization and Architecture",
+            0          ],
+                    [
+            "Analog Communication",
+            0          ],
+                  ]
+      },
+            {
+        name: "IVth Semester",
+        id: "IVth Semester",
+        data: [
+                    [
+            "Discrete Mathematics",
+            8.5          ],
+                    [
+            "Computer Networks",
+            9          ],
+                    [
+            "Operating Systems",
+            10          ],
+                    [
+            "Introduction to Database Systems",
+            10          ],
+                    [
+            "Management - I (Organizational Behavior)",
+            8          ],
+                    [
+            "Environmental Sciences",
+            6          ],
+                    [
+            "Computer Networks",
+            0          ],
+                    [
+            "Operating Systems",
+            0          ],
+                    [
+            "Introduction to Database Systems",
+            0          ],
+                    [
+            "Biology for Engineers",
+            8          ],
+                    [
+            "Fundamentals of Digital Communication",
+            0          ],
+                  ]
+      },
+            {
+        name: "Vth Semester",
+        id: "Vth Semester",
+        data: [
+                    [
+            "Design & Analysis of Algorithms",
+            8.5          ],
+                    [
+            "Software Engineering",
+            8.5          ],
+                    [
+            "Advanced Web Technologies",
+            10          ],
+                    [
+            "Artificial Intelligence & Machine Learning",
+            9          ],
+                    [
+            "Finance and Accounting",
+            8.5          ],
+                    [
+            "Constitution of India",
+            9          ],
+                    [
+            "Advanced Web Technologies",
+            0          ],
+                    [
+            "Artificial Intelligence & Machine Learning",
+            0          ],
+                    [
+            "Technical Writing",
+            10          ],
+                    [
+            "Soft Skills",
+            10          ],
+                    [
+            "Computer Networks",
+            0          ],
+                  ]
+      },
+            {
+        name: "VIth Semester",
+        id: "VIth Semester",
+        data: [
+                    [
+            "THEORY OF COMPUTATION",
+            8          ],
+                    [
+            "INTRODUCTORY CYBER SECURITY ",
+            10          ],
+                    [
+            "DIGITAL IMAGE PROCESSING",
+            10          ],
+                    [
+            "ENTREPRENEURSHIPS AND STARTUPS",
+            10          ],
+                    [
+            "INTRODUCTORY CYBER SECURITY ",
+            0          ],
+                    [
+            "SOCIALLY RELEVANT PROJECT",
+            8.5          ],
+                    [
+            "SEMINAR",
+            10          ],
+                    [
+            "RADAR & NAVIGATION",
+            0          ],
+                    [
+            "ADVANCED COMPUTER ARCHITECTURE",
+            9          ],
+                    [
+            "BLOCKCHAIN TECHNOLOGY",
+            8.5          ],
+                  ]
+      },
+            {
+        name: "VIIth Semester",
+        id: "VIIth Semester",
+        data: [
+                    [
+            "COMPILER DESIGN",
+            0          ],
+                    [
+            "CLOUD COMPUTING",
+            0          ],
+                    [
+            "RESEARCH BASED MINI PROJECT",
+            0          ],
+                    [
+            "COMPILER DESIGN",
+            0          ],
+                    [
+            "CLOUD COMPUTING",
+            0          ],
+                    [
+            " BIOMEDICAL INSTRUMENTATION",
+            0          ],
+                    [
+            "NETWORKS AND SYSTEMS SECURITY",
+            0          ],
+                  ]
+      },
+          ]
+  }
+});
+</script>
+
+<!---/////////////////////////////Start Academic Progress % Graph/////////////////////////  ----->
+		</div>
+	</div>
+			</div>
+		</div>
+
+    </div>
+ 
+	<div class="row-fluid">
+        <div id="footer" class="span12">
+            <div style="margin:0 20px 0 0; padding:0 0 10px 0;">Page Generated in 3.88884 seconds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	&copy; 2026 <a href="http://www.etuwa.in" target="_balnk">Etuwa Concepts</a>, All rights reserved.</div>
+        </div>
+				</div>
+    <script src="/source/scripts/etlab.js?v=1586592913" type="1feef66dd8bfa2b7c38b0463-text/javascript"></script>
+          
+    
+<ul class="typeahead dropdown-menu"></ul><script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/a5f312c1/js/bootstrap-transition.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/a5f312c1/js/bootstrap-tooltip.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/a5f312c1/js/bootstrap-popover.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/5961d2eb/chosen.jquery.min.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/a5f312c1/js/bootstrap-alert.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript" src="/assets/a5f312c1/js/bootstrap-dropdown.js"></script>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript">
+/*<![CDATA[*/
+jQuery(function($) {
+jQuery('a[rel="tooltip"]').tooltip();
+jQuery('a[rel="popover"]').popover();
+$( '.chzn-select' ).chosen([]);
+jQuery('#yw1 .alert').alert();
+jQuery('.dropdown-toggle[data-dropdown="dropdown"]').dropdown();
+
+			jQuery(document).ajaxComplete(
+				function(event, request, options) {
+					if (request.responseText == "YII_LOGIN_REQUIRED") {
+						alert('login required')
+						window.location.href = "/user/login";
+					}
+				}
+			);
+		
+});
+/*]]>*/
+</script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="1feef66dd8bfa2b7c38b0463-|49" defer></script></body></html>
+<script type="1feef66dd8bfa2b7c38b0463-text/javascript">
+
+$( document ).ajaxSend(function() {
+  $('#blocker').show();
+		$('#spinner').show();
+});
+$( document ).ajaxStop(function() {
+  $('#blocker').hide();
+		$('#spinner').hide();
+});
+$( document ).ajaxError(function() {
+  $('#blocker').hide();
+		$('#spinner').hide();
+});
+$(function() {
+
+    $('tr').each(function() {
+        $(this).find('td').each(function(i) {
+            $(this).find('input').attr('tabindex', i+1);
+            // Set the tabindex of each input in that cell to the counter
+        });
+    });
+});
+$('tr').keydown(function(e) {
+    if (e.keyCode==40) {
+        $(this).next('tr').focus();
+    }
+});
+$(document).ready(function () {
+    $('input').keyup(function (e) {
+    if (e.which == 39) { // right arrow
+      $(this).closest('td').next().find('input').focus();
+
+    } else if (e.which == 37) { // left arrow
+      $(this).closest('td').prev().find('input').focus();
+
+    } else if (e.which == 40) { // down arrow
+      $(this).closest('tr').next().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
+
+    } else if (e.which == 38) { // up arrow
+      $(this).closest('tr').prev().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
+    }
+    });
+});
+  </script>
+  

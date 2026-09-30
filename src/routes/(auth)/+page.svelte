@@ -2,6 +2,7 @@
 	import ArrowRightIcon from "phosphor-svelte/lib/ArrowRightIcon";
 	import BarbellIcon from "phosphor-svelte/lib/BarbellIcon";
 	import CalendarCheckIcon from "phosphor-svelte/lib/CalendarCheckIcon";
+	import ChartLineIcon from "phosphor-svelte/lib/ChartLineIcon";
 
 	import pressSound_opus from "$lib/assets/press-sound.opus";
 	import Box from "$lib/components/box";
@@ -10,14 +11,17 @@
 	import { useSound } from "svelte-attach-sound";
 	import AssignmentCard from "./assignment-card.svelte";
 	import * as remotes from "./dashboard.remote";
-	import { cachedGracefulRemoteQuery } from "./states.svelte";
+	import { cachedGracefulRemoteQuery, webAccessSettingsState } from "./states.svelte";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
 
 	let assignmentsData = cachedGracefulRemoteQuery(
 		{ name: "getDueAssignments", version: 1 },
 		remotes.getDueAssignments
 	);
 	onMount(async () => {
-		await assignmentsData.load();
+		await assignmentsData.load(data.sessionUser);
 	});
 
 	const clickSfx = useSound(pressSound_opus, ["click"], { volume: 0.75 });
@@ -45,6 +49,14 @@
 		<BarbellIcon weight="bold" /> Assignments
 	</Button>
 </div>
+
+{#if webAccessSettingsState.resolved && webAccessSettingsState.value != null}
+	<div>
+		<Button variant="outline" href="/academic-analysis">
+			<ChartLineIcon weight="bold" /> Academic Analysis
+		</Button>
+	</div>
+{/if}
 
 <div class="flex place-items-center justify-between">
 	<h2 class="text-2xl font-bold">Assignments Due</h2>

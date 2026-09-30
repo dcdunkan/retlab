@@ -31,6 +31,33 @@
 
 	let contentRef = $state<HTMLDivElement>();
 	let showScrollBorders = $state<"none" | "top" | "bottom" | "both">("none");
+
+	function updateScrollBorders() {
+		if (contentRef == null) {
+			showScrollBorders = "none";
+			return;
+		}
+		const { scrollHeight, clientHeight, scrollTop } = contentRef;
+		if (scrollHeight <= clientHeight + 1) {
+			showScrollBorders = "none";
+			return;
+		}
+		const maxScroll = scrollHeight - clientHeight;
+		const atTop = scrollTop <= 1;
+		const atBottom = scrollTop >= maxScroll - 1;
+		if (atTop && atBottom) showScrollBorders = "none";
+		else if (atBottom) showScrollBorders = "top";
+		else if (atTop) showScrollBorders = "bottom";
+		else showScrollBorders = "both";
+	}
+
+	$effect(() => {
+		if (!open || contentRef == null) return;
+		updateScrollBorders();
+		const ro = new ResizeObserver(updateScrollBorders);
+		ro.observe(contentRef);
+		return () => ro.disconnect();
+	});
 </script>
 
 <Dialog.Root bind:open {onOpenChange} {onOpenChangeComplete}>
@@ -76,28 +103,10 @@
 			{#if children != null}
 				<div
 					bind:this={contentRef}
-					onscroll={() => {
-						if (contentRef == null) {
-							showScrollBorders = "none";
-							return;
-						}
-						if (contentRef.scrollHeight <= contentRef.clientHeight) {
-							showScrollBorders = "none";
-							return;
-						}
-						const height = Math.abs(contentRef.scrollHeight - contentRef.clientHeight);
-						const current = Math.round(contentRef.scrollTop);
-						if (current === height) {
-							showScrollBorders = "top";
-						} else if (current === 0) {
-							showScrollBorders = "bottom";
-						} else {
-							showScrollBorders = "both";
-						}
-					}}
+					onscroll={updateScrollBorders}
 					class={[
-						"min-h-0 grow overflow-y-auto transition-all duration-150",
-						enableBorders && "border-2 px-2 py-1",
+						"min-h-0 grow overflow-y-auto border-border transition-all duration-150",
+						enableBorders && "border-2",
 						showScrollBorders === "none" ? "" : "border-t-2 border-b-2",
 						showScrollBorders === "bottom"
 							? "border-t-transparent"

@@ -3,6 +3,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
 	boolean,
+	check,
 	foreignKey,
 	integer,
 	jsonb,
@@ -150,17 +151,107 @@ export const notificationSettingsRelations = relations(notificationServerSetting
 	})
 }));
 
-export type SettingsState = Omit<Settings, "collegeId" | "accountUsername">;
-export type NotificationServerSettingsState = Omit<
-	NotificationServerSettings,
-	"collegeId" | "accountUsername"
->;
+export const webAccessSettings = pgTable(
+	"web_access_settings",
+	{
+		accountUsername: text("account_username").notNull(),
+		collegeId: integer("college_id").notNull(),
+
+		setupAt: timestamp({ withTimezone: true, mode: "date" }).defaultNow().notNull(), // something to expose
+
+		hashSalt: text("web_access_hash_salt").notNull(), // argon2 salt
+		encryptionNonce: text("web_access_encryption_nonce").notNull(), // aes-256-gcm nonce
+		encryptionAuthTag: text("web_access_encryption_authtag").notNull(), // aes-256-gcm authtag
+		encryptedPassword: text("web_access_encrypted_password").notNull() // Password encrypted using the passcode
+	},
+	(table) => [
+		foreignKey({
+			columns: [table.collegeId, table.accountUsername],
+			foreignColumns: [accounts.collegeId, accounts.username],
+			name: "web_access_settings_college_id_account_username_fkey"
+		})
+			.onUpdate("cascade")
+			.onDelete("cascade"),
+		primaryKey({
+			columns: [table.accountUsername, table.collegeId],
+			name: "web_access_settings_pkey"
+		})
+	]
+);
+
+export type WebAccessSettings = typeof webAccessSettings.$inferSelect;
+
+export const webAccessSettingsRelations = relations(webAccessSettings, (r) => ({
+	account: r.one(accounts, {
+		fields: [webAccessSettings.collegeId, webAccessSettings.accountUsername],
+		references: [accounts.collegeId, accounts.username]
+	})
+}));
+
+export const webSessions = pgTable(
+	"web_sessions",
+	{
+		id: text("web_sessions_id")
+			.primaryKey()
+			.notNull()
+			.$defaultFn(() => createId()),
+
+		accountUsername: text("account_username").notNull(),
+		collegeId: integer("college_id").notNull(),
+
+		cookieString: text("cookie_string").notNull(),
+		requestsMade: integer("requests_made").default(0).notNull(),
+
+		requestedAt: timestamp("requested_at", { withTimezone: true, mode: "date" }).notNull(),
+		lastUsedAt: timestamp("last_used_at", { withTimezone: true, mode: "date" }).notNull(),
+
+		loggedInAt: timestamp("logged_in_at", { withTimezone: true, mode: "date" })
+			.defaultNow()
+			.notNull(),
+		expiresAt: timestamp("expired_at", { withTimezone: true, mode: "date" }).notNull(),
+
+		revokedAt: timestamp("revoked_at", { withTimezone: true, mode: "date" }),
+		revokedReason: text("revoked_reason")
+	},
+	(table) => [
+		foreignKey({
+			columns: [table.collegeId, table.accountUsername],
+			foreignColumns: [accounts.collegeId, accounts.username],
+			name: "web_sessions_college_id_account_username_fkey"
+		})
+			.onUpdate("cascade")
+			.onDelete("cascade"),
+		check(
+			"web_sessions_revoke_must_have_timestamp_and_reason",
+			sql`${table.revokedReason} IS NULL OR ${table.revokedAt} IS NOT NULL`
+		)
+	]
+);
+
+export type WebSession = typeof webSessions.$inferSelect;
+
+export const webSessionsRelations = relations(webSessions, (r) => ({
+	account: r.one(accounts, {
+		fields: [webSessions.collegeId, webSessions.accountUsername],
+		references: [accounts.collegeId, accounts.username]
+	})
+}));
+
+export type OmittedAuthPk = "collegeId" | "accountUsername";
+
+export type SettingsState = Omit<Settings, OmittedAuthPk>;
+export type NotificationServerSettingsState = Omit<NotificationServerSettings, OmittedAuthPk>;
+export type WebAccessSettingsState = Omit<WebAccessSettings, OmittedAuthPk>;
 
 // settings that's passed on to the client side.
 export type ClientSettingsState = SettingsState;
 export type ClientNotificationServerSettingsState = Omit<
 	NotificationServerSettingsState,
 	"etlabAccessToken" | "apiKey" | "authToken"
+> | null;
+export type ClientWebAccessSettingsState = Omit<
+	WebAccessSettingsState,
+	"hashSalt" | "encryptionNonce" | "encryptionAuthTag" | "encryptedPassword"
 > | null;
 
 export const accounts = pgTable(

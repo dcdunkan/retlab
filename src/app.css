@@ -249,6 +249,17 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	/* Charts */
+	.lc-root-container,
+	/* portaled tooltips render outside `.lc-root-container` (e.g. on `<body>`) */
+	.lc-tooltip-root {
+		--color-primary: var(--ret-primary);
+		--color-surface-100: var(--background);
+		--color-surface-200: var(--muted);
+		/* No direct mapping, should add explicit color (light and dark mode) */
+		--color-surface-content: var(--foreground);
+	}
 }
 
 h1,

@@ -3,7 +3,8 @@
 		HOME: "home",
 		ATTENDANCE: "attendance",
 		ASSIGNMENTS: "assignments",
-		SETTINGS: "settings"
+		SETTINGS: "settings",
+		ACADEMIC_ANALYSIS: "academic-analysis"
 	};
 </script>
 
@@ -19,11 +20,38 @@
 	import { onMount, type Component } from "svelte";
 	import type { LayoutProps } from "./$types";
 	import { DEFAULT_SETTINGS } from "./settings/default-settings";
-	import { idb, notificationServerSettingsState, settingsState } from "./states.svelte";
+	import {
+		auth,
+		idb,
+		notificationServerSettingsState,
+		settingsState,
+		webAccessSettingsState
+	} from "./states.svelte";
+	import type { RouteId } from "$app/types";
 
 	let { data, children }: LayoutProps = $props();
 
 	onMount(async () => {
+		auth.set({
+			session: {
+				id: data.sessionUser.session.id,
+				deviceInfo: data.sessionUser.session.deviceInfo,
+				deviceType: data.sessionUser.session.deviceType,
+				createdAt: data.sessionUser.session.createdAt
+			},
+			account: {
+				username: data.sessionUser.account.username,
+				semesterId: data.sessionUser.account.semesterId,
+				lastUpdatedAt: data.sessionUser.account.lastUpdatedAt
+			},
+			college: {
+				id: data.sessionUser.college.id,
+				name: data.sessionUser.college.name,
+				baseUrl: data.sessionUser.college.baseUrl
+			}
+		});
+		auth.resolve();
+
 		// Resolve normal settings:
 		if (data.sessionUser.settings != null) {
 			// tweak stuff
@@ -46,6 +74,15 @@
 				vapidKey: data.sessionUser.notificationServerSettings.vapidKey
 			});
 		}
+
+		if (data.sessionUser.webAccessSettings != null) {
+			webAccessSettingsState.set({
+				setupAt: data.sessionUser.webAccessSettings.setupAt
+			});
+		} else {
+			webAccessSettingsState.set(null);
+		}
+		webAccessSettingsState.resolve();
 
 		// unsubscribe zombie subscriptions:
 		async function unsubscribeLocalPushSubscription() {
@@ -125,30 +162,33 @@
 			notificationServerSettingsState.resolve();
 		}
 
-		await Promise.allSettled([loadIdb(), unsubscribeLocalPushSubscriptionIfExpired()]);
+		await Promise.all([loadIdb(), unsubscribeLocalPushSubscriptionIfExpired()]);
 	});
 
-	let pieces: {
+	type PathPiece = {
 		label?: string;
 		icon?: Component<IconComponentProps, Record<never, never>, "">;
 		href: Pathname;
-	}[] = $derived(
-		page.route.id == "/(auth)/attendance"
-			? [
-					{ label: Piece.HOME, href: "/" },
-					{ label: Piece.ATTENDANCE, href: "/attendance" }
-				]
-			: page.route.id === "/(auth)/assignments"
-				? [
-						{ label: Piece.HOME, href: "/" },
-						{ label: Piece.ASSIGNMENTS, href: "/assignments" }
-					]
-				: page.route.id == "/(auth)"
-					? [{ label: Piece.HOME, href: "/" }]
-					: page.route.id == "/(auth)/settings"
-						? [{ href: "/settings", icon: GearFineIcon }]
-						: [{ label: Piece.HOME, href: "/" }]
-	);
+	};
+	const HOME_PIECE: PathPiece = { label: Piece.HOME, href: "/" };
+
+	const table: Partial<Record<RouteId, PathPiece[]>> = {
+		"/(auth)": [{ label: Piece.HOME, href: "/" }],
+		"/(auth)/attendance": [HOME_PIECE, { label: Piece.ATTENDANCE, href: "/attendance" }],
+		"/(auth)/assignments": [HOME_PIECE, { label: Piece.ASSIGNMENTS, href: "/assignments" }],
+		"/(auth)/settings": [{ href: "/settings", icon: GearFineIcon }],
+		"/(auth)/academic-analysis": [
+			HOME_PIECE,
+			{ href: "/academic-analysis", label: Piece.ACADEMIC_ANALYSIS }
+		]
+	};
+
+	let pieces = $derived.by(() => {
+		if (page.route.id == null) return [HOME_PIECE];
+		else if (page.route.id in table && table[page.route.id] != null)
+			return table[page.route.id] ?? [HOME_PIECE];
+		else return [HOME_PIECE];
+	});
 </script>
 
 <div class="min-h-screen w-full">
@@ -186,7 +226,7 @@
 
 	<footer class="mt-3 px-4 pb-4">
 		<div class="text-center text-xs font-medium text-muted-foreground">
-			ret build <a
+			ret commit <a
 				target="_blank"
 				href="https://github.com/dcdunkan/retlab/tree/{__GIT_SHA__}"
 				class="underline hover:text-ret-accent"

@@ -1,29 +1,30 @@
 <script lang="ts">
+	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
+	import GithubLogoIcon from "phosphor-svelte/lib/GithubLogoIcon";
+	import HeartIcon from "phosphor-svelte/lib/HeartIcon";
+	import PaletteIcon from "phosphor-svelte/lib/PaletteIcon";
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
+
 	import { negateFn } from "$lib";
 	import Box from "$lib/components/box";
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
+	import Input from "$lib/components/input.svelte";
 	import Select from "$lib/components/select.svelte";
 	import { type ExpandAttendanceSubjectCardsOption } from "$lib/types";
 	import { isHttpError } from "@sveltejs/kit";
 	import { Slider } from "bits-ui";
+	import { setMode, userPrefersMode } from "mode-watcher";
+	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
 	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
 	import type { PageProps } from "./$types.js";
+	import { DEFAULT_SETTINGS } from "./default-settings";
 	import DestroyAccountDialog from "./destroy-account-dialog.svelte";
 	import LogoutDialog from "./logout-dialog.svelte";
+	import NotificationSection from "./notifications-section.svelte";
 	import SessionCard from "./session-card.svelte";
 	import * as remotes from "./settings.remote.js";
-	import NotificationSection from "./notifications-section.svelte";
-	import { DEFAULT_SETTINGS } from "./default-settings";
-	import { onMount } from "svelte";
-
-	import FloppyDiskBackIcon from "phosphor-svelte/lib/FloppyDiskBackIcon";
-	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
-	import HeartIcon from "phosphor-svelte/lib/HeartIcon";
-	import GithubLogoIcon from "phosphor-svelte/lib/GithubLogoIcon";
-	import PaletteIcon from "phosphor-svelte/lib/PaletteIcon";
-	import Input from "$lib/components/input.svelte";
-	import { setMode, userPrefersMode } from "mode-watcher";
+	import WebAccessSection from "./web-access-section.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -37,7 +38,7 @@
 		remotes.getSessions
 	);
 	onMount(async () => {
-		await sessions.load();
+		await sessions.load(data.sessionUser);
 	});
 
 	type Session = NonNullable<typeof sessions.data>[number];
@@ -160,7 +161,7 @@
 							class="relative flex w-full touch-none items-center select-none"
 						>
 							<span
-								class="relative h-3 w-full grow cursor-pointer overflow-hidden border-2 bg-background"
+								class="relative h-3 w-full grow cursor-pointer overflow-hidden border-2 border-border bg-background"
 							>
 								<span
 									class="absolute h-full bg-ret-unsafe"
@@ -174,7 +175,7 @@
 							</span>
 							<Slider.Thumb
 								index={0}
-								class="peer/min block size-4 cursor-pointer border-2 bg-background shadow-sm"
+								class="peer/min block size-4 cursor-pointer border-2  border-border bg-background shadow-sm"
 							/>
 							<Slider.ThumbLabel
 								index={0}
@@ -185,7 +186,7 @@
 							</Slider.ThumbLabel>
 							<Slider.Thumb
 								index={1}
-								class="peer/max block size-4 cursor-pointer border-2 bg-background shadow-sm"
+								class="peer/max block size-4 cursor-pointer border-2 border-border bg-background shadow-sm"
 							/>
 							<Slider.ThumbLabel
 								index={1}
@@ -433,14 +434,14 @@
 			{@const otherSessions = sessions.data.filter(negateFn(isCurrentSession))}
 			<h3 class="text-lg italic">Other sessions</h3>
 			{#if otherSessions.length > 0}
-				<div class="max-h-64 divide-y-2 overflow-scroll border-2 border-border">
+				<div class="max-h-64 divide-y-2 divide-border overflow-scroll border-2 border-border">
 					{#each otherSessions as session (session.id)}
 						<SessionCard
 							{session}
 							showLogout
 							onLogout={async () => {
 								await remotes.logoutSession({ session_id: session.id });
-								sessions.load();
+								await sessions.load(data.sessionUser);
 							}}
 						/>
 					{/each}
@@ -457,6 +458,8 @@
 		{/if}
 	</div>
 </section>
+
+<WebAccessSection sessionUser={data.sessionUser} />
 
 <section class="space-y-4">
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Account</h2>

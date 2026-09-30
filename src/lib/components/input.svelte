@@ -32,7 +32,10 @@
 
 {#if Icon != null}
 	<div class="relative">
-		<Icon class="absolute inset-s-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+		<Icon
+			weight="bold"
+			class="absolute inset-s-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
+		/>
 		<input
 			bind:this={ref}
 			bind:value

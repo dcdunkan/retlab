@@ -12,7 +12,11 @@ import z from "zod";
 // todo: write cron for clearing expired L2 entries every 24h
 
 const BEARER_PREFIX = "Bearer ";
-const ALLOWED_ENDPOINTS: string[] = [ApiEndPoints.SURVEY_URL, ApiEndPoints.RESULT_SEASONAL_URL];
+const ALLOWED_ENDPOINTS: string[] = [
+	ApiEndPoints.SURVEY_URL,
+	ApiEndPoints.RESULT_SEASONAL_URL,
+	ApiEndPoints.ATTENDANCE_BY_SUBJECT_URL // todo
+];
 const PROXY_REQUEST_SCHEMA = z
 	.object({
 		collegeId: z.int(),

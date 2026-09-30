@@ -49,7 +49,10 @@
 
 <Combobox.Root {type} {items} bind:value={value as never} bind:open {...mergedRootProps}>
 	<div class="relative">
-		<Icon class="absolute inset-s-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+		<Icon
+			weight="bold"
+			class="absolute inset-s-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
+		/>
 		<Combobox.Input
 			{...mergedInputProps}
 			class={inputVariants({ class: ["w-full", Icon != null ? "px-10" : "pr-10"] })}

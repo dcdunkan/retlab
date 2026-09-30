@@ -510,6 +510,7 @@
 									{...registerNotificationServer.fields.serverUrl.as("url")}
 									class="w-full text-sm"
 									placeholder="Server URL"
+									autocomplete="off"
 									oninput={() =>
 										registerNotificationServer.validate({
 											includeUntouched: false,

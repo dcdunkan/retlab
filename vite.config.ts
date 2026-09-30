@@ -10,6 +10,7 @@ const gitLongSha = execSync("git rev-parse HEAD").toString().trim();
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	// server: {
+	// 	host: "0.0.0.0",
 	// 	https: {
 	// 		cert: readFileSync("./cert/cert.pem"),
 	// 		key: readFileSync("./cert/key.pem")

@@ -6,6 +6,7 @@ export const NOTIFICATION_SERVER_ERRORS = [
 ] as const satisfies string[];
 
 export const ErrorCodes = makeErrorCodes({
+	WebAccess: ["NO_ACTIVE_SESSION"],
 	Network: ["INTERNAL_SERVER_ERROR", "UNREACHABLE_SERVER"],
 	Core: ["UNKNOWN_ERROR"],
 	NotificationServer: [

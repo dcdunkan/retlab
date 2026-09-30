@@ -7,13 +7,16 @@
 	import * as remotes from "./attendance.remote";
 	import { onMount } from "svelte";
 	import Button from "$lib/components/button.svelte";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
 
 	const attendanceData = cachedGracefulRemoteQuery(
 		{ name: "getAttendance", version: 1 },
 		remotes.getAttendance
 	);
 	onMount(async () => {
-		await attendanceData.load();
+		await attendanceData.load(data.sessionUser);
 	});
 	let attendancePercentThresholds = $derived(
 		[settingsState.value.attendancePercentMin, settingsState.value.attendancePercentMax].map(

@@ -24,7 +24,9 @@ export const routes = {
 export const SECOND = 1000,
 	MINUTE = 60 * SECOND,
 	HOUR = 60 * MINUTE,
-	DAY = 24 * HOUR;
+	DAY = 24 * HOUR,
+	MONTH = 30 * DAY,
+	YEAR = 365 * DAY;
 
 export const ETLAB_RESPONSE_FRESH_EXPIRY = 15 * SECOND;
 export const ETLAB_RESPONSE_STALE_EXPIRY = 30 * DAY;
@@ -144,3 +146,45 @@ export function zodStrictNumber(piped: ZodType<number, number | null>, error?: s
 		.transform((value) => (value === null ? null : Number(value)))
 		.pipe(piped);
 }
+
+export const timeDistanceToNow = (time: Date | number) => {
+	const ms = typeof time === "number" ? time : time.getTime();
+	const diff = Math.floor(Date.now() - ms);
+	const seconds = Math.abs(diff);
+
+	let result: string;
+
+	if (seconds < 10) {
+		result = "just a few seconds";
+	} else if (seconds < 30) {
+		result = "less than a minute";
+	} else if (seconds < MINUTE + 30) {
+		result = "about one minute";
+	} else if (seconds < 44 * MINUTE + 30) {
+		result = `${Math.ceil(seconds / MINUTE)} minutes`;
+	} else if (seconds < 89 * MINUTE + 30) {
+		result = "about an hour";
+	} else if (seconds < 23 * HOUR + 59 * MINUTE + 30) {
+		result = `about ${Math.ceil(seconds / HOUR)} hours`;
+	} else if (seconds < 41 * HOUR + 59 * MINUTE + 30) {
+		result = "about a day";
+	} else if (seconds < 29 * DAY + 23 * HOUR + 59 * MINUTE + 30) {
+		result = `about ${Math.ceil(seconds / DAY)} days`;
+	} else if (seconds < 44 * DAY + 23 * HOUR + 59 * MINUTE + 30) {
+		result = "about a month";
+	} else if (seconds < 59 * DAY + 23 * HOUR + 59 * MINUTE + 30) {
+		result = "about 2 months";
+	} else if (seconds < 364 * DAY + 23 * HOUR + 59 * MINUTE + 30) {
+		result = `about ${Math.ceil(seconds / MONTH)} months`;
+	} else if (seconds < YEAR + 3 * MONTH) {
+		result = "about a year";
+	} else if (seconds < YEAR + 9 * MONTH) {
+		result = "over a year";
+	} else if (seconds < 2 * YEAR) {
+		result = "almost 2 years";
+	} else {
+		result = `about ${Math.ceil(seconds / YEAR)} years`;
+	}
+
+	return diff < 0 ? `in ${result}` : `${result} ago`;
+};

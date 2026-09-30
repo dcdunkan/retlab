@@ -192,7 +192,7 @@
 									<p class="text-sm">{channel.description}</p>
 								{/if}
 							</div>
-							<div class="divide-y-2 border-2 bg-muted">
+							<div class="divide-y-2 divide-border border-2 bg-muted">
 								{#each Object.entries(channel.items) as [channelItemId, channelItem] (channelItemId)}
 									<div class="flex place-items-start justify-between gap-2 px-3 py-2">
 										<div class="text-sm">
@@ -244,7 +244,7 @@
 					</p>
 				</div>
 
-				<div class="divide-y-2 border-2 bg-muted">
+				<div class="divide-y-2 divide-border border-2 bg-muted">
 					{#each Object.entries(configuration.data.serverConfig.config) as [optionKey, option] (optionKey)}
 						<div id="notconf-option-{optionKey}" class="space-y-1 px-3 py-2">
 							<div class="flex place-items-start justify-between gap-2">
