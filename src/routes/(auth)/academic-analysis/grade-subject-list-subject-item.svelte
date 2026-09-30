@@ -34,7 +34,7 @@
 						No series examinations were recorded for this subject.
 					</div>
 				{:else}
-					<div class="space-y-1 px-2.5 py-1.5">
+					<div class="space-y-1 bg-muted px-2.5 py-1.5">
 						{#each subject.seriesExams as seriesExam (`${subject.name}-${seriesExam.slNo}`)}
 							<div class="grid grid-cols-3">
 								<div>{seriesExam.name}</div>
