@@ -105,7 +105,9 @@ function createResolvableState<T>() {
 		},
 		set(newValue: T) {
 			value = newValue;
-			if (!resolved) idb.resolve();
+			if (!resolved) {
+				resolved = true;
+			}
 		}
 	} as {
 		resolve(): void;
