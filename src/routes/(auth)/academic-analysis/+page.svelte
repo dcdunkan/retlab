@@ -189,6 +189,8 @@
 		>
 			{#snippet tooltip({ context })}
 				<Tooltip.Root
+					x="data"
+					y="data"
 					variant="none"
 					class="min-w-40 border-2 border-border bg-background shadow-block-shadow"
 				>
@@ -364,6 +366,8 @@
 		>
 			{#snippet tooltip()}
 				<Tooltip.Root
+					x="data"
+					y="data"
 					variant="none"
 					class="min-w-40 border-2 border-border bg-background shadow-block-shadow"
 				>

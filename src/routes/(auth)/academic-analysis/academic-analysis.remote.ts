@@ -38,7 +38,6 @@ export const getAcademicAnalysis = query(async () => {
 	}
 	try {
 		const parsed = parseAcademicAnalysisPage(await response.text());
-		console.log(JSON.stringify(parsed));
 		return parsed;
 	} catch {
 		return error(500, "Failed to parse academic analysis page");
