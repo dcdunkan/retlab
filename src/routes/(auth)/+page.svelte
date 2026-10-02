@@ -13,6 +13,7 @@
 	import * as remotes from "./dashboard.remote";
 	import { cachedGracefulRemoteQuery, webAccessSettingsState } from "./states.svelte";
 	import type { PageProps } from "./$types";
+	import box from "$lib/components/box";
 
 	let { data }: PageProps = $props();
 
@@ -60,9 +61,9 @@
 
 <div class="flex place-items-center justify-between">
 	<h2 class="text-2xl font-bold">Assignments Due</h2>
-	<Button href="/assignments" variant="outline" shadow="default" size="sm"
-		>Show all <ArrowRightIcon /></Button
-	>
+	<Button href="/assignments" variant="outline" shadow="default" size="sm">
+		Show all <ArrowRightIcon />
+	</Button>
 </div>
 
 {#if assignmentsData.loading}
@@ -70,7 +71,9 @@
 {:else if assignmentsData.data}
 	<div>
 		{#each assignmentsData.data as assignment (assignment.id)}
-			<AssignmentCard {assignment} />
+			<AssignmentCard assignment={{ ...assignment, status: "due" }} showResult={false} />
+		{:else}
+			<box.Empty>You have no assignments due.</box.Empty>
 		{/each}
 	</div>
 {:else if assignmentsData.error}

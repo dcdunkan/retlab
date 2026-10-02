@@ -49,12 +49,12 @@ export const getAssignmentResults = query(
 		const sessionUser = event.locals.sessionUser;
 		const etproxy = makeSessionBoundProxy(sessionUser);
 
-		const assignmentResults = await etproxy<result.ResultAssignment>({
+		const assignmentResults = await etproxy<result.ResultAssignment[]>({
 			endpoint: ApiEndPoints.RESULT_ASSIGNMENT_URL,
 			method: "POST",
 			body: {
 				// todo: no types? need to improve retlab-generate
-				sem_id: arg.semester_id.toString() // not working as of 26/12/25
+				sem_id: arg.semester_id.toString() // not working as of 26/12/2025, 03/10/2026
 			}
 		});
 

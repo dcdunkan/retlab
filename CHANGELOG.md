@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2026.10.03
+
+### Added
+
+- Added status based filtering to assignment page.
+- Now the assignments shows results along with them. There's also a toggle for it.
+- A button to go back to current semester in semester selection of assignments page.
+- Small help text in assignments page, if the USER is ever confused, duh.
+
+### Changed
+
+- Home page's due assignments section now shows an empty box if there are no assignments due instead of just being blank.
+- Assignment card's timestamps & dates now uses the Timestamp component showing relative time by default.
+- UI updates to assignments page & cards. Action buttons are now shown inside the expanded card.
+
+### Fixed
+
+- Made the "has uploaded assignment" check more stronger.
+- Dashed borders without transition in assignments page.
+
 ## 2026.09.30
 
 This update brings you a fixed view of academic analysis from Etlab web.

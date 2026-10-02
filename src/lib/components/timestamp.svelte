@@ -62,7 +62,7 @@
 	size="min"
 	variant="ghost"
 	class={cn(
-		"w-fit text-left font-normal whitespace-normal underline decoration-border decoration-dashed underline-offset-4",
+		"w-fit text-left font-normal whitespace-normal text-inherit underline decoration-inherit decoration-dashed underline-offset-4",
 		className
 	)}
 	onmousedown={interactionStart}

@@ -224,12 +224,12 @@
 		{@render children()}
 	</main>
 
-	<footer class="mt-3 px-4 pb-4">
-		<div class="text-center text-xs font-medium text-muted-foreground">
+	<footer class="mt-6 px-4 pb-4">
+		<div class="text-center text-xs font-medium text-muted-foreground/50">
 			ret commit <a
 				target="_blank"
 				href="https://github.com/dcdunkan/retlab/tree/{__GIT_SHA__}"
-				class="underline hover:text-ret-accent"
+				class="underline decoration-wavy underline-offset-2 hover:text-ret-accent/50"
 			>
 				{__GIT_SHORT_SHA__}
 			</a>

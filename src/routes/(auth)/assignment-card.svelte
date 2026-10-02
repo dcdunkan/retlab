@@ -1,39 +1,34 @@
 <script lang="ts">
 	import DownloadSimpleIcon from "phosphor-svelte/lib/DownloadSimpleIcon";
-	import UploadSimpleIcon from "phosphor-svelte/lib/UploadSimpleIcon";
 	import EyeIcon from "phosphor-svelte/lib/EyeIcon";
 	import TrashIcon from "phosphor-svelte/lib/TrashIcon";
+	import UploadSimpleIcon from "phosphor-svelte/lib/UploadSimpleIcon";
 
 	import { isValidDate } from "$lib";
 	import Button from "$lib/components/button.svelte";
-	import type * as models from "$lib/generated/models";
 	import sanitizeHtml from "sanitize-html";
-	import { MediaQuery } from "svelte/reactivity";
 	import { slide } from "svelte/transition";
+	import type { ParsedAssignmentWithResults } from "./assignments/+page.svelte";
+	import Timestamp from "$lib/components/timestamp.svelte";
 
 	let {
-		assignment
+		assignment,
+		showResult = false
 	}: {
-		assignment: models.assignment.Assignment & {
-			_parsed: {
-				issue_date: Date;
-				last_date: Date;
-				has_uploaded: boolean;
-				is_due: boolean;
-			};
-		};
+		showResult?: boolean;
+		assignment: ParsedAssignmentWithResults;
 	} = $props();
 
 	let open = $state(false);
 	let onActivated = () => (open = !open);
 
-	const tzFormatter = new Intl.DateTimeFormat("en-IN", {
+	const tzFormatOptions: Intl.DateTimeFormatOptions = {
 		timeZone: "Asia/Kolkata",
 		dateStyle: "long",
 		timeStyle: "short"
-	});
+	};
 
-	const isLarge = new MediaQuery("min-width: 32rem");
+	// const isLarge = new MediaQuery("min-width: 32rem");
 </script>
 
 <div class="border-2 border-b-0 border-border last:border-b-2">
@@ -46,29 +41,22 @@
 				<div class="font-medium">{assignment.title}</div>
 			</div>
 
-			<div class="shrink-0">
-				{#if assignment.url != ""}
-					<!-- is a downloadable assignment -->
-					<Button
-						size="icon-sm"
-						variant="outline"
-						shadow="none"
-						href={assignment.url}
-						target="_blank"
-						onclick={(e) => {
-							e.stopPropagation();
-						}}
-					>
-						<DownloadSimpleIcon weight="bold" />
-					</Button>
+			<div class="flex shrink-0 place-items-center gap-4">
+				{#if showResult && assignment._parsed_result != null}
+					<div class="items-center self-stretch font-serif text-2xl font-bold text-nowrap">
+						{#if assignment._parsed_result.obtained_mark != null}
+							<span class="text-">{assignment._parsed_result.obtained_mark}</span>
+						{:else}
+							<span class="text-muted-foreground">--</span>
+						{/if}
+						/
+						{assignment._parsed_result.max_mark}
+					</div>
 				{/if}
 				{#if assignment.upload}
-					<!-- uploadable (online submission) -->
 					{#if !assignment._parsed.has_uploaded}
-						<!-- has not uploaded yet -->
 						<Button
 							size="icon-sm"
-							shadow="none"
 							onclick={(e) => {
 								e.stopPropagation();
 							}}
@@ -76,10 +64,8 @@
 							<UploadSimpleIcon weight="bold" />
 						</Button>
 					{:else}
-						<!-- already uploaded -->
 						<Button
 							size="icon-sm"
-							shadow="none"
 							variant="outline"
 							href={assignment.uploaded_file}
 							target="_blank"
@@ -95,67 +81,105 @@
 		</div>
 
 		{#if assignment._parsed.is_due}
-			<div class="mt-2 text-sm text-error-foreground">
-				Submit before {tzFormatter.format(assignment._parsed.last_date)}
+			<div class="mt-2 text-sm font-bold text-error-foreground">
+				Submit before <Timestamp
+					timestamp={assignment._parsed.last_date}
+					dateTimeFormatOptions={tzFormatOptions}
+				/>
 			</div>
 		{/if}
-
-		<!-- {#if open}
-			<div transition:slide class="mt-2 space-x-1 text-sm *:border-r *:pr-2 *:last:border-r-0">
-				{#if assignment.url != ""}
-					<a class="text-ret-accent hover:underline" href={assignment.url}>View assignment</a>
-				{/if}
-				{#if assignment.upload}
-					{#if assignment.uploaded_file == "" || assignment.uploaded_file == new URL(college.base_url).origin}
-						<a class="text-ret-accent hover:underline" href={assignment.url}>Submit assignment</a>
-					{:else}
-						<a class="text-ret-accent hover:underline" href={assignment.uploaded_file}
-							>View submission</a
-						>
-					{/if}
-				{/if}
-			</div>
-		{/if} -->
 	</div>
 
 	{#if open}
-		<div transition:slide class="bg-muted text-sm">
-			<div class="border-t-2 border-dashed border-border">
-				<!-- todo: find a way to include these classes in the parent without the transition duration acting. -->
-			</div>
-			<div class="space-y-2 px-3 py-2">
+		<div transition:slide>
+			<div class="space-y-2 border-t-2 border-dashed border-border px-3 py-2 text-sm">
 				<div class="flex place-items-center justify-between gap-4">
 					<div>
 						<div>
-							<b>Issued on</b>
-							{isValidDate(assignment._parsed.issue_date)
-								? tzFormatter.format(assignment._parsed.issue_date)
-								: assignment.issue_date}
+							<b>Issued</b>
+							{#if isValidDate(assignment._parsed.issue_date)}
+								<Timestamp
+									timestamp={assignment._parsed.issue_date}
+									dateTimeFormatOptions={tzFormatOptions}
+								/>
+							{:else}
+								{assignment.issue_date}
+							{/if}
 						</div>
 						<div>
 							<b>Last date</b>
-							{tzFormatter.format(assignment._parsed.last_date)}
+							<Timestamp
+								timestamp={assignment._parsed.last_date}
+								dateTimeFormatOptions={tzFormatOptions}
+							/>
 						</div>
 					</div>
-					{#if assignment.upload && assignment._parsed.has_uploaded}
-						<Button
-							size={isLarge.current ? "sm" : "icon-sm"}
-							shadow="none"
-							variant="destructive"
-							onclick={(e) => {
-								e.stopPropagation();
-							}}
-						>
-							<TrashIcon weight="bold" />
-							{#if isLarge.current}
-								Delete
-							{/if}
-						</Button>
-					{/if}
 				</div>
 
+				{#if assignment.url !== "" || assignment.upload}
+					<div class="mb-1 flex gap-2">
+						{#if assignment.url !== ""}
+							<Button
+								size="sm"
+								variant="outline"
+								href={assignment.url}
+								target="_blank"
+								onclick={(e) => {
+									e.stopPropagation();
+								}}
+							>
+								<DownloadSimpleIcon weight="bold" /> Question
+							</Button>
+						{/if}
+
+						{#if assignment.upload}
+							{#if assignment._parsed.has_uploaded}
+								<Button
+									size="sm"
+									variant="outline"
+									href={assignment.uploaded_file}
+									target="_blank"
+									onclick={(e) => {
+										e.stopPropagation();
+									}}
+								>
+									<EyeIcon weight="bold" />
+									Submission
+								</Button>
+
+								<Button
+									size="sm"
+									variant="destructive"
+									onclick={(e) => {
+										e.stopPropagation();
+									}}
+									disabled
+								>
+									<TrashIcon weight="bold" />
+									Delete
+								</Button>
+							{:else if assignment.status === "due" || assignment.status === "closed"}
+								<Button
+									size="sm"
+									variant="default"
+									onclick={(e) => {
+										e.stopPropagation();
+									}}
+								>
+									<UploadSimpleIcon weight="bold" />
+									{#if assignment.status === "closed"}
+										Try late upload
+									{:else}
+										Upload
+									{/if}
+								</Button>
+							{/if}
+						{/if}
+					</div>
+				{/if}
+
 				{#if assignment.details}
-					<p>
+					<p class="mt-2">
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html sanitizeHtml(assignment.details)}
 					</p>
@@ -163,4 +187,9 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- <div transition:slide class="text-sm"> -->
+	<!-- <div class="border-t-2 border-dashed border-border">
+				<!-- todo: find a way to include these classes in the parent without the transition duration acting. --
+			</div> -->
 </div>

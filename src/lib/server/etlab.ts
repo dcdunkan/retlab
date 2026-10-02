@@ -40,8 +40,12 @@ export function parseAssignmentsResponse(
 	collegeBaseUrlOrigin: string
 ): ParsedAssignmentResponse {
 	return response.assignments.map((assignment) => {
+		// console.log(assignment.subject, assignment.title, assignment.uploaded_file);
+		// const hasUploaded =
+		// 	assignment.uploaded_file !== "" && assignment.uploaded_file !== collegeBaseUrlOrigin;
 		const hasUploaded =
-			assignment.uploaded_file !== "" && assignment.uploaded_file !== collegeBaseUrlOrigin;
+			!!assignment.uploaded_file &&
+			new URL(assignment.uploaded_file, collegeBaseUrlOrigin).pathname.replace(/\/$/, "") !== "";
 		const isDue = assignment.can_submit && (!assignment.upload || !hasUploaded);
 
 		// const issueDate = parseServerDateString(assignment.issue_date);
