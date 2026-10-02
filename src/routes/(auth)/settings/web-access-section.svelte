@@ -151,7 +151,7 @@
 					<div class="flex justify-between gap-4 border-2 border-border px-4 py-3">
 						<div>
 							<div class="font-bold text-success-foreground">Active session</div>
-							<ul class="list-inside list-[square] text-sm *:list-item">
+							<ul class="list-[square] pl-4 text-sm *:list-item">
 								<li>Logged in <Timestamp timestamp={ws.loggedInAt} /></li>
 								<li>Expires <Timestamp timestamp={ws.expiresAt} /></li>
 								<li>Total {ws.requestsMade} requests made.</li>
