@@ -13,7 +13,7 @@
 
 	import { resolve } from "$app/paths";
 	import { page } from "$app/state";
-	import type { Pathname } from "$app/types";
+	import type { Pathname, RouteId } from "$app/types";
 	import { getLocalSubscription } from "$lib/browser";
 	import { IDBStore, openIdb } from "$lib/indexeddb";
 	import type { IconComponentProps } from "phosphor-svelte";
@@ -27,7 +27,6 @@
 		settingsState,
 		webAccessSettingsState
 	} from "./states.svelte";
-	import type { RouteId } from "$app/types";
 
 	let { data, children }: LayoutProps = $props();
 
@@ -193,8 +192,8 @@
 
 <div class="min-h-screen w-full">
 	<nav class="sticky top-0 z-50 border-b-2 border-border bg-background/50 backdrop-blur-lg">
-		<div class="mx-auto flex max-w-prose place-items-center justify-between px-4 py-2">
-			<div>
+		<div class="mx-auto flex max-w-prose place-items-center justify-between gap-2 px-4 py-2">
+			<div class="grow">
 				{#each pieces as piece, i (i)}
 					{#if i == pieces.length - 1}
 						{#if piece.label}
