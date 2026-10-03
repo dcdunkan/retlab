@@ -539,7 +539,14 @@
 			heartClickCount++;
 			if (heartClickCount % 50 === 0) {
 				toast("Yay! You found it!");
-				confetti({ disableForReducedMotion: true });
+
+				confetti({
+					disableForReducedMotion: true,
+					origin: { y: 0.75 },
+					particleCount: 80,
+					spread: 50,
+					ticks: 250
+				});
 			} else {
 				heartClickResetTimer = setTimeout(() => {
 					heartClickCount = 0;
