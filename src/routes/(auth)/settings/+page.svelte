@@ -25,6 +25,7 @@
 	import SessionCard from "./session-card.svelte";
 	import * as remotes from "./settings.remote.js";
 	import WebAccessSection from "./web-access-section.svelte";
+	import confetti from "canvas-confetti";
 
 	let { data }: PageProps = $props();
 
@@ -128,6 +129,8 @@
 	});
 
 	let heartFilled = $state(false);
+	let heartClickCount = $state(0);
+	let heartClickResetTimer = $state<NodeJS.Timeout>();
 </script>
 
 <svelte:head>
@@ -529,7 +532,20 @@
 <section class="relative border-t-2 border-border py-3">
 	<button
 		class="absolute top-0 left-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-1 bg-background px-2 leading-none text-ret-favourite"
-		onclick={() => (heartFilled = !heartFilled)}
+		onclick={() => {
+			heartFilled = !heartFilled;
+			if (heartClickResetTimer != null) clearTimeout(heartClickResetTimer);
+
+			heartClickCount++;
+			if (heartClickCount % 50 === 0) {
+				toast("Yay! You found it!");
+				confetti({ disableForReducedMotion: true });
+			} else {
+				heartClickResetTimer = setTimeout(() => {
+					heartClickCount = 0;
+				}, 2000);
+			}
+		}}
 	>
 		<HeartIcon weight={heartFilled ? "fill" : "bold"} class="block shrink-0 text-ret-favourite" />
 		<GithubLogoIcon weight={heartFilled ? "bold" : "fill"} class="block shrink-0 text-foreground" />
