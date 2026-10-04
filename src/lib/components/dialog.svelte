@@ -93,8 +93,8 @@
 				<Dialog.Close
 					class="absolute top-4 right-4 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 				>
-					<div class={buttonVariants({ variant: "destructive", size: "icon-sm", shadow: "none" })}>
-						<XIcon weight="bold" />
+					<div class={buttonVariants({ variant: "destructive", size: "icon-xsm" })}>
+						<XIcon weight="bold" class="text-background" />
 						<span class="sr-only">Close</span>
 					</div>
 				</Dialog.Close>
