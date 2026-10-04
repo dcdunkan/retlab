@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2026.10.04
+
+### Added
+
+- Attendance page now has a calendar component inspired by the Android app's attendance by day calendar. Same thing, but faster & better.
+
+### Changed
+
+- Updated dialog's close button to have inverted colors for the X icon, for improving the visual.
+
 ## 2026.10.03
 
 ### Added
