@@ -138,7 +138,7 @@ export type CachedLoadData<RQ> =
 // todo: make sure to clear idb on logout
 export function cachedGracefulRemoteQuery<I, O>(
 	cacheInfo: {
-		name: string;
+		name: string | (() => string);
 		version: number;
 	},
 	remoteQuery: RemoteQueryFunction<I, O>
@@ -147,9 +147,12 @@ export function cachedGracefulRemoteQuery<I, O>(
 	let data = $state<O>();
 	let error = $state.raw<unknown>();
 
+	const cacheInfoNameFn =
+		typeof cacheInfo.name === "string" ? () => cacheInfo.name : cacheInfo.name;
+
 	function computeCacheKey(cacheUser: CacheUserInfo, stringifiedInput: string) {
 		return (
-			`${cacheUser.college.id}-${cacheUser.account.username}:${cacheInfo.name}:${cacheInfo.version}` +
+			`${cacheUser.college.id}-${cacheUser.account.username}:${cacheInfoNameFn()}:${cacheInfo.version}` +
 			(typeof stringifiedInput !== "string" ? "" : ":" + cyrb53(stringifiedInput))
 		);
 	}

@@ -1,13 +1,17 @@
 <script lang="ts">
+	import CheckIcon from "phosphor-svelte/lib/CheckIcon";
+	import XIcon from "phosphor-svelte/lib/XIcon";
+
 	import { cutePercent, safeDivision } from "$lib";
 	import Box from "$lib/components/box";
+	import Button from "$lib/components/button.svelte";
 	import { isHttpError } from "@sveltejs/kit";
+	import { onMount } from "svelte";
 	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
+	import type { PageProps } from "./$types";
 	import AttendanceCard from "./attendance-card.svelte";
 	import * as remotes from "./attendance.remote";
-	import { onMount } from "svelte";
-	import Button from "$lib/components/button.svelte";
-	import type { PageProps } from "./$types";
+	import AttendanceCalendar from "./attendance-calendar.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -44,15 +48,19 @@
 	{@const totalPercent = cutePercent(safeDivision(total.attended, total.classes) * 100, 0)}
 
 	<div class="flex flex-col justify-between gap-4 sm:flex-row">
-		<h1 class="text-5xl font-bold">{totalPercent} %</h1>
+		<h1 class="text-6xl font-bold">{totalPercent} %</h1>
 
 		<Button
 			variant="outline"
 			size="sm"
 			onclick={() => (attendanceMode = attendanceMode === "duty_leave" ? "normal" : "duty_leave")}
 		>
-			<b>duty leave mode:</b>
-			{attendanceMode === "duty_leave" ? "on" : "off"}
+			Include duty leave
+			{#if attendanceMode === "duty_leave"}
+				<CheckIcon weight="bold" />
+			{:else}
+				<XIcon weight="bold" />
+			{/if}
 		</Button>
 	</div>
 
@@ -61,6 +69,8 @@
 			<AttendanceCard {attendancePercentThresholds} {subject} {attendanceMode} />
 		{/each}
 	</div>
+
+	<AttendanceCalendar sessionUser={data.sessionUser} />
 
 	<!-- <section class="w-full">
 		<GearIcon weight="fill" size="1.5em" />

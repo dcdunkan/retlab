@@ -2854,6 +2854,7 @@ export namespace attendance {
 		attends: Array<AttendanceNew>;
 	};
 	export type AttendancePeriod = {
+		topic_cov: string[]; // added manually.
 		attendance: string;
 		hour?: number;
 		subject: string;

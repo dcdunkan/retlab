@@ -409,7 +409,7 @@
 			}}
 		>
 			{#if isSavingChanges}
-				<SpinnerIcon weight="bold" /> Saving changes
+				<SpinnerIcon weight="bold" class="animate-spin" /> Saving changes
 			{:else}
 				<FloppyDiskBackIcon weight="fill" /> Save &AMP; close
 			{/if}
