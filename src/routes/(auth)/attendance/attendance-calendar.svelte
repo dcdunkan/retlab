@@ -225,13 +225,14 @@
 			<div
 				class={cn(
 					"text-center text-lg",
+					calendarDate.year === year && calendarDate.month === month ? "" : "text-muted-foreground",
+					data?.holiday ? "text-ret-excellent-foreground" : "",
+
 					year === today.year && month === today.month
 						? day === today.day
-							? "font-bold text-ret-accent"
+							? "font-bold text-ret-accent underline decoration-2 underline-offset-2"
 							: "font-medium"
-						: "",
-					calendarDate.year === year && calendarDate.month === month ? "" : "text-muted-foreground",
-					data?.holiday ? "text-ret-excellent-foreground" : ""
+						: ""
 				)}
 			>
 				{day}
