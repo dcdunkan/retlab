@@ -64,10 +64,13 @@
 		</Button>
 	</div>
 
-	<div class="grid grid-flow-row">
-		{#each attendanceData.data as subject, i (i)}
-			<AttendanceCard {attendancePercentThresholds} {subject} {attendanceMode} />
-		{/each}
+	<div class="space-y-2">
+		<div class="grid grid-flow-row">
+			{#each attendanceData.data as subject, i (i)}
+				<AttendanceCard {attendancePercentThresholds} {subject} {attendanceMode} />
+			{/each}
+		</div>
+		<p class="text-sm text-muted-foreground">These cards are interactable btw.</p>
 	</div>
 
 	<AttendanceCalendar sessionUser={data.sessionUser} />

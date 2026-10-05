@@ -91,7 +91,7 @@
 	</div>
 
 	{#if open}
-		<div transition:slide>
+		<div transition:slide class="bg-muted">
 			<div class="space-y-2 border-t-2 border-dashed border-border px-3 py-2 text-sm">
 				<div class="flex place-items-center justify-between gap-4">
 					<div>
