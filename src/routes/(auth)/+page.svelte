@@ -3,8 +3,10 @@
 	import BarbellIcon from "phosphor-svelte/lib/BarbellIcon";
 	import CalendarCheckIcon from "phosphor-svelte/lib/CalendarCheckIcon";
 	import ChartLineIcon from "phosphor-svelte/lib/ChartLineIcon";
+	import ExamIcon from "phosphor-svelte/lib/ExamIcon";
 
 	import pressSound_opus from "$lib/assets/press-sound.opus";
+
 	import Box from "$lib/components/box";
 	import Button from "$lib/components/button.svelte";
 	import { onMount } from "svelte";
@@ -14,6 +16,7 @@
 	import { cachedGracefulRemoteQuery, webAccessSettingsState } from "./states.svelte";
 	import type { PageProps } from "./$types";
 	import box from "$lib/components/box";
+	import { MediaQuery } from "svelte/reactivity";
 
 	let { data }: PageProps = $props();
 
@@ -26,13 +29,15 @@
 	});
 
 	const clickSfx = useSound(pressSound_opus, ["click"], { volume: 0.75 });
+
+	const isLarge = new MediaQuery("min-width: 32rem"); // note: its actually 40em tho (https://tailwindcss.com/docs/responsive-design#overview)
 </script>
 
 <svelte:head>
 	<title>Dashboard / Retlab</title>
 </svelte:head>
 
-<div>
+<div class="space-y-2">
 	<Button class="transition-none" {@attach clickSfx()}>Relax &lpar;0ms&rpar;</Button>
 	<Button variant="destructive" class="transition-all duration-75" {@attach clickSfx()}>
 		Relax &lpar;75ms&rpar;
@@ -42,43 +47,54 @@
 	</Button>
 </div>
 
-<div>
+<div class="space-y-2">
 	<Button variant="outline" href="/attendance">
 		<CalendarCheckIcon weight="bold" /> Attendance
 	</Button>
 	<Button variant="outline" href="/assignments">
 		<BarbellIcon weight="bold" /> Assignments
 	</Button>
+	<Button variant="outline" href="/results">
+		<ExamIcon weight="bold" /> Results
+	</Button>
 </div>
 
 {#if webAccessSettingsState.resolved && webAccessSettingsState.value != null}
-	<div>
+	<div class="space-y-2">
 		<Button variant="outline" href="/academic-analysis">
 			<ChartLineIcon weight="bold" /> Academic Analysis
 		</Button>
 	</div>
 {/if}
 
-<div class="flex place-items-center justify-between">
-	<h2 class="text-2xl font-bold">Assignments Due</h2>
-	<Button href="/assignments" variant="outline" shadow="default" size="sm">
-		Show all <ArrowRightIcon />
-	</Button>
-</div>
-
-{#if assignmentsData.loading}
-	<Box.Loading>Loading due assignments...</Box.Loading>
-{:else if assignmentsData.data}
-	<div>
-		{#each assignmentsData.data as assignment (assignment.id)}
-			<AssignmentCard assignment={{ ...assignment, status: "due" }} showResult={false} />
-		{:else}
-			<box.Empty>You have no assignments due.</box.Empty>
-		{/each}
+<div class="space-y-4">
+	<div class="flex place-items-center justify-between gap-2">
+		<h2 class="text-2xl">Assignments Due</h2>
+		<Button
+			href="/assignments"
+			variant="outline"
+			shadow="default"
+			size={isLarge.current ? "sm" : "icon-sm"}
+		>
+			{#if isLarge.current}Show all{/if}
+			<ArrowRightIcon />
+		</Button>
 	</div>
-{:else if assignmentsData.error}
-	<Box.Error>Something went wrong</Box.Error>
-{/if}
+
+	{#if assignmentsData.loading}
+		<Box.Loading>Loading due assignments...</Box.Loading>
+	{:else if assignmentsData.data}
+		<div>
+			{#each assignmentsData.data as assignment (assignment.id)}
+				<AssignmentCard assignment={{ ...assignment, status: "due" }} showResult={false} />
+			{:else}
+				<box.Empty>You have no assignments due.</box.Empty>
+			{/each}
+		</div>
+	{:else if assignmentsData.error}
+		<Box.Error>Something went wrong</Box.Error>
+	{/if}
+</div>
 
 <!-- <h1 class="text-2xl capitalize">
 	{data.account.profile_name.toLowerCase()}
