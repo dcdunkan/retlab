@@ -151,43 +151,6 @@ export const notificationSettingsRelations = relations(notificationServerSetting
 	})
 }));
 
-export const webAccessSettings = pgTable(
-	"web_access_settings",
-	{
-		accountUsername: text("account_username").notNull(),
-		collegeId: integer("college_id").notNull(),
-
-		setupAt: timestamp({ withTimezone: true, mode: "date" }).defaultNow().notNull(), // something to expose
-
-		hashSalt: text("web_access_hash_salt").notNull(), // argon2 salt
-		encryptionNonce: text("web_access_encryption_nonce").notNull(), // aes-256-gcm nonce
-		encryptionAuthTag: text("web_access_encryption_authtag").notNull(), // aes-256-gcm authtag
-		encryptedPassword: text("web_access_encrypted_password").notNull() // Password encrypted using the passcode
-	},
-	(table) => [
-		foreignKey({
-			columns: [table.collegeId, table.accountUsername],
-			foreignColumns: [accounts.collegeId, accounts.username],
-			name: "web_access_settings_college_id_account_username_fkey"
-		})
-			.onUpdate("cascade")
-			.onDelete("cascade"),
-		primaryKey({
-			columns: [table.accountUsername, table.collegeId],
-			name: "web_access_settings_pkey"
-		})
-	]
-);
-
-export type WebAccessSettings = typeof webAccessSettings.$inferSelect;
-
-export const webAccessSettingsRelations = relations(webAccessSettings, (r) => ({
-	account: r.one(accounts, {
-		fields: [webAccessSettings.collegeId, webAccessSettings.accountUsername],
-		references: [accounts.collegeId, accounts.username]
-	})
-}));
-
 export const webSessions = pgTable(
 	"web_sessions",
 	{
@@ -241,17 +204,12 @@ export type OmittedAuthPk = "collegeId" | "accountUsername";
 
 export type SettingsState = Omit<Settings, OmittedAuthPk>;
 export type NotificationServerSettingsState = Omit<NotificationServerSettings, OmittedAuthPk>;
-export type WebAccessSettingsState = Omit<WebAccessSettings, OmittedAuthPk>;
 
 // settings that's passed on to the client side.
 export type ClientSettingsState = SettingsState;
 export type ClientNotificationServerSettingsState = Omit<
 	NotificationServerSettingsState,
 	"etlabAccessToken" | "apiKey" | "authToken"
-> | null;
-export type ClientWebAccessSettingsState = Omit<
-	WebAccessSettingsState,
-	"hashSalt" | "encryptionNonce" | "encryptionAuthTag" | "encryptedPassword"
 > | null;
 
 export const accounts = pgTable(

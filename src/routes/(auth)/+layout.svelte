@@ -21,13 +21,7 @@
 	import { onMount, type Component } from "svelte";
 	import type { LayoutProps } from "./$types";
 	import { DEFAULT_SETTINGS } from "./settings/default-settings";
-	import {
-		auth,
-		idb,
-		notificationServerSettingsState,
-		settingsState,
-		webAccessSettingsState
-	} from "./states.svelte";
+	import { auth, idb, notificationServerSettingsState, settingsState } from "./states.svelte";
 
 	let { data, children }: LayoutProps = $props();
 
@@ -74,15 +68,6 @@
 				vapidKey: data.sessionUser.notificationServerSettings.vapidKey
 			});
 		}
-
-		if (data.sessionUser.webAccessSettings != null) {
-			webAccessSettingsState.set({
-				setupAt: data.sessionUser.webAccessSettings.setupAt
-			});
-		} else {
-			webAccessSettingsState.set(null);
-		}
-		webAccessSettingsState.resolve();
 
 		// unsubscribe zombie subscriptions:
 		async function unsubscribeLocalPushSubscription() {

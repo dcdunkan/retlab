@@ -62,13 +62,6 @@ declare global {
 					vapidKey: string;
 					etlabAccessToken: string;
 				} | null;
-				webAccessSettings: {
-					setupAt: Date;
-					hashSalt: string;
-					encryptionNonce: string;
-					encryptionAuthTag: string;
-					encryptedPassword: string;
-				} | null;
 			} | null;
 		}
 		// interface PageData {}

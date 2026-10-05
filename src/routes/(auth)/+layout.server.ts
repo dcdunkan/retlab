@@ -3,8 +3,7 @@ import { ApiEndPoints } from "$lib/generated/api-endpoints.js";
 import { makeSessionBoundProxy } from "$lib/server/etlab.js";
 import {
 	type ClientNotificationServerSettingsState,
-	type ClientSettingsState,
-	type ClientWebAccessSettingsState
+	type ClientSettingsState
 } from "$lib/server/schema.js";
 import { error } from "@sveltejs/kit";
 
@@ -73,12 +72,6 @@ export const load = async (event) => {
 				name: sessionUser.college.name,
 				baseUrl: sessionUser.college.baseUrl
 			},
-			webAccessSettings:
-				sessionUser.webAccessSettings === null
-					? null
-					: ({
-							setupAt: sessionUser.webAccessSettings.setupAt
-						} satisfies ClientWebAccessSettingsState),
 			notificationServerSettings:
 				sessionUser.notificationServerSettings == null
 					? null

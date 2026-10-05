@@ -7,11 +7,11 @@
 	import box from "$lib/components/box";
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Dialog from "$lib/components/dialog.svelte";
-	import PinInput from "$lib/components/pin-input.svelte";
+	import Input from "$lib/components/input.svelte";
 	import { isHttpError } from "@sveltejs/kit";
-	import { Dialog as DialogPrimitive, REGEXP_ONLY_DIGITS_AND_CHARS } from "bits-ui";
+	import { Dialog as DialogPrimitive } from "bits-ui";
 	import { toast } from "svelte-sonner";
-	import { authenticateWebAccess, getMyWebSessions } from "./web-access.remote";
+	import { authenticateWebSession, getMyWebSessions } from "./web-access.remote";
 
 	let {
 		open = $bindable(false),
@@ -23,8 +23,8 @@
 
 	let isAuthenticating = $state(false);
 
-	let showPasscode = $state(false);
-	let passcode = $state("");
+	let showPassword = $state(false);
+	let password = $state("");
 </script>
 
 <Dialog bind:open showCloseIcon={false} interactOutsideBehavior="ignore">
@@ -39,24 +39,21 @@
 	{/snippet}
 
 	{#snippet description()}
-		Enter passcode to authenticate web-access. If you forgot your passcode, disable & set-up
-		web-access again.
+		Enter your Etlab account password to create a new web-access session.
 	{/snippet}
 
 	<div class="space-y-3 p-2">
 		<div class="flex w-full items-center justify-center gap-2">
-			<PinInput
-				type="text"
-				inputmode="text"
-				hide={!showPasscode}
-				maxlength={6}
-				pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-				class="w-fit uppercase"
-				bind:value={passcode}
+			<Input
+				type={showPassword ? "text" : "password"}
+				bind:value={password}
+				placeholder="Etlab account password"
+				class="w-full"
+				autocomplete="current-password"
 			/>
 			<!-- todo: sad-to-happy password strength smiley reactions -->
-			<Button variant="ghost" size="icon-lg" onclick={() => (showPasscode = !showPasscode)}>
-				{#if showPasscode}
+			<Button variant="ghost" size="icon-lg" onclick={() => (showPassword = !showPassword)}>
+				{#if showPassword}
 					<SmileyIcon class="size-7" />
 				{:else}
 					<SmileyXEyesIcon class="size-7" />
@@ -71,20 +68,20 @@
 
 		<box.Warning>
 			By clicking <b>"Authenticate"</b>, you agree to let Ret login to Etlab to obtain your session
-			token by decrypting your stored encrypted password using your passcode.
+			token by using the entered password (without storing or logging it anywhere).
 		</box.Warning>
 	</div>
 
 	{#snippet footer()}
-		<Button disabled={isAuthenticating} variant="outline" onclick={() => (open = false)}
-			>Cancel</Button
-		>
+		<Button disabled={isAuthenticating} variant="outline" onclick={() => (open = false)}>
+			Cancel
+		</Button>
 		<Button
 			disabled={isAuthenticating}
 			onclick={async () => {
 				isAuthenticating = true;
 				try {
-					const newWSession = await authenticateWebAccess(passcode);
+					const newWSession = await authenticateWebSession({ password });
 					open = false;
 					webSessions.expired.unshift(
 						...webSessions.active.map((activeWs) => ({

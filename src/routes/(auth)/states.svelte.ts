@@ -4,7 +4,6 @@
 import { cyrb53, ETLAB_RESPONSE_FRESH_EXPIRY, ETLAB_RESPONSE_STALE_EXPIRY } from "$lib";
 import { IDBStore } from "$lib/indexeddb";
 import type {
-	ClientWebAccessSettingsState,
 	ClientNotificationServerSettingsState,
 	ClientSettingsState,
 	DeviceType
@@ -77,8 +76,6 @@ function createNotificationSettings() {
 		}
 	};
 }
-
-export const webAccessSettingsState = createResolvableState<ClientWebAccessSettingsState>();
 
 export const idb = createResolvableState<{
 	cacheStorageIdb: IDBDatabase;

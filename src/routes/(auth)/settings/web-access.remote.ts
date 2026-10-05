@@ -1,153 +1,13 @@
 import { command, getRequestEvent, query } from "$app/server";
 import { WeblabRoutes } from "$lib/server/constants";
 import { db, schema } from "$lib/server/db";
-import type { OmittedAuthPk } from "$lib/server/schema";
-import * as argon2 from "@node-rs/argon2";
-import { error, isHttpError } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import { and, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
-import * as crypto from "node:crypto";
 import { parseSetCookie } from "set-cookie-parser";
 import z from "zod";
 
 const SESSION_ID_COOKIE_SUFFIX = "SESSIONID";
 const MAX_WEB_SESSIONS = 20;
-
-const WEB_ACCESS_KEY_LEN = 32,
-	WEB_ACCESS_AES_NONCE_LEN = 12,
-	WEB_ACCESS_KEY_SALT_LEN = 16;
-
-async function deriveKey(passcode: string, salt: Uint8Array) {
-	return await argon2.hashRaw(Buffer.from(passcode, "utf-8"), {
-		salt: salt,
-		timeCost: 4,
-		parallelism: 4,
-		memoryCost: 65536,
-		outputLen: WEB_ACCESS_KEY_LEN,
-		algorithm: 2, // argon2.Algorithm.Argon2id, // stupid verbatimmodulesyntax
-		version: 1 // argon2.Version.V0x13
-	});
-}
-
-export const setupWebAccess = command(
-	z.object({
-		password: z.string().nonempty("Password is empty").max(128, "That seems a bit too long..."),
-		passcode: z
-			.string()
-			.length(6, "Passcode must be 6 characters long")
-			.toUpperCase()
-			.regex(/^[A-Z0-9]{6}$/, "Passcode can only contain numbers and letters")
-	}),
-	async (data) => {
-		const event = getRequestEvent();
-		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
-
-		const sessionUser = event.locals.sessionUser;
-		if (sessionUser.webAccessSettings != null)
-			return error(400, "Web access is already enabled in this account!");
-
-		const requestedAt = new Date();
-
-		const hashSalt = crypto.randomBytes(WEB_ACCESS_KEY_SALT_LEN);
-		const aesNonce = crypto.randomBytes(WEB_ACCESS_AES_NONCE_LEN);
-
-		const key = await deriveKey(data.passcode, hashSalt);
-		const cipher = crypto.createCipheriv("aes-256-gcm", key, aesNonce);
-		const ciphertext = Buffer.concat([cipher.update(data.password, "utf-8"), cipher.final()]);
-		const authtag = cipher.getAuthTag();
-
-		key.fill(0); // zero it right after use, as Claude said.
-
-		try {
-			const sessionInitiationResponse = await loginToWeblab(
-				sessionUser.college.baseUrl,
-				sessionUser.account.username,
-				data.password
-			);
-			if (!sessionInitiationResponse.success) {
-				return error(400, sessionInitiationResponse.error); // yeah, blame the client
-			}
-
-			const webAccessDetails: Omit<typeof schema.webAccessSettings.$inferInsert, OmittedAuthPk> = {
-				encryptedPassword: ciphertext.toString("base64"),
-				encryptionAuthTag: authtag.toString("base64"),
-				encryptionNonce: aesNonce.toString("base64"),
-				hashSalt: hashSalt.toString("base64")
-			};
-
-			return await db.transaction(async (tx) => {
-				const [inserted] = await tx
-					.insert(schema.webAccessSettings)
-					.values({
-						accountUsername: sessionUser.account.username,
-						collegeId: sessionUser.college.id,
-						...webAccessDetails
-					})
-					.onConflictDoUpdate({
-						target: [schema.webAccessSettings.collegeId, schema.webAccessSettings.accountUsername],
-						set: { ...webAccessDetails }
-					})
-					.returning({
-						setupAt: schema.webAccessSettings.setupAt
-					});
-
-				if (inserted == null) throw new Error("damn, should have been inserted");
-
-				await tx
-					.update(schema.webSessions)
-					.set({ revokedAt: sql`now()` }) // note: revokedReason = null -> system revocation
-					.where(
-						and(
-							eq(schema.webSessions.accountUsername, sessionUser.account.username),
-							eq(schema.webSessions.collegeId, sessionUser.college.id),
-							gte(schema.webSessions.expiresAt, sql`now()`),
-							isNull(schema.webSessions.revokedAt)
-						)
-					);
-
-				const sessionsToDelete = db
-					.select({ id: schema.webSessions.id })
-					.from(schema.webSessions)
-					.where(
-						and(
-							eq(schema.webSessions.accountUsername, sessionUser.account.username),
-							eq(schema.webSessions.collegeId, sessionUser.college.id)
-						)
-					)
-					.orderBy(desc(schema.webSessions.loggedInAt))
-					.offset(MAX_WEB_SESSIONS);
-				await tx.delete(schema.webSessions).where(inArray(schema.webSessions.id, sessionsToDelete));
-
-				const [newSession] = await tx
-					.insert(schema.webSessions)
-					.values({
-						accountUsername: sessionUser.account.username,
-						collegeId: sessionUser.college.id,
-						cookieString: `${sessionInitiationResponse.name}=${sessionInitiationResponse.value}`,
-						lastUsedAt: sql`now()`,
-						requestedAt: requestedAt,
-						expiresAt: sql`now() + interval '30 minute'`,
-						requestsMade: 0
-					})
-					.returning({
-						id: schema.webSessions.id,
-						revokedAt: schema.webSessions.revokedAt,
-						revokedReason: schema.webSessions.revokedReason,
-						expiresAt: schema.webSessions.expiresAt,
-						loggedInAt: schema.webSessions.loggedInAt,
-						requestedAt: schema.webSessions.requestedAt,
-						lastUsedAt: schema.webSessions.lastUsedAt,
-						requestsMade: schema.webSessions.requestsMade
-					});
-
-				return { setupAt: inserted.setupAt, webSession: newSession };
-			});
-		} catch (err) {
-			if (isHttpError(err)) throw err;
-			console.error(err);
-			return error(500, "Something went wrong trying to initiate a web session.");
-		}
-	}
-);
 
 function findSessionIdCookieValue(response: Response, cookieNameEndsWith: string[]) {
 	const cookies = response.headers.getSetCookie();
@@ -214,135 +74,78 @@ async function loginToWeblab(
 	return { success: true, name: c2.name, value: c2.value };
 }
 
-export const authenticateWebAccess = command(
-	z
-		.string()
-		.length(6, "Passcode must be 6 characters long")
-		.toUpperCase()
-		.regex(/^[A-Z0-9]{6}$/, "Passcode can only contain numbers and letters"),
-	async (passcode) => {
+export const authenticateWebSession = command(
+	z.object({
+		password: z.string().nonempty("Password is empty").max(128, "That seems a bit too long...")
+	}),
+	async (args) => {
 		const event = getRequestEvent();
 		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
 		const sessionUser = event.locals.sessionUser;
-		if (sessionUser.webAccessSettings == null)
-			return error(400, "Web access is not enabled in this account!");
 
 		const requestedAt = new Date();
 
-		const key = await deriveKey(
-			passcode,
-			Buffer.from(sessionUser.webAccessSettings.hashSalt, "base64")
+		const sessionInitiationResponse = await loginToWeblab(
+			sessionUser.college.baseUrl,
+			sessionUser.account.username,
+			args.password
 		);
-		try {
-			const decipher = crypto.createDecipheriv(
-				"aes-256-gcm",
-				key,
-				Buffer.from(sessionUser.webAccessSettings.encryptionNonce, "base64")
-			);
-			decipher.setAuthTag(Buffer.from(sessionUser.webAccessSettings.encryptionAuthTag, "base64"));
-			const passwordBuf = Buffer.concat([
-				decipher.update(Buffer.from(sessionUser.webAccessSettings.encryptedPassword, "base64")),
-				decipher.final() // throws if tag mismatch
-			]);
-
-			const sessionInitiationResponse = await loginToWeblab(
-				sessionUser.college.baseUrl,
-				sessionUser.account.username,
-				passwordBuf.toString("utf8")
-			);
-			if (!sessionInitiationResponse.success) {
-				return error(400, sessionInitiationResponse.error); // yeah, blame the client
-			}
-
-			return await db.transaction(async (tx) => {
-				await tx
-					.update(schema.webSessions)
-					.set({ revokedAt: sql`now()` }) // note: revokedReason = null -> system revocation
-					.where(
-						and(
-							eq(schema.webSessions.accountUsername, sessionUser.account.username),
-							eq(schema.webSessions.collegeId, sessionUser.college.id),
-							gte(schema.webSessions.expiresAt, sql`now()`),
-							isNull(schema.webSessions.revokedAt)
-						)
-					);
-
-				const sessionsToDelete = db
-					.select({ id: schema.webSessions.id })
-					.from(schema.webSessions)
-					.where(
-						and(
-							eq(schema.webSessions.accountUsername, sessionUser.account.username),
-							eq(schema.webSessions.collegeId, sessionUser.college.id)
-						)
-					)
-					.orderBy(desc(schema.webSessions.loggedInAt))
-					.offset(MAX_WEB_SESSIONS);
-				await tx.delete(schema.webSessions).where(inArray(schema.webSessions.id, sessionsToDelete));
-
-				const [newSession] = await tx
-					.insert(schema.webSessions)
-					.values({
-						accountUsername: sessionUser.account.username,
-						collegeId: sessionUser.college.id,
-						cookieString: `${sessionInitiationResponse.name}=${sessionInitiationResponse.value}`,
-						lastUsedAt: sql`now()`,
-						requestedAt: requestedAt,
-						expiresAt: sql`now() + interval '30 minute'`,
-						requestsMade: 0
-					})
-					.returning({
-						id: schema.webSessions.id,
-						revokedAt: schema.webSessions.revokedAt,
-						revokedReason: schema.webSessions.revokedReason,
-						expiresAt: schema.webSessions.expiresAt,
-						loggedInAt: schema.webSessions.loggedInAt,
-						requestedAt: schema.webSessions.requestedAt,
-						lastUsedAt: schema.webSessions.lastUsedAt,
-						requestsMade: schema.webSessions.requestsMade
-					});
-
-				return newSession;
-			});
-		} catch {
-			return error(400, "Wrong passcode!"); // note: don't leak whether it was tag-fail vs other error
-		} finally {
-			key.fill(0);
+		if (!sessionInitiationResponse.success) {
+			return error(400, sessionInitiationResponse.error); // yeah, blame the client
 		}
+
+		return await db.transaction(async (tx) => {
+			const sessionsToDelete = db
+				.select({ id: schema.webSessions.id })
+				.from(schema.webSessions)
+				.where(
+					and(
+						eq(schema.webSessions.accountUsername, sessionUser.account.username),
+						eq(schema.webSessions.collegeId, sessionUser.college.id)
+					)
+				)
+				.orderBy(desc(schema.webSessions.loggedInAt))
+				.offset(MAX_WEB_SESSIONS);
+			await tx.delete(schema.webSessions).where(inArray(schema.webSessions.id, sessionsToDelete));
+
+			await tx
+				.update(schema.webSessions)
+				.set({ revokedAt: sql`now()` }) // note: revokedReason = null -> system revocation
+				.where(
+					and(
+						eq(schema.webSessions.accountUsername, sessionUser.account.username),
+						eq(schema.webSessions.collegeId, sessionUser.college.id),
+						gte(schema.webSessions.expiresAt, sql`now()`),
+						isNull(schema.webSessions.revokedAt)
+					)
+				);
+
+			const [newSession] = await tx
+				.insert(schema.webSessions)
+				.values({
+					accountUsername: sessionUser.account.username,
+					collegeId: sessionUser.college.id,
+					cookieString: `${sessionInitiationResponse.name}=${sessionInitiationResponse.value}`,
+					lastUsedAt: sql`now()`,
+					requestedAt: requestedAt,
+					expiresAt: sql`now() + interval '30 minute'`,
+					requestsMade: 0
+				})
+				.returning({
+					id: schema.webSessions.id,
+					revokedAt: schema.webSessions.revokedAt,
+					revokedReason: schema.webSessions.revokedReason,
+					expiresAt: schema.webSessions.expiresAt,
+					loggedInAt: schema.webSessions.loggedInAt,
+					requestedAt: schema.webSessions.requestedAt,
+					lastUsedAt: schema.webSessions.lastUsedAt,
+					requestsMade: schema.webSessions.requestsMade
+				});
+
+			return newSession;
+		});
 	}
 );
-
-export const disableWebAccess = command(async () => {
-	const event = getRequestEvent();
-	if (event.locals.sessionUser == null) return error(401, "Unauthorized");
-
-	const sessionUser = event.locals.sessionUser;
-	if (sessionUser.webAccessSettings == null)
-		return error(400, "Web access is not enabled in this account!");
-
-	await db.transaction(async (tx) => {
-		await tx
-			.update(schema.webSessions)
-			.set({ revokedAt: sql`now()` }) // note: revokedReason = null -> system revocation
-			.where(
-				and(
-					eq(schema.webSessions.accountUsername, sessionUser.account.username),
-					eq(schema.webSessions.collegeId, sessionUser.college.id),
-					gte(schema.webSessions.expiresAt, sql`now()`),
-					isNull(schema.webSessions.revokedAt)
-				)
-			);
-
-		await tx
-			.delete(schema.webAccessSettings)
-			.where(
-				and(
-					eq(schema.webAccessSettings.accountUsername, sessionUser.account.username),
-					eq(schema.webAccessSettings.collegeId, sessionUser.college.id)
-				)
-			);
-	});
-});
 
 // todo: logoout
 // async function logoutWeblab(collegeBaseUrl: string, cookieString: string) {
@@ -368,8 +171,6 @@ export const revokeWebSession = command(
 		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
 
 		const sessionUser = event.locals.sessionUser;
-		if (sessionUser.webAccessSettings == null)
-			return error(400, "Web access is not enabled in this account!");
 
 		const [webSession] = await db
 			.select({
@@ -429,8 +230,6 @@ export const getMyWebSessions = query(async () => {
 	if (event.locals.sessionUser == null) return error(401, "Unauthorized");
 
 	const sessionUser = event.locals.sessionUser;
-	// if (sessionUser.webAccessSettings == null)
-	// 	return error(400, "Web access is not enabled in this account!");
 
 	const wsessions = await db
 		.select({

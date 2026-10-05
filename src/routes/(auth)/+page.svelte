@@ -13,7 +13,7 @@
 	import { useSound } from "svelte-attach-sound";
 	import AssignmentCard from "./assignment-card.svelte";
 	import * as remotes from "./dashboard.remote";
-	import { cachedGracefulRemoteQuery, webAccessSettingsState } from "./states.svelte";
+	import { cachedGracefulRemoteQuery } from "./states.svelte";
 	import type { PageProps } from "./$types";
 	import box from "$lib/components/box";
 	import { MediaQuery } from "svelte/reactivity";
@@ -59,13 +59,11 @@
 	</Button>
 </div>
 
-{#if webAccessSettingsState.resolved && webAccessSettingsState.value != null}
-	<div class="space-y-2">
-		<Button variant="outline" href="/academic-analysis">
-			<ChartLineIcon weight="bold" /> Academic Analysis
-		</Button>
-	</div>
-{/if}
+<div class="space-y-2">
+	<Button variant="outline" href="/academic-analysis">
+		<ChartLineIcon weight="bold" /> Academic Analysis
+	</Button>
+</div>
 
 <div class="space-y-4">
 	<div class="flex place-items-center justify-between gap-2">
