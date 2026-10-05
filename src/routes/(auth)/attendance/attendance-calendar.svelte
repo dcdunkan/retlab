@@ -341,7 +341,7 @@
 		{/if}
 	{/snippet}
 
-	{#if selectedDay != null}
+	{#if selectedDay != null && selectedDay.periods.length > 0}
 		{@const grouped = selectedDay.periods.reduce(
 			(p, c) => {
 				const last = p[p.length - 1];
@@ -374,6 +374,7 @@
 
 		<div class="space-y-2">
 			{#each grouped as periods, i (i)}
+				{@const { subject, topic_cov } = periods[0]}
 				<div class="space-y-2">
 					<div class="flex justify-center gap-0 font-serif text-2xl font-bold">
 						{#each periods as period, j (j)}
@@ -392,10 +393,10 @@
 						{/each}
 					</div>
 					<div class="border-2 border-border px-3 py-2">
-						<div class="font-medium">{periods[0].subject}</div>
-						{#if periods[0].topic_cov && Array.isArray(periods[0].topic_cov) && periods[0].topic_cov.length > 0}
+						<div class="font-medium">{subject}</div>
+						{#if topic_cov && Array.isArray(topic_cov) && topic_cov.length > 0}
 							<ul class="mt-1 list-disc pl-4 text-sm text-muted-foreground">
-								{#each periods[0].topic_cov as topic, k (k)}
+								{#each topic_cov as topic, k (k)}
 									<li>{topic}</li>
 								{/each}
 							</ul>
