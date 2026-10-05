@@ -17,7 +17,7 @@
 	import XIcon from "phosphor-svelte/lib/XIcon";
 	import ArrowUUpLeftIcon from "phosphor-svelte/lib/ArrowUUpLeftIcon";
 
-	import { isValidDate } from "$lib";
+	import { isValidDate, strictNum } from "$lib";
 	import Box from "$lib/components/box";
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Select from "$lib/components/select.svelte";
@@ -31,12 +31,6 @@
 	import box from "$lib/components/box";
 
 	let { data } = $props();
-
-	function num(x: string) {
-		const parsed = Number.parseFloat(x);
-		if (Number.isNaN(parsed)) return undefined;
-		return parsed;
-	}
 
 	let chosenSemester = $derived(data.sessionUser.account.semesterId);
 
@@ -79,8 +73,8 @@
 						return { ...assignment, status: getAssignmentStatus(assignment) };
 					}
 
-					const obtainedMark = num(result.obtained_mark),
-						maxMark = num(result.max_mark);
+					const obtainedMark = strictNum(result.obtained_mark),
+						maxMark = strictNum(result.max_mark);
 
 					if (obtainedMark == null && maxMark == null) {
 						const assignment = {
@@ -318,7 +312,7 @@
 		disabled={chosenSemester === data.sessionUser.account.semesterId}
 		onclick={() => switchSemester(data.sessionUser.account.semesterId)}
 	>
-		<ArrowUUpLeftIcon />
+		<ArrowUUpLeftIcon weight="bold" />
 	</Button>
 </div>
 

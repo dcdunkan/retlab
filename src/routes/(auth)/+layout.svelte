@@ -4,7 +4,8 @@
 		ATTENDANCE: "attendance",
 		ASSIGNMENTS: "assignments",
 		SETTINGS: "settings",
-		ACADEMIC_ANALYSIS: "academic-analysis"
+		ACADEMIC_ANALYSIS: "academic-analysis",
+		RESULTS: "results"
 	};
 </script>
 
@@ -179,7 +180,8 @@
 		"/(auth)/academic-analysis": [
 			HOME_PIECE,
 			{ href: "/academic-analysis", label: Piece.ACADEMIC_ANALYSIS }
-		]
+		],
+		"/(auth)/results": [HOME_PIECE, { href: "/results", label: Piece.RESULTS }]
 	};
 
 	let pieces = $derived.by(() => {

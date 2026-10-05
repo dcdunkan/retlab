@@ -188,3 +188,9 @@ export const timeDistanceToNow = (time: Date | number) => {
 
 	return diff < 0 ? `in ${result}` : `${result} ago`;
 };
+
+export function strictNum(x: string) {
+	const parsed = Number.parseFloat(x);
+	if (Number.isNaN(parsed)) return undefined;
+	return parsed;
+}

@@ -13,6 +13,9 @@ import { db, schema } from "./db";
 import { redis } from "./redis";
 import type { ResponseCacheStatus } from "$lib/types";
 
+const SUBJECT_CODE_NAME_SEPARATOR = " - ";
+const COMBINED_MARK_SEPARATOR = " / ";
+
 export type ParsedAssignmentResponse = {
 	_parsed: {
 		issue_date: Date;
@@ -233,5 +236,29 @@ export async function proxyEtRequest<T>(
 		ok: false,
 		statusCode: 500,
 		message: "Failed to make proxy call to Etlab"
+	};
+}
+
+export function parseSubjectString(str: string): {
+	code?: string;
+	name: string;
+} {
+	const sepIndex = str.indexOf(SUBJECT_CODE_NAME_SEPARATOR);
+	if (sepIndex == -1) return { code: undefined, name: str.trim() }; // todo: confirm which one is actually undefined here
+	return {
+		code: str.slice(0, sepIndex).trim(),
+		name: str.slice(sepIndex + SUBJECT_CODE_NAME_SEPARATOR.length)
+	};
+}
+
+export function parseCombinedMarkString(str: string): {
+	obtained?: string;
+	total: string;
+} {
+	const sepIndex = str.indexOf(COMBINED_MARK_SEPARATOR);
+	if (sepIndex == -1) return { obtained: undefined, total: str.trim() }; // todo: confirm which one is actually undefined here
+	return {
+		obtained: str.slice(0, sepIndex).trim(),
+		total: str.slice(sepIndex + COMBINED_MARK_SEPARATOR.length)
 	};
 }

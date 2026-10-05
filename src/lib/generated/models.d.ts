@@ -762,6 +762,7 @@ export namespace result {
 		export type ResultModuleTest = {
 			mark: string;
 			subject: string;
+			name?: string; // added manually
 		};
 		export type ResultModuleTestResponse = {
 			login?: boolean;
