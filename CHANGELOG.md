@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2026.10.05
+
+### Added
+
+- Simple & boring results page that shows sessional, internals, and module tests results (Assignment results are integrated into assignments page & tutorials will be done later in a separate page && UNIVERSITY RESULTS PAGE doesn't work!).
+
+### Changed
+
+- Layout fixes in home page.
+
 ## 2026.10.04
 
 ### Added
