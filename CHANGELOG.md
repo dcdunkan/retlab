@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Layout fixes in home page.
+- Weblab features (actually just one feature) no longer require any setup in settings due to the removal of passcode based feature.
+
+### Removed
+
+- Removed passcode based approach for web access, because why overcomplicate stuff when you can just simply save and use passwords right in your browser?
+  The 6-letter passcode could've been weak btw.
 
 ## 2026.10.04
 
