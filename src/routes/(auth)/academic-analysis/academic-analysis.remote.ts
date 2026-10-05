@@ -11,8 +11,8 @@ export const getAcademicAnalysis = query(async () => {
 	const sessionUser = event.locals.sessionUser;
 
 	const [activeSession] = await db
-		.select({ cookieString: schema.webSessions.cookieString })
-		.from(schema.webSessions)
+		.update(schema.webSessions)
+		.set({ requestsMade: sql`${schema.webSessions.requestsMade} + 1`, lastUsedAt: sql`now()` })
 		.where(
 			and(
 				eq(schema.webSessions.accountUsername, sessionUser.account.username),
@@ -20,12 +20,16 @@ export const getAcademicAnalysis = query(async () => {
 				isNull(schema.webSessions.revokedAt),
 				gte(schema.webSessions.expiresAt, sql`now()`)
 			)
-		);
+		)
+		.returning({
+			cookieString: schema.webSessions.cookieString
+		});
 	if (activeSession == null)
 		return error(400, {
 			message: "No active sessions found!",
 			code: "WebAccess:NO_ACTIVE_SESSION"
 		});
+
 	const parsedCollegeBaseUrl = new URL(sessionUser.college.baseUrl);
 	const academicAnalysisUrl = new URL(WeblabRoutes.ACADEMIC_ANALYSIS_URL, parsedCollegeBaseUrl);
 	const response = await fetch(academicAnalysisUrl, {
