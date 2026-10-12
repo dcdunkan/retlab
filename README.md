@@ -12,7 +12,7 @@ The API endpoints and types are generated and documented by parsing the Etlab an
 ### Goals
 
 - Only implement features that are needed.
-- Reliable notifications based on service workers.
+- Reliable notifications based on service workers. (<https://github.com/dcdunkan/retlab-notifications>)
 - No survey annoyance + auto-fill.
 - Help with keeping attendance & skipping classes.
 - Don't hit rate limits on dashboard API.
