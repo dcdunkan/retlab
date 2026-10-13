@@ -173,7 +173,9 @@
 									: "outline"}
 								size="xsm"
 								disabled={tweaks.saving}
-								onclick={() => (tweaks.attendanceCutoffs.current = [75, 85])}
+								onclick={() => {
+									if (tweaks) tweaks.attendanceCutoffs.current = [75, 85];
+								}}
 							>
 								2024 Scheme (85%)
 							</Button>
@@ -185,7 +187,9 @@
 									: "outline"}
 								size="xsm"
 								disabled={tweaks.saving}
-								onclick={() => (tweaks.attendanceCutoffs.current = [75, 90])}
+								onclick={() => {
+									if (tweaks) tweaks.attendanceCutoffs.current = [75, 90];
+								}}
 							>
 								2019 Scheme (90%)
 							</Button>
