@@ -79,8 +79,6 @@ export const POST = async (event) => {
 	if (notificationServerSettings == null)
 		return error(401, "This account have not configured a notification server");
 
-	console.log(notificationServerSettings, parsed);
-
 	const proxyResponse = await proxyEtRequest(
 		{
 			collegeBaseUrl: notificationServerSettings.account.college.baseUrl,
