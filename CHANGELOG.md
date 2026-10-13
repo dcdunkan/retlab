@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2026.10.13
+
+### Added
+
+- Upload assignments and delete assignments using Web access!
+- Client-side PDF lossy compression using PDF.js (through unpdf) + pdf-lib.
+- Experimental web toggles for vite build.
+- Separate Web access functions from the remote functions file.
+
+### Changed
+
+- Reduce L1 cache time-to-live from 60 seconds to 30 seconds.
+- Added cache controls to client-side cache and etlab proxies.
+
 ## 2026.10.05
 
 ### Added
