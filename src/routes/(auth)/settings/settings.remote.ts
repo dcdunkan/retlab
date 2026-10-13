@@ -97,18 +97,16 @@ export const refreshHardCache = command(async () => {
 			const [updatedAccount] = await db
 				.update(schema.accounts)
 				.set({
+					profileName:
+						// @ts-expect-error invalid types
+						parsed.name,
+					imageUrl: parsed.url,
+
 					batchId: Number.parseInt(parsed.batch_id),
 					semesterId: Number.parseInt(parsed.sem_id),
-					studentId: Number.parseInt(parsed.student_id),
-					// @ts-expect-error invalid types
-					profileName: parsed.name,
-					courseName: parsed.course,
 					semesterName: parsed.curnt_sem,
-					imageUrl: parsed.url,
-					// @ts-expect-error invalid types
-					regNo: String(parsed.register_no),
-					// @ts-expect-error invalid types
-					rollNo: String(parsed.roll_no),
+					courseName: parsed.course,
+
 					lastUpdatedAt: new Date()
 				})
 				.where(

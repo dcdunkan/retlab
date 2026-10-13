@@ -217,16 +217,22 @@ export const accounts = pgTable(
 	{
 		collegeId: integer("college_id").notNull(),
 		username: text().notNull(),
+
+		profileName: text("profile_name").notNull(),
+		imageUrl: text("image_url").notNull(),
+
 		batchId: integer("batch_id").notNull(),
 		courseName: text("course_name").notNull(),
-		imageUrl: text("image_url").notNull(),
-		lastUpdatedAt: timestamp("last_updated_at", { mode: "date" }).notNull(),
-		profileName: text("profile_name").notNull(),
-		regNo: text("reg_no").notNull(),
-		rollNo: text("roll_no").notNull(),
 		semesterId: integer("semester_id").notNull(),
 		semesterName: text("semester_name").notNull(),
-		studentId: integer("student_id").notNull()
+
+		// got rid of the following because not really needed, and eliminates the need for dash on login.
+		// regNo: text("reg_no").notNull(), // -
+		// rollNo: text("roll_no").notNull(), // -
+		// studentId: integer("student_id").notNull(), // -
+
+		lastUpdatedAt: timestamp("last_updated_at", { mode: "date" }).notNull(),
+		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull()
 	},
 	(table) => [
 		foreignKey({

@@ -1,7 +1,7 @@
 import { form, getRequestEvent } from "$app/server";
 import { DAY, MINUTE } from "$lib";
 import { ApiEndPoints } from "$lib/generated/api-endpoints";
-import type { dash, login, SuccessResponse } from "$lib/generated/models";
+import type { login } from "$lib/generated/models";
 import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
 import { db, schema } from "$lib/server/db";
@@ -51,49 +51,14 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 		invalid(issue("Couldn't authorize with Etlab instance"));
 	}
 
-	const dashResponse = await api.get<dash.DashResponse>(college.baseUrl + ApiEndPoints.DASH_URL, {
-		headers: { Authorization: "Bearer " + loginDetails.access_token }
-	});
+	const updated: Omit<Account, "username" | "collegeId" | "createdAt"> = {
+		profileName: loginDetails.profile_name,
+		imageUrl: loginDetails.url,
 
-	let dashDetails: dash.DashResponse | null;
-
-	if (dashResponse.ok) {
-		const parsed: dash.DashResponse = await dashResponse.json();
-		if (parsed.error || parsed.login == false) {
-			// console.error(parsed); // something went wrong, will do later.
-			dashDetails = null;
-		} else {
-			dashDetails = parsed;
-		}
-	} else {
-		// logged in, but no dash response (will be tried later)
-		// two possible reasons: 429 (non-sense making rate limits), or usual 500 (still a mystery)
-		dashDetails = null;
-	}
-
-	if (dashDetails == null) {
-		await api.post<SuccessResponse>(college.baseUrl + ApiEndPoints.LOGOUT_URL, {
-			json: {
-				push_token: "" // yes, empty string works & the property is required
-			} satisfies login.LogoutRequest
-		});
-		invalid(issue("Failed to fetch details of the account."));
-	}
-
-	const updated: Omit<Account, "username" | "collegeId"> = {
-		batchId: Number.parseInt(dashDetails.batch_id),
-		semesterId: Number.parseInt(dashDetails.sem_id),
-		studentId: Number.parseInt(dashDetails.student_id),
-
-		// @ts-expect-error invalid types
-		profileName: dashDetails.name,
-		courseName: dashDetails.course,
-		semesterName: dashDetails.curnt_sem,
-		imageUrl: dashDetails.url,
-		// @ts-expect-error invalid types
-		regNo: String(dashDetails.register_no),
-		// @ts-expect-error invalid types
-		rollNo: String(dashDetails.roll_no),
+		batchId: Number.parseInt(loginDetails.batch_id),
+		courseName: loginDetails.course,
+		semesterId: Number.parseInt(loginDetails.sem_id),
+		semesterName: loginDetails.sem_name,
 
 		lastUpdatedAt: new Date()
 	};
@@ -103,6 +68,7 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 		.values({
 			collegeId: data.collegeId,
 			username: data.username,
+			createdAt: new Date(),
 			...updated
 		})
 		.onConflictDoUpdate({
@@ -113,19 +79,6 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 			collegeId: schema.accounts.collegeId,
 			username: schema.accounts.username
 		});
-
-	// const [account] = await db
-	// 	.select({
-	// 		collegeId: schema.accounts.collegeId,
-	// 		username: schema.accounts.username
-	// 	})
-	// 	.from(schema.accounts)
-	// 	.where(
-	// 		and(
-	// 			eq(schema.accounts.collegeId, data.collegeId),
-	// 			eq(schema.accounts.username, data.username)
-	// 		)
-	// 	);
 
 	const userAgent = event.request.headers.get("User-Agent");
 	const deviceInfo = getDeviceInfo(userAgent);
