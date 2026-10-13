@@ -33,10 +33,10 @@ const MAX_REQ_PER_WINDOW = 20;
 export const POST = async (event) => {
 	const authTokenHeader = event.request.headers.get("authorization");
 	if (typeof authTokenHeader !== "string" || !authTokenHeader.startsWith(BEARER_PREFIX))
-		return error(401);
+		return error(401, "Unauthorized");
 	const authToken = authTokenHeader.slice(BEARER_PREFIX.length);
 	const verified = await verifyNsToken(authToken);
-	if (verified == null) return error(401); // todo: undo
+	if (verified == null) return error(401, "Unauthorized, could not verify token"); // todo: undo
 
 	const key = `prl:${authToken}`;
 	const [count] = await redis
@@ -44,14 +44,15 @@ export const POST = async (event) => {
 		.incr(key)
 		.expire(key, RATE_LIMIT_WINDOW_IN_S, "NX") // NX = only set if not exists
 		.exec();
-	if (count > MAX_REQ_PER_WINDOW) return error(429);
+	if (count > MAX_REQ_PER_WINDOW) return error(429, "Too many requests within the window");
 
 	const parsed = await event.request
 		.json()
 		.then((data) => PROXY_REQUEST_SCHEMA.parse(data))
-		.catch(() => error(400));
+		.catch(() => error(400, "Failed to parse the proxy request data"));
 
-	if (!ALLOWED_ENDPOINTS.includes(parsed.endpoint)) return error(400);
+	if (!ALLOWED_ENDPOINTS.includes(parsed.endpoint))
+		return error(400, "This endpoint is not allowed to proxy through");
 
 	const notificationServerSettings = await db.query.notificationServerSettings.findFirst({
 		where: and(
@@ -75,7 +76,8 @@ export const POST = async (event) => {
 			}
 		}
 	});
-	if (notificationServerSettings == null) return error(401);
+	if (notificationServerSettings == null)
+		return error(401, "This account have not configured a notification server");
 
 	console.log(notificationServerSettings, parsed);
 
