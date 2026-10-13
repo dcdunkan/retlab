@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2026.10.14
+
+### Fixed
+
+- Retlab notifications are now reliable again!
+
 ## 2026.10.13
 
 ### Added
