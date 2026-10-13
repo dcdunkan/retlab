@@ -169,11 +169,15 @@ export async function proxyEtRequest<T>(
 		}
 	}
 
+	console.log(user, req, etlabAccessToken, body);
+
 	const response = await fetch(user.collegeBaseUrl + req.endpoint, {
 		headers: { Authorization: bearer(etlabAccessToken) },
 		method: req.method,
 		...(body != null ? { body: body } : {})
 	});
+
+	console.log(response);
 
 	if (response.status === 400 || response.status === 401 || response.status === 403) {
 		return {
