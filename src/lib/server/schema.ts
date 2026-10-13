@@ -81,7 +81,7 @@ export const settings = pgTable(
 
 		// useful tweaks
 		attendancePercentMin: integer("attendance_percent_min").default(75).notNull(),
-		attendancePercentMax: integer("attendance_percent_max").default(90).notNull(),
+		attendancePercentMax: integer("attendance_percent_max").default(85).notNull(),
 
 		// fun tweaks
 		expandAttendanceSubjects: text("expand_attendance_subjects")
