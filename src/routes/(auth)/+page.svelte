@@ -25,8 +25,12 @@
 		remotes.getDueAssignments
 	);
 	onMount(async () => {
-		await assignmentsData.load(data.sessionUser);
+		await assignmentsData.load(data.sessionUser, {});
 	});
+
+	async function hardRefreshAssignments() {
+		await assignmentsData.load(data.sessionUser, { _l1: false }, { readIdbCache: false });
+	}
 
 	const clickSfx = useSound(pressSound_opus, ["click"], { volume: 0.75 });
 
@@ -84,7 +88,11 @@
 	{:else if assignmentsData.data}
 		<div>
 			{#each assignmentsData.data as assignment (assignment.id)}
-				<AssignmentCard assignment={{ ...assignment, status: "due" }} showResult={false} />
+				<AssignmentCard
+					assignment={{ ...assignment, status: "due" }}
+					showResult={false}
+					hardRefreshAssignmentsList={hardRefreshAssignments}
+				/>
 			{:else}
 				<box.Empty>You have no assignments due.</box.Empty>
 			{/each}

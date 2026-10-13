@@ -31,7 +31,7 @@ export const load = async (event) => {
 			method: "GET",
 			endpoint: ApiEndPoints.SEM_LIST_URL
 		},
-		{ useL1Cache: true, L1ExpiryInSeconds: (2 * DAY) / SECOND }
+		{ readL1Cached: true, L1ExpiryInSeconds: (2 * DAY) / SECOND }
 	);
 
 	const processedSemesters = semesters.ok

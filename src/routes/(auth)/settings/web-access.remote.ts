@@ -1,78 +1,9 @@
 import { command, getRequestEvent, query } from "$app/server";
-import { WeblabRoutes } from "$lib/server/constants";
 import { db, schema } from "$lib/server/db";
+import { acquireNewWebSession, MAX_WEB_SESSIONS } from "$lib/server/web-access";
 import { error } from "@sveltejs/kit";
-import { and, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
-import { parseSetCookie } from "set-cookie-parser";
+import { and, desc, eq, sql } from "drizzle-orm";
 import z from "zod";
-
-const SESSION_ID_COOKIE_SUFFIX = "SESSIONID";
-const MAX_WEB_SESSIONS = 20;
-
-function findSessionIdCookieValue(response: Response, cookieNameEndsWith: string[]) {
-	const cookies = response.headers.getSetCookie();
-	const parsed = parseSetCookie(cookies, { decodeValues: true });
-	for (const suffix of cookieNameEndsWith) {
-		const cookie = parsed.find((c) => c.name.endsWith(suffix));
-		if (cookie != null) return cookie;
-	}
-}
-
-async function loginToWeblab(
-	collegeBaseUrl: string,
-	username: string,
-	password: string
-): Promise<{ success: true; name: string; value: string } | { success: false; error: string }> {
-	const parsedCollegeBaseUrl = new URL(collegeBaseUrl);
-	const loginUrl = new URL(WeblabRoutes.LOGIN_URL, parsedCollegeBaseUrl);
-	const authCheckUrl = new URL(WeblabRoutes.STUDENT_REMARKS_URL, parsedCollegeBaseUrl); // note: keep it light as possible, remarks will load in a minimum time.
-
-	const r1 = await fetch(loginUrl);
-	if (!r1.ok) return { success: false, error: "Could not fetch the login page" };
-
-	const hostnameParts = parsedCollegeBaseUrl.hostname.split(".");
-	const targetCookieEndsWith: string[] = [SESSION_ID_COOKIE_SUFFIX];
-	if (
-		hostnameParts.length === 3 &&
-		hostnameParts[1] === "etlab" &&
-		(hostnameParts[2] === "in" || hostnameParts[2] === "app")
-	) {
-		const collegeShortname = hostnameParts[0].toUpperCase();
-		targetCookieEndsWith.unshift(collegeShortname + SESSION_ID_COOKIE_SUFFIX);
-	}
-	const c1 = findSessionIdCookieValue(r1, targetCookieEndsWith);
-	if (c1 == null)
-		return { success: false, error: "Could not extract session ID cookie from initial request" };
-
-	const formdata = new FormData();
-	formdata.append("LoginForm[username]", username);
-	formdata.append("LoginForm[password]", password);
-
-	const r2 = await fetch(loginUrl, {
-		method: "POST",
-		body: formdata,
-		redirect: "manual",
-		headers: { Cookie: `${c1.name}=${c1.value}` }
-	});
-	if (r2.status !== 302) {
-		return {
-			success: false,
-			error: "Failed to login, are you sure your password is correct?"
-		};
-	}
-
-	const c2 = findSessionIdCookieValue(r2, targetCookieEndsWith);
-	if (c2 == null)
-		return { success: false, error: "Could not extract session ID cookie from login request" };
-
-	const r3 = await fetch(authCheckUrl, {
-		headers: { Cookie: `${c2.name}=${c2.value}` }
-	});
-	if (r3.status !== 200) {
-		return { success: false, error: "Seems like login didn't work" };
-	}
-	return { success: true, name: c2.name, value: c2.value };
-}
 
 export const authenticateWebSession = command(
 	z.object({
@@ -83,67 +14,21 @@ export const authenticateWebSession = command(
 		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
 		const sessionUser = event.locals.sessionUser;
 
-		const requestedAt = new Date();
-
-		const sessionInitiationResponse = await loginToWeblab(
-			sessionUser.college.baseUrl,
-			sessionUser.account.username,
-			args.password
-		);
-		if (!sessionInitiationResponse.success) {
-			return error(400, sessionInitiationResponse.error); // yeah, blame the client
+		const attempt = await acquireNewWebSession(sessionUser, args.password);
+		if (!attempt.acquired) {
+			return error(400, attempt.message);
 		}
 
-		return await db.transaction(async (tx) => {
-			const sessionsToDelete = db
-				.select({ id: schema.webSessions.id })
-				.from(schema.webSessions)
-				.where(
-					and(
-						eq(schema.webSessions.accountUsername, sessionUser.account.username),
-						eq(schema.webSessions.collegeId, sessionUser.college.id)
-					)
-				)
-				.orderBy(desc(schema.webSessions.loggedInAt))
-				.offset(MAX_WEB_SESSIONS);
-			await tx.delete(schema.webSessions).where(inArray(schema.webSessions.id, sessionsToDelete));
-
-			await tx
-				.update(schema.webSessions)
-				.set({ revokedAt: sql`now()` }) // note: revokedReason = null -> system revocation
-				.where(
-					and(
-						eq(schema.webSessions.accountUsername, sessionUser.account.username),
-						eq(schema.webSessions.collegeId, sessionUser.college.id),
-						gte(schema.webSessions.expiresAt, sql`now()`),
-						isNull(schema.webSessions.revokedAt)
-					)
-				);
-
-			const [newSession] = await tx
-				.insert(schema.webSessions)
-				.values({
-					accountUsername: sessionUser.account.username,
-					collegeId: sessionUser.college.id,
-					cookieString: `${sessionInitiationResponse.name}=${sessionInitiationResponse.value}`,
-					lastUsedAt: sql`now()`,
-					requestedAt: requestedAt,
-					expiresAt: sql`now() + interval '30 minute'`,
-					requestsMade: 0
-				})
-				.returning({
-					id: schema.webSessions.id,
-					revokedAt: schema.webSessions.revokedAt,
-					revokedReason: schema.webSessions.revokedReason,
-					expiresAt: schema.webSessions.expiresAt,
-					loggedInAt: schema.webSessions.loggedInAt,
-					requestedAt: schema.webSessions.requestedAt,
-					lastUsedAt: schema.webSessions.lastUsedAt,
-					requestsMade: schema.webSessions.requestsMade
-				});
-
-			return newSession;
-		});
+		return {
+			id: attempt.session.id,
+			lastUsedAt: attempt.session.lastUsedAt,
+			expiresAt: attempt.session.expiresAt,
+			loggedInAt: attempt.session.loggedInAt,
+			requestedAt: attempt.session.requestedAt,
+			requestsMade: attempt.session.requestsMade,
+			revokedAt: attempt.session.revokedAt,
+			revokedReason: attempt.session.revokedReason
+		};
 	}
 );
 

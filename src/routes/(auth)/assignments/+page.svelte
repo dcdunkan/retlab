@@ -50,6 +50,14 @@
 		]);
 	});
 
+	async function hardRefreshAssignments() {
+		await assignmentsData.load(
+			data.sessionUser,
+			{ semester_id: chosenSemester, _l1: false },
+			{ readIdbCache: false }
+		);
+	}
+
 	function getAssignmentStatus(
 		a: Omit<ParsedAssignmentWithResults, "status">
 	): ParsedAssignmentStatus {
@@ -419,7 +427,11 @@
 					{#each sortByOptions[sortBy]
 						.fn(assignmentGroup.assignments)
 						.filter((a) => filterByStatus[a.status]) as assignment (assignment.id)}
-						<AssignmentCard {assignment} showResult={showResults} />
+						<AssignmentCard
+							{assignment}
+							showResult={showResults}
+							hardRefreshAssignmentsList={hardRefreshAssignments}
+						/>
 					{:else}
 						<box.Empty class="text-xs">
 							There were some assignments here, but they are hidden because of the applied filters.

@@ -127,7 +127,14 @@ export type CachedLoadData<RQ> =
 				readonly loading: boolean;
 				readonly error: unknown;
 				readonly data: O | undefined;
-				load(user: CacheUserInfo, input: I): Promise<void>;
+				load(
+					user: CacheUserInfo,
+					input: I,
+					options?: {
+						readIdbCache?: boolean;
+						writeIdbCache?: boolean;
+					}
+				): Promise<void>;
 			}
 		: never;
 
@@ -154,15 +161,25 @@ export function cachedGracefulRemoteQuery<I, O>(
 		);
 	}
 
-	async function loadFn(cacheUser: CacheUserInfo, input: I) {
+	async function loadFn(
+		cacheUser: CacheUserInfo,
+		input: I,
+		options?: {
+			readIdbCache?: boolean;
+			writeIdbCache?: boolean;
+		}
+	): Promise<void> {
 		loading = true;
 		data = undefined;
 		error = undefined;
 
+		const skipCacheRead = options?.readIdbCache === false;
+		const skipCacheWrite = options?.writeIdbCache === false;
+
 		const now = Date.now();
 		const cacheKey = computeCacheKey(cacheUser, JSON.stringify(input));
 
-		if (idb.resolved) {
+		if (!skipCacheRead && idb.resolved) {
 			const cached = await idb.value.etlabResponseCache.get(cacheKey);
 			if (cached != null && cached.timestamp + ETLAB_RESPONSE_FRESH_EXPIRY > now) {
 				data = cached.data as O;
@@ -173,7 +190,7 @@ export function cachedGracefulRemoteQuery<I, O>(
 
 		try {
 			data = await remoteQuery(input);
-			if (idb.resolved) {
+			if (!skipCacheWrite && idb.resolved) {
 				await idb.value.etlabResponseCache.put({
 					key: cacheKey,
 					data: data,
@@ -183,7 +200,7 @@ export function cachedGracefulRemoteQuery<I, O>(
 			error = null;
 		} catch (err) {
 			error = err;
-			if (!isHttpError(err) && !isValidationError(err) && idb.resolved) {
+			if (!skipCacheRead && !isHttpError(err) && !isValidationError(err) && idb.resolved) {
 				const cached = await idb.value.etlabResponseCache.get(cacheKey);
 				if (cached != null) {
 					if (cached.timestamp + ETLAB_RESPONSE_STALE_EXPIRY > now) {
@@ -209,8 +226,15 @@ export function cachedGracefulRemoteQuery<I, O>(
 		get data() {
 			return data;
 		},
-		async load(user: CacheUserInfo, input: I) {
-			return await loadFn(user, input);
+		async load(
+			user: CacheUserInfo,
+			input: I,
+			options?: {
+				readIdbCache?: boolean;
+				writeIdbCache?: boolean;
+			}
+		): Promise<void> {
+			return await loadFn(user, input, options);
 		}
 	};
 }

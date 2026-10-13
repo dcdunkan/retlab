@@ -7,11 +7,11 @@ import {
 	PROXY_RESPONSE_CACHE_STATUS
 } from "$lib";
 import type { assignment } from "$lib/generated/models";
+import type { ResponseCacheStatus } from "$lib/types";
 import { waitUntil } from "@vercel/functions";
 import { eq } from "drizzle-orm";
 import { db, schema } from "./db";
 import { redis } from "./redis";
-import type { ResponseCacheStatus } from "$lib/types";
 
 const SUBJECT_CODE_NAME_SEPARATOR = " - ";
 const COMBINED_MARK_SEPARATOR = " / ";
@@ -67,7 +67,7 @@ export function parseAssignmentsResponse(
 	});
 }
 
-const FRESH_CACHE_EXPIRY_IN_S = 60;
+const FRESH_CACHE_EXPIRY_IN_S = 30;
 const STALE_CACHE_EXPIRY = 14 * DAY;
 
 type ProxySuccess<T> = {
@@ -85,11 +85,15 @@ type ProxyResponse<T> = ProxyError | ProxySuccess<T>;
 type ProxyRequest = {
 	method: "GET" | "POST";
 	endpoint: string;
+	type?: "json" | "x-www-form-urlencoded" | "multipart";
 	body?: unknown;
 };
 type ProxyRequestOptions = {
-	useL1Cache?: boolean;
+	readL1Cached?: boolean;
 	L1ExpiryInSeconds?: number;
+	readL2Cached?: boolean;
+	writeL1Cache?: boolean;
+	writeL2Cache?: boolean;
 };
 
 export function makeSessionBoundProxy(
@@ -117,11 +121,17 @@ export async function proxyEtRequest<T>(
 	},
 	etlabAccessToken: string,
 	req: ProxyRequest,
-	options: ProxyRequestOptions = {
-		useL1Cache: true,
-		L1ExpiryInSeconds: FRESH_CACHE_EXPIRY_IN_S
-	}
+	options?: ProxyRequestOptions
 ): Promise<ProxyResponse<T>> {
+	const opts: ProxyRequestOptions = {
+		readL1Cached: true,
+		L1ExpiryInSeconds: FRESH_CACHE_EXPIRY_IN_S,
+		readL2Cached: true,
+		writeL1Cache: true,
+		writeL2Cache: true,
+		...options
+	};
+
 	const now = Date.now();
 	const cacheKey = await hexSha256(
 		JSON.stringify({
@@ -132,7 +142,7 @@ export async function proxyEtRequest<T>(
 		})
 	);
 
-	if (options.useL1Cache) {
+	if (opts.readL1Cached) {
 		const cached = await redis.get<{ data: T; fetchedAt: number }>(`pc:${cacheKey}`);
 		if (cached != null) {
 			return {
@@ -144,10 +154,25 @@ export async function proxyEtRequest<T>(
 		}
 	}
 
+	let body: BodyInit | undefined = undefined;
+	if (req.method !== "GET" && req.body != null) {
+		if (req.type === "x-www-form-urlencoded") {
+			body = new URLSearchParams(req.body as Record<string, string>);
+		} else if (req.type === "multipart") {
+			if (req.body instanceof FormData) {
+				body = req.body;
+			} else {
+				throw new Error("multipart body must be an instance of FormData");
+			}
+		} else {
+			body = JSON.stringify(req.body);
+		}
+	}
+
 	const response = await fetch(user.collegeBaseUrl + req.endpoint, {
 		headers: { Authorization: bearer(etlabAccessToken) },
 		method: req.method,
-		...(req.method !== "GET" && req.body != null ? { body: JSON.stringify(req.body) } : {})
+		...(body != null ? { body: body } : {})
 	});
 
 	if (response.status === 400 || response.status === 401 || response.status === 403) {
@@ -179,31 +204,34 @@ export async function proxyEtRequest<T>(
 
 	if (response.ok && parsedJson != null) {
 		// store in both caches and then return the result
-		if (options.useL1Cache === true) {
+		if (opts.writeL1Cache) {
 			await redis.set(
 				`pc:${cacheKey}`,
 				{ data: parsedJson, fetchedAt: now },
-				{ ex: options.L1ExpiryInSeconds ?? FRESH_CACHE_EXPIRY_IN_S }
+				{ ex: opts.L1ExpiryInSeconds ?? FRESH_CACHE_EXPIRY_IN_S }
 			);
 		}
-		const updatedData = {
-			cachedAt: new Date(now),
-			data: parsedJson
-		};
 
-		waitUntil(
-			db
-				.insert(schema.staleProxyCache)
-				.values({
-					key: cacheKey,
-					...updatedData
-				})
-				.onConflictDoUpdate({
-					target: [schema.staleProxyCache.key],
-					set: updatedData
-				})
-				.catch(console.error)
-		);
+		if (opts.writeL2Cache) {
+			const updatedData = {
+				cachedAt: new Date(now),
+				data: parsedJson
+			};
+
+			waitUntil(
+				db
+					.insert(schema.staleProxyCache)
+					.values({
+						key: cacheKey,
+						...updatedData
+					})
+					.onConflictDoUpdate({
+						target: [schema.staleProxyCache.key],
+						set: updatedData
+					})
+					.catch(console.error)
+			);
+		}
 
 		return {
 			ok: true,
@@ -211,7 +239,7 @@ export async function proxyEtRequest<T>(
 			fetchedAt: now,
 			data: parsedJson
 		};
-	} else {
+	} else if (opts.readL2Cached) {
 		const cached = await db.query.staleProxyCache.findFirst({
 			where: eq(schema.staleProxyCache.key, cacheKey)
 		});

@@ -28,6 +28,9 @@ export const SECOND = 1000,
 	MONTH = 30 * DAY,
 	YEAR = 365 * DAY;
 
+export const KiB = 1024,
+	MiB = 1024 * KiB;
+
 export const ETLAB_RESPONSE_FRESH_EXPIRY = 15 * SECOND;
 export const ETLAB_RESPONSE_STALE_EXPIRY = 30 * DAY;
 

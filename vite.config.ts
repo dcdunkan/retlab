@@ -11,6 +11,7 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	// server: {
 	// 	host: "0.0.0.0",
+	// 	port: 6173,
 	// 	https: {
 	// 		cert: readFileSync("./cert/cert.pem"),
 	// 		key: readFileSync("./cert/key.pem")
@@ -18,11 +19,15 @@ export default defineConfig({
 	// 	hmr: {
 	// 		host: "debbie.tail8cee02.ts.net",
 	// 		protocol: "wss",
-	// 		port: 5173
+	// 		port: 6173
 	// 	}
 	// },
 	define: {
 		__GIT_SHORT_SHA__: JSON.stringify(gitShortSha),
-		__GIT_SHA__: JSON.stringify(gitLongSha)
+		__GIT_SHA__: JSON.stringify(gitLongSha),
+		__EXPERIMENTAL_WEB_TOGGLES__: {
+			upload_assignment_mode: "web",
+			delete_assignment_mode: "web"
+		} satisfies ExperimentalWebToggles
 	}
 });

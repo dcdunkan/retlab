@@ -6,17 +6,21 @@
 
 	import { isValidDate } from "$lib";
 	import Button from "$lib/components/button.svelte";
+	import Timestamp from "$lib/components/timestamp.svelte";
 	import sanitizeHtml from "sanitize-html";
 	import { slide } from "svelte/transition";
+	import AssignmentUploadDialog from "./assignment-upload-dialog.svelte";
 	import type { ParsedAssignmentWithResults } from "./assignments/+page.svelte";
-	import Timestamp from "$lib/components/timestamp.svelte";
+	import AssignmentDeleteDialog from "./assignment-delete-dialog.svelte";
 
 	let {
 		assignment,
-		showResult = false
+		showResult = false,
+		hardRefreshAssignmentsList
 	}: {
 		showResult?: boolean;
 		assignment: ParsedAssignmentWithResults;
+		hardRefreshAssignmentsList: () => Promise<void>;
 	} = $props();
 
 	let open = $state(false);
@@ -29,6 +33,9 @@
 	};
 
 	// const isLarge = new MediaQuery("min-width: 32rem");
+
+	let isUploadPortalOpen = $state(false);
+	let isDeleteDialogOpen = $state(false);
 </script>
 
 <div class="border-2 border-b-0 border-border last:border-b-2">
@@ -59,6 +66,7 @@
 							size="icon-sm"
 							onclick={(e) => {
 								e.stopPropagation();
+								isUploadPortalOpen = true;
 							}}
 						>
 							<UploadSimpleIcon weight="bold" />
@@ -117,7 +125,7 @@
 				</div>
 
 				{#if assignment.url !== "" || assignment.upload}
-					<div class="mb-1 flex gap-2">
+					<div class="mb-1 flex flex-wrap gap-2">
 						{#if assignment.url !== ""}
 							<Button
 								size="sm"
@@ -152,8 +160,8 @@
 									variant="destructive"
 									onclick={(e) => {
 										e.stopPropagation();
+										isDeleteDialogOpen = true;
 									}}
-									disabled
 								>
 									<TrashIcon weight="bold" />
 									Delete
@@ -164,6 +172,7 @@
 									variant="default"
 									onclick={(e) => {
 										e.stopPropagation();
+										isUploadPortalOpen = true;
 									}}
 								>
 									<UploadSimpleIcon weight="bold" />
@@ -193,3 +202,19 @@
 				<!-- todo: find a way to include these classes in the parent without the transition duration acting. --
 			</div> -->
 </div>
+
+{#if assignment.upload}
+	{#if assignment._parsed.has_uploaded}
+		<AssignmentDeleteDialog
+			bind:open={isDeleteDialogOpen}
+			{assignment}
+			onDeleteComplete={hardRefreshAssignmentsList}
+		/>
+	{:else}
+		<AssignmentUploadDialog
+			bind:open={isUploadPortalOpen}
+			{assignment}
+			onUploadComplete={hardRefreshAssignmentsList}
+		/>
+	{/if}
+{/if}

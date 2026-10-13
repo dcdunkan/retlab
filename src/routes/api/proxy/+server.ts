@@ -89,7 +89,7 @@ export const POST = async (event) => {
 			method: parsed.method,
 			body: parsed.body
 		},
-		{ useL1Cache: false }
+		{ readL1Cached: false }
 	);
 
 	if (proxyResponse.ok) {

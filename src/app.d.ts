@@ -2,13 +2,19 @@
 
 import type { ErrorCode } from "$lib/errors";
 
-// import type { login } from '$lib/generated/models';
-
 // for information about these interfaces
 declare global {
+	// defined values from vite-config, more like build variables
 	const __GIT_SHA__: string;
 	const __GIT_SHORT_SHA__: string;
+	const __EXPERIMENTAL_WEB_TOGGLES__: ExperimentalWebToggles;
 
+	type ExperimentalWebToggles = {
+		upload_assignment_mode: "app" | "web";
+		delete_assignment_mode: "app" | "web";
+	};
+
+	// sveltekit App
 	namespace App {
 		interface Error {
 			code?: ErrorCode;
@@ -68,6 +74,8 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	export type SessionUser = NonNullable<App.Locals["sessionUser"]>;
 }
 
 export {};

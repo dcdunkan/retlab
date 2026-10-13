@@ -3,6 +3,7 @@ import ky from "ky";
 import crypto from "node:crypto";
 import { textEncoder } from "./constants";
 import { SECOND } from "$lib";
+import z from "zod";
 
 export const api = ky.extend({
 	throwHttpErrors: false,
@@ -45,3 +46,7 @@ export async function verifyNsToken(token: string): Promise<string | null> {
 	);
 	return valid ? jti : null;
 }
+
+export const L1_CACHE_ARGS = z.object({
+	_l1: z.boolean().default(true)
+});
