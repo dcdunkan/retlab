@@ -27,11 +27,11 @@
 	{/snippet}
 
 	<div class="space-y-4 border-border">
-		{#each semesters as semester (semester.semester)}
+		{#each semesters as semester, i (`${i}-${semester.semester}`)}
 			<div class="space-y-2">
 				<div class="text-sm font-medium">{semester.semester}</div>
 				<div class="divide-y-2 divide-border border-2 border-border">
-					{#each semester.subjects as subject (`${semester.semester}-${subject.name}`)}
+					{#each semester.subjects as subject, j (`${semester.semester}-${subject.code}-${subject.name}-${j}`)}
 						<GradeSubjectListSubjectItem {subject} />
 					{/each}
 				</div>
