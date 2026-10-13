@@ -1,4 +1,7 @@
 <script lang="ts">
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
+	import SignOutIcon from "phosphor-svelte/lib/SignOutIcon";
+
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Dialog from "$lib/components/dialog.svelte";
 	import { Dialog as DialogPrimitive } from "bits-ui";
@@ -6,7 +9,6 @@
 	import { goto } from "$app/navigation";
 	import { resolve } from "$app/paths";
 	import { toast } from "svelte-sonner";
-	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 
 	let {
 		open = $bindable(false)
@@ -36,7 +38,6 @@
 		<Button
 			disabled={loggingOut}
 			variant="outline"
-			shadow="none"
 			onclick={() => {
 				open = false;
 			}}
@@ -44,9 +45,7 @@
 			Cancel
 		</Button>
 		<Button
-			size={loggingOut ? "icon" : "default"}
 			variant="destructive"
-			shadow="none"
 			disabled={loggingOut}
 			onclick={async () => {
 				loggingOut = true;
@@ -60,9 +59,9 @@
 			}}
 		>
 			{#if loggingOut}
-				<SpinnerIcon class="animate-spin" />
+				<SpinnerIcon class="animate-spin" /> Logging you out...
 			{:else}
-				Logout session
+				<SignOutIcon weight="bold" /> Logout session
 			{/if}
 		</Button>
 	{/snippet}

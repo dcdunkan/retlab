@@ -1,10 +1,12 @@
 <script lang="ts">
+	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
+	import BombIcon from "phosphor-svelte/lib/BombIcon";
+
 	import { goto } from "$app/navigation";
 	import { resolve } from "$app/paths";
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Dialog from "$lib/components/dialog.svelte";
 	import { Dialog as DialogPrimitive } from "bits-ui";
-	import SpinnerIcon from "phosphor-svelte/lib/SpinnerIcon";
 	import { toast } from "svelte-sonner";
 	import { destroyAccount } from "./settings.remote";
 
@@ -44,13 +46,9 @@
 	</p>
 
 	{#snippet footer()}
-		<Button disabled={destroying} variant="outline" shadow="none" onclick={() => (open = false)}>
-			Cancel
-		</Button>
+		<Button disabled={destroying} variant="outline" onclick={() => (open = false)}>Cancel</Button>
 		<Button
-			size={destroying ? "icon" : "default"}
 			variant="destructive"
-			shadow="none"
 			disabled={destroying}
 			onclick={async () => {
 				destroying = true;
@@ -64,9 +62,9 @@
 			}}
 		>
 			{#if destroying}
-				<SpinnerIcon class="animate-spin" />
+				<SpinnerIcon class="animate-spin" /> Destroying...
 			{:else}
-				Destrooyyy!
+				<BombIcon weight="fill" /> Destrooyyy!
 			{/if}
 		</Button>
 	{/snippet}
