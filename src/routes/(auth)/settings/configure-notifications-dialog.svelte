@@ -162,7 +162,7 @@
 		<Box.Loading>Fetching *fresh* schema from server...</Box.Loading>
 	{:else if configuration.state === LoadState.Resolved && changedConfig != null}
 		<div class="space-y-4">
-			<p class="border-2 bg-muted px-3 py-2 text-sm">
+			<p class="border-2 border-border bg-muted px-3 py-2 text-sm">
 				<!-- eslint-disable svelte/no-navigation-without-resolve -->
 				If you are facing any issues with the notification server, try contacting the host of the server
 				at
@@ -192,7 +192,7 @@
 									<p class="text-sm">{channel.description}</p>
 								{/if}
 							</div>
-							<div class="divide-y-2 divide-border border-2 bg-muted">
+							<div class="divide-y-2 divide-border border-2 border-border bg-muted">
 								{#each Object.entries(channel.items) as [channelItemId, channelItem] (channelItemId)}
 									<div class="flex place-items-start justify-between gap-2 px-3 py-2">
 										<div class="text-sm">
@@ -244,7 +244,7 @@
 					</p>
 				</div>
 
-				<div class="divide-y-2 divide-border border-2 bg-muted">
+				<div class="divide-y-2 divide-border border-2 border-border bg-muted">
 					{#each Object.entries(configuration.data.serverConfig.config) as [optionKey, option] (optionKey)}
 						<div id="notconf-option-{optionKey}" class="space-y-1 px-3 py-2">
 							<div class="flex place-items-start justify-between gap-2">

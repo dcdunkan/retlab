@@ -23,5 +23,8 @@
 	>
 		<Slider.Range class="absolute h-full bg-foreground" />
 	</span>
-	<Slider.Thumb index={0} class="block size-4 cursor-pointer border-2 bg-background shadow-sm" />
+	<Slider.Thumb
+		index={0}
+		class="block size-4 cursor-pointer border-2 border-border bg-background shadow-sm"
+	/>
 </Slider.Root>

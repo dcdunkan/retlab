@@ -11,7 +11,7 @@
 
 <Checkbox.Root
 	class={cn(
-		"group relative inline-flex size-5 shrink-0 border-2 transition-all duration-75 data-disabled:opacity-60 data-[state=checked]:bg-ret-switch-on data-[state=indeterminate]:bg-background data-[state=unchecked]:bg-ret-switch-off",
+		"group relative inline-flex size-5 shrink-0 border-2 transition-all duration-75 data-disabled:opacity-60 data-[state=checked]:border-success-border data-[state=checked]:bg-ret-switch-on data-[state=indeterminate]:border-border data-[state=indeterminate]:bg-background data-[state=unchecked]:border-error-border data-[state=unchecked]:bg-ret-switch-off",
 		className
 	)}
 	{...restProps}

@@ -13,7 +13,7 @@
 
 <div
 	class={cn(
-		"border-2 bg-muted p-2 text-center text-sm font-medium text-muted-foreground",
+		"border-2 border-border bg-muted p-2 text-center text-sm font-medium text-muted-foreground",
 		className
 	)}
 	{...props}

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Retlab notifications are now reliable again!
+- Borders are more consistent overall & styled more nicely in switches and checkboxes.
 
 ## 2026.10.13
 
