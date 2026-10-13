@@ -6,7 +6,6 @@ import { and, eq } from "drizzle-orm";
 
 export const handle = async ({ event, resolve }) => {
 	if (event.url.pathname === "/api/proxy") {
-		console.log(await event.request.json());
 		return resolve(event);
 	}
 
