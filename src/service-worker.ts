@@ -155,6 +155,9 @@ self.addEventListener("pushsubscriptionchange", (event) => {
 		await fetch(`/api/notification-server/subscription/${oldId}`, {
 			method: "PUT",
 			credentials: "include",
+			headers: {
+				"Content-Type": "application/json"
+			},
 			body: JSON.stringify(newSubscription.toJSON())
 		});
 	}
