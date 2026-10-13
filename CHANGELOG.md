@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reduce L1 cache time-to-live from 60 seconds to 30 seconds.
 - Added cache controls to client-side cache and etlab proxies.
 
+### Fixed
+
+- Handle duplicate entries in grade subject lists
+
 ## 2026.10.05
 
 ### Added
