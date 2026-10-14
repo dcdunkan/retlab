@@ -67,7 +67,7 @@ export const handle = async ({ event, resolve }) => {
 		// todo: jws & no shity
 
 		// console.log("invalidating cache");
-		await db.$cache.invalidate({ tags: sessionCacheTag(event.locals.sessionId) });
+		// await db.$cache.invalidate({ tags: sessionCacheTag(event.locals.sessionId) });
 		// console.log("done invalidating cache");
 
 		const [dbSession] = await db
@@ -130,11 +130,11 @@ export const handle = async ({ event, resolve }) => {
 				)
 			)
 			.where(eq(schema.sessions.id, event.locals.sessionId))
-			.limit(1);
-		// .$withCache({
-		// 	tag: sessionCacheTag(event.locals.sessionId),
-		// 	config: { ex: (1 * DAY) / SECOND }
-		// });
+			.limit(1)
+			.$withCache({
+				tag: sessionCacheTag(event.locals.sessionId),
+				config: { ex: (1 * DAY) / SECOND }
+			});
 
 		if (dbSession == null) {
 			auth.deleteTokenCookies(event);
