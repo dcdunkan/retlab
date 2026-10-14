@@ -24,7 +24,7 @@
 	import { isHttpError } from "@sveltejs/kit";
 	import { onMount } from "svelte";
 	import AssignmentCard from "../assignment-card.svelte";
-	import { cachedGracefulRemoteQuery } from "../states.svelte";
+	import { cachedGracefulRemoteQuery, getClientSessionUser } from "../states.svelte";
 	import * as remotes from "./assignments.remote";
 	import { slide } from "svelte/transition";
 	import Timestamp from "$lib/components/timestamp.svelte";
@@ -32,7 +32,9 @@
 
 	let { data } = $props();
 
-	let chosenSemester = $derived(data.sessionUser.account.semesterId);
+	const sessionUser = getClientSessionUser();
+
+	let chosenSemester = $derived(sessionUser.account.semesterId);
 
 	const assignmentsData = cachedGracefulRemoteQuery(
 		{ name: "getAssignments", version: 1 },
@@ -45,14 +47,14 @@
 
 	onMount(async () => {
 		await Promise.all([
-			assignmentsData.load(data.sessionUser, { semester_id: chosenSemester }),
-			assignmentResultsData.load(data.sessionUser, { semester_id: chosenSemester })
+			assignmentsData.load(sessionUser, { semester_id: chosenSemester }),
+			assignmentResultsData.load(sessionUser, { semester_id: chosenSemester })
 		]);
 	});
 
 	async function hardRefreshAssignments() {
 		await assignmentsData.load(
-			data.sessionUser,
+			sessionUser,
 			{ semester_id: chosenSemester, _l1: false },
 			{ readIdbCache: false }
 		);
@@ -266,8 +268,8 @@
 	async function switchSemester(semesterId: number) {
 		chosenSemester = semesterId;
 		await Promise.allSettled([
-			assignmentsData.load(data.sessionUser, { semester_id: chosenSemester }),
-			assignmentResultsData.load(data.sessionUser, { semester_id: chosenSemester })
+			assignmentsData.load(sessionUser, { semester_id: chosenSemester }),
+			assignmentResultsData.load(sessionUser, { semester_id: chosenSemester })
 		]);
 	}
 </script>
@@ -317,8 +319,8 @@
 		class="shrink-0"
 		variant="outline"
 		size="icon"
-		disabled={chosenSemester === data.sessionUser.account.semesterId}
-		onclick={() => switchSemester(data.sessionUser.account.semesterId)}
+		disabled={chosenSemester === sessionUser.account.semesterId}
+		onclick={() => switchSemester(sessionUser.account.semesterId)}
 	>
 		<ArrowUUpLeftIcon weight="bold" />
 	</Button>
@@ -361,7 +363,7 @@
 
 	<div class="flex flex-wrap gap-2">
 		<Button variant="outline" size="sm" onclick={() => (showResults = !showResults)}>
-			<!-- disabled={data.sessionUser.account.semesterId !== chosenSemester} -->
+			<!-- disabled={sessionUser.account.semesterId !== chosenSemester} -->
 			Hide scores
 			{#if showResults}
 				<XIcon weight="bold" />
@@ -409,7 +411,7 @@
 		</Select>
 	</div>
 
-	{#if showResults && data.sessionUser.account.semesterId !== chosenSemester}
+	{#if showResults && sessionUser.account.semesterId !== chosenSemester}
 		<div transition:slide>
 			<Box.Warning>
 				Results can only be fetched correctly for the current semester as there is a bug on Etlab's

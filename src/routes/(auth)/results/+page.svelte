@@ -6,10 +6,12 @@
 	import Select from "$lib/components/select.svelte";
 	import { isHttpError } from "@sveltejs/kit";
 	import { onMount } from "svelte";
-	import { cachedGracefulRemoteQuery } from "../states.svelte";
+	import { cachedGracefulRemoteQuery, getClientSessionUser } from "../states.svelte";
 	import * as remotes from "./results.remote";
 
-	let { data } = $props();
+	const { data } = $props();
+
+	const sessionUser = getClientSessionUser();
 
 	const sessionalResultsData = cachedGracefulRemoteQuery(
 		{ name: "sessional-results", version: 1 },
@@ -24,35 +26,35 @@
 		remotes.getModuleTestResults
 	);
 
-	let selectedSemester = $derived(data.sessionUser.account.semesterId);
+	let selectedSemester = $derived(sessionUser.account.semesterId);
 	let selectedSession = $state(1);
 
 	onMount(async () => {
 		await Promise.all([
-			sessionalResultsData.load(data.sessionUser, {
+			sessionalResultsData.load(sessionUser, {
 				semester_id: selectedSemester,
 				session: selectedSession
 			}),
-			internalResultsData.load(data.sessionUser, { semester_id: selectedSemester }),
-			moduleTestResultsData.load(data.sessionUser, { semester_id: selectedSemester })
+			internalResultsData.load(sessionUser, { semester_id: selectedSemester }),
+			moduleTestResultsData.load(sessionUser, { semester_id: selectedSemester })
 		]);
 	});
 
 	async function switchSemester(semesterId: number) {
 		selectedSemester = semesterId;
 		await Promise.allSettled([
-			sessionalResultsData.load(data.sessionUser, {
+			sessionalResultsData.load(sessionUser, {
 				semester_id: selectedSemester,
 				session: selectedSession
 			}),
-			internalResultsData.load(data.sessionUser, { semester_id: selectedSemester }),
-			moduleTestResultsData.load(data.sessionUser, { semester_id: selectedSemester })
+			internalResultsData.load(sessionUser, { semester_id: selectedSemester }),
+			moduleTestResultsData.load(sessionUser, { semester_id: selectedSemester })
 		]);
 	}
 
 	async function switchSession(sessionNo: number) {
 		selectedSession = sessionNo;
-		await sessionalResultsData.load(data.sessionUser, {
+		await sessionalResultsData.load(sessionUser, {
 			semester_id: selectedSemester,
 			session: selectedSession
 		});
@@ -80,8 +82,8 @@
 		class="shrink-0"
 		variant="outline"
 		size="icon"
-		disabled={selectedSemester === data.sessionUser.account.semesterId}
-		onclick={() => switchSemester(data.sessionUser.account.semesterId)}
+		disabled={selectedSemester === sessionUser.account.semesterId}
+		onclick={() => switchSemester(sessionUser.account.semesterId)}
 	>
 		<ArrowUUpLeftIcon weight="bold" />
 	</Button>

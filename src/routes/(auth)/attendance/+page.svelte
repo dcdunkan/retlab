@@ -7,20 +7,19 @@
 	import Button from "$lib/components/button.svelte";
 	import { isHttpError } from "@sveltejs/kit";
 	import { onMount } from "svelte";
-	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
-	import type { PageProps } from "./$types";
+	import { cachedGracefulRemoteQuery, getClientSessionUser, settingsState } from "../states.svelte";
+	import AttendanceCalendar from "./attendance-calendar.svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import * as remotes from "./attendance.remote";
-	import AttendanceCalendar from "./attendance-calendar.svelte";
 
-	let { data }: PageProps = $props();
+	const sessionUser = getClientSessionUser();
 
 	const attendanceData = cachedGracefulRemoteQuery(
 		{ name: "getAttendance", version: 1 },
 		remotes.getAttendance
 	);
 	onMount(async () => {
-		await attendanceData.load(data.sessionUser);
+		await attendanceData.load(sessionUser);
 	});
 	let attendancePercentThresholds = $derived(
 		[settingsState.value.attendancePercentMin, settingsState.value.attendancePercentMax].map(
@@ -73,7 +72,7 @@
 		<p class="text-sm text-muted-foreground">These cards are interactable btw.</p>
 	</div>
 
-	<AttendanceCalendar sessionUser={data.sessionUser} />
+	<AttendanceCalendar />
 
 	<!-- <section class="w-full">
 		<GearIcon weight="fill" size="1.5em" />

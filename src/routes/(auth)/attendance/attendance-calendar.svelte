@@ -19,11 +19,10 @@
 	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
 	import { SvelteDate, SvelteMap } from "svelte/reactivity";
-	import { cachedGracefulRemoteQuery } from "../states.svelte";
-	import type { PageData } from "./$types";
+	import { cachedGracefulRemoteQuery, getClientSessionUser } from "../states.svelte";
 	import * as remotes from "./attendance.remote";
 
-	let { sessionUser }: Pick<PageData, "sessionUser"> = $props();
+	const sessionUser = getClientSessionUser();
 
 	const today = getToday("Asia/Kolkata");
 	const selectedDate = new SvelteDate();

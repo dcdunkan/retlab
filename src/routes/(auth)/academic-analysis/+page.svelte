@@ -3,15 +3,14 @@
 	import { isHttpError } from "@sveltejs/kit";
 	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
-	import { cachedGracefulRemoteQuery } from "../states.svelte";
-	import type { PageProps } from "./$types";
+	import { cachedGracefulRemoteQuery, getClientSessionUser } from "../states.svelte";
 	import AcademicAnalysisCharts from "./academic-analysis-charts.svelte";
 	import * as remotes from "./academic-analysis.remote";
 	import WebAccessGuardian from "./web-access-guardian.svelte";
 
 	let isGuardianOpen = $state(false);
 
-	let { data }: PageProps = $props();
+	const sessionUser = getClientSessionUser();
 
 	const academicAnalysis = cachedGracefulRemoteQuery(
 		{ name: "academicAnalysis-e", version: 1 },
@@ -19,7 +18,7 @@
 	);
 
 	async function loadAcademicAnalysis() {
-		await academicAnalysis.load(data.sessionUser);
+		await academicAnalysis.load(sessionUser);
 
 		if (academicAnalysis.data == null) {
 			// todo: make this one better
