@@ -49,6 +49,7 @@
 				bind:value={password}
 				placeholder="Etlab account password"
 				class="w-full"
+				disabled={isAuthenticating}
 				autocomplete="current-password"
 			/>
 			<!-- todo: sad-to-happy password strength smiley reactions -->

@@ -65,6 +65,8 @@ export const load = async (event) => {
 			account: {
 				username: sessionUser.account.username,
 				semesterId: sessionUser.account.semesterId,
+				profileName: sessionUser.account.profileName,
+				displayName: sessionUser.account.displayName,
 				lastUpdatedAt: sessionUser.account.lastUpdatedAt
 			},
 			college: {

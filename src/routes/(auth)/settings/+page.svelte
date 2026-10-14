@@ -10,38 +10,37 @@
 	import Button, { buttonVariants } from "$lib/components/button.svelte";
 	import Input from "$lib/components/input.svelte";
 	import Select from "$lib/components/select.svelte";
+	import Timestamp from "$lib/components/timestamp.svelte";
 	import { type ExpandAttendanceSubjectCardsOption } from "$lib/types";
 	import { isHttpError } from "@sveltejs/kit";
 	import { Slider } from "bits-ui";
+	import confetti from "canvas-confetti";
 	import { setMode, userPrefersMode } from "mode-watcher";
 	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
-	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
-	import type { PageProps } from "./$types.js";
+	import { cachedGracefulRemoteQuery, getClientSessionUser, settingsState } from "../states.svelte";
+	import AccountSection from "./account-section.svelte";
 	import { DEFAULT_SETTINGS } from "./default-settings";
 	import NotificationSection from "./notifications-section.svelte";
 	import SessionCard from "./session-card.svelte";
 	import * as remotes from "./settings.remote.js";
 	import WebAccessSection from "./web-access-section.svelte";
-	import confetti from "canvas-confetti";
-	import Timestamp from "$lib/components/timestamp.svelte";
-	import AccountSection from "./account-section.svelte";
 
-	let { data }: PageProps = $props();
+	const sessionUser = getClientSessionUser();
 
 	const sessions = cachedGracefulRemoteQuery(
 		{ name: "getSessions", version: 1 },
 		remotes.getSessions
 	);
 	onMount(async () => {
-		await sessions.load(data.sessionUser);
+		await sessions.load(sessionUser);
 	});
 
 	type Session = NonNullable<typeof sessions.data>[number];
-	const isCurrentSession = (s: Session) => s.id == data.sessionUser.session.id;
+	const isCurrentSession = (s: Session) => s.id == sessionUser.session.id;
 
 	let refreshingHardCache = $state(false);
-	let hardCacheLastUpdatedAt = $derived(data.sessionUser.account.lastUpdatedAt);
+	let hardCacheLastUpdatedAt = $derived(sessionUser.account.lastUpdatedAt);
 
 	let tweaks = $state<{
 		saving: boolean;
@@ -430,7 +429,7 @@
 	<div class="mt-4 space-y-2">
 		<h3 class="text-lg italic">This session</h3>
 		<div class="border-2 border-border">
-			<SessionCard session={data.sessionUser.session} showLogout={false} />
+			<SessionCard session={sessionUser.session} showLogout={false} />
 		</div>
 
 		{#if sessions.loading}
@@ -446,7 +445,7 @@
 							showLogout
 							onLogout={async () => {
 								await remotes.logoutSession({ session_id: session.id });
-								await sessions.load(data.sessionUser);
+								await sessions.load(sessionUser);
 							}}
 						/>
 					{/each}
@@ -464,9 +463,9 @@
 	</div>
 </section>
 
-<WebAccessSection sessionUser={data.sessionUser} />
+<WebAccessSection {sessionUser} />
 
-<AccountSection sessionUser={data.sessionUser} />
+<AccountSection />
 
 <section>
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Playground</h2>

@@ -216,3 +216,43 @@ export const destroyAccount = command(async () => {
 
 	return { logout: true };
 });
+
+export const changeAccountDisplayName = command(
+	z.object({
+		displayName: z
+			.string()
+			.trim()
+			.min(1, "Display name cannot be empty")
+			.max(24, "Display name must be atmost 24 characters long")
+			.regex(/^[a-zA-Z0-9 ]+$/u, "Display name contains invalid characters!")
+	}),
+	async (args) => {
+		const event = getRequestEvent();
+		if (event.locals.sessionUser == null) return error(401, "Unauthorized");
+		const sessionUser = event.locals.sessionUser;
+
+		if (sessionUser.account.displayName === args.displayName)
+			return error(400, "It's the same as your current display name!");
+
+		const [updated] = await db
+			.update(schema.accounts)
+			.set({
+				displayName: args.displayName
+			})
+			.where(
+				and(
+					eq(schema.accounts.username, sessionUser.account.username),
+					eq(schema.accounts.collegeId, sessionUser.college.id)
+				)
+			)
+			.returning({
+				displayName: schema.accounts.displayName
+			});
+
+		if (updated == null) return error(400, "Something went wrong while updating display name!");
+
+		return {
+			displayName: updated.displayName
+		};
+	}
+);

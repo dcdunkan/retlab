@@ -1,20 +1,51 @@
 <script lang="ts">
+	import Button from "$lib/components/button.svelte";
 	import Timestamp from "$lib/components/timestamp.svelte";
-	import type { PageData } from "./$types";
+	import { getClientSessionUser } from "../states.svelte";
+	import ChangeDisplayNameDialog from "./change-display-name-dialog.svelte";
 	import DestroyAccountDialog from "./destroy-account-dialog.svelte";
 	import LogoutDialog from "./logout-dialog.svelte";
 
-	let {
-		sessionUser
-	}: {
-		sessionUser: PageData["sessionUser"];
-	} = $props();
+	let sessionUser = getClientSessionUser();
+
+	let changeDisplayNameDialogOpen = $state(false);
 </script>
 
 <section class="space-y-4">
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Account</h2>
 
 	<div class="divide-y-2 divide-border border-2 border-border">
+		<div class="flex justify-between gap-4 px-4 py-3">
+			<div class="space-y-2">
+				<div>
+					<div class="font-bold">Display name</div>
+					{#if sessionUser.account.profileName === sessionUser.account.displayName}
+						<p class="text-sm font-medium text-warning-foreground">
+							Same as profile name: <b>{sessionUser.account.profileName}</b>
+						</p>
+					{:else}
+						<p class="text-sm font-medium text-ret-accent">
+							Currently set to <b>{sessionUser.account.displayName}</b>
+						</p>
+					{/if}
+				</div>
+
+				<p class="text-sm">
+					You can set a display name to be greeted by, in the dashboard and other places. It
+					defaults to your fetched full profile name.
+				</p>
+			</div>
+
+			<Button
+				size="sm"
+				onclick={() => {
+					changeDisplayNameDialogOpen = true;
+				}}
+			>
+				Change
+			</Button>
+		</div>
+
 		<div class="flex justify-between gap-4 px-4 py-3">
 			<div class="space-y-2">
 				<div>
@@ -54,3 +85,5 @@
 		</div>
 	</div>
 </section>
+
+<ChangeDisplayNameDialog bind:open={changeDisplayNameDialogOpen} />

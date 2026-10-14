@@ -7,39 +7,55 @@
 
 	import pressSound_opus from "$lib/assets/press-sound.opus";
 
-	import Box from "$lib/components/box";
+	import { default as Box, default as box } from "$lib/components/box";
 	import Button from "$lib/components/button.svelte";
 	import { onMount } from "svelte";
 	import { useSound } from "svelte-attach-sound";
+	import { MediaQuery } from "svelte/reactivity";
 	import AssignmentCard from "./assignment-card.svelte";
 	import * as remotes from "./dashboard.remote";
-	import { cachedGracefulRemoteQuery } from "./states.svelte";
-	import type { PageProps } from "./$types";
-	import box from "$lib/components/box";
-	import { MediaQuery } from "svelte/reactivity";
+	import { cachedGracefulRemoteQuery, getClientSessionUser } from "./states.svelte";
+	import ChangeDisplayNameDialog from "./settings/change-display-name-dialog.svelte";
+	import { slide } from "svelte/transition";
 
-	let { data }: PageProps = $props();
+	const sessionUser = getClientSessionUser();
 
 	let assignmentsData = cachedGracefulRemoteQuery(
 		{ name: "getDueAssignments", version: 1 },
 		remotes.getDueAssignments
 	);
 	onMount(async () => {
-		await assignmentsData.load(data.sessionUser, {});
+		await assignmentsData.load(sessionUser, {});
 	});
 
 	async function hardRefreshAssignments() {
-		await assignmentsData.load(data.sessionUser, { _l1: false }, { readIdbCache: false });
+		await assignmentsData.load(sessionUser, { _l1: false }, { readIdbCache: false });
 	}
 
 	const clickSfx = useSound(pressSound_opus, ["click"], { volume: 0.75 });
 
 	const isLarge = new MediaQuery("min-width: 32rem"); // note: its actually 40em tho (https://tailwindcss.com/docs/responsive-design#overview)
+	let changeDisplayNameDialogOpen = $state(false);
 </script>
 
 <svelte:head>
 	<title>Dashboard / Retlab</title>
 </svelte:head>
+
+<div>
+	<div>Hey there</div>
+	<div class="font-serif text-4xl font-bold">
+		{#if sessionUser.account.profileName === sessionUser.account.displayName}
+			<button
+				onclick={() => {
+					changeDisplayNameDialogOpen = true;
+				}}>{sessionUser.account.displayName}<span class="text-ret-accent">*</span>!</button
+			>
+		{:else}
+			{sessionUser.account.displayName}!
+		{/if}
+	</div>
+</div>
 
 <div class="space-y-2">
 	<Button class="transition-none" {@attach clickSfx()}>Relax &lpar;0ms&rpar;</Button>
@@ -105,3 +121,11 @@
 <!-- <h1 class="text-2xl capitalize">
 	{data.account.profile_name.toLowerCase()}
 </h1> -->
+
+{#if sessionUser.account.displayName === sessionUser.account.profileName}
+	<p class="text-xs text-muted-foreground" transition:slide>
+		<span class="text-ret-accent">*</span> click to change your display name.
+	</p>
+{/if}
+
+<ChangeDisplayNameDialog bind:open={changeDisplayNameDialogOpen} />

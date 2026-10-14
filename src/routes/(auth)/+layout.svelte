@@ -21,31 +21,18 @@
 	import { onMount, type Component } from "svelte";
 	import type { LayoutProps } from "./$types";
 	import { DEFAULT_SETTINGS } from "./settings/default-settings";
-	import { auth, idb, notificationServerSettingsState, settingsState } from "./states.svelte";
+	import {
+		idb,
+		notificationServerSettingsState,
+		setClientSessionUser,
+		settingsState
+	} from "./states.svelte";
 
 	let { data, children }: LayoutProps = $props();
 
-	onMount(async () => {
-		auth.set({
-			session: {
-				id: data.sessionUser.session.id,
-				deviceInfo: data.sessionUser.session.deviceInfo,
-				deviceType: data.sessionUser.session.deviceType,
-				createdAt: data.sessionUser.session.createdAt
-			},
-			account: {
-				username: data.sessionUser.account.username,
-				semesterId: data.sessionUser.account.semesterId,
-				lastUpdatedAt: data.sessionUser.account.lastUpdatedAt
-			},
-			college: {
-				id: data.sessionUser.college.id,
-				name: data.sessionUser.college.name,
-				baseUrl: data.sessionUser.college.baseUrl
-			}
-		});
-		auth.resolve();
+	setClientSessionUser(() => data.sessionUser);
 
+	onMount(async () => {
 		// Resolve normal settings:
 		if (data.sessionUser.settings != null) {
 			// tweak stuff

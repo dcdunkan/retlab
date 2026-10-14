@@ -66,6 +66,10 @@ export const handle = async ({ event, resolve }) => {
 		// console.log("finding session");
 		// todo: jws & no shity
 
+		// console.log("invalidating cache");
+		await db.$cache.invalidate({ tags: sessionCacheTag(event.locals.sessionId) });
+		// console.log("done invalidating cache");
+
 		const [dbSession] = await db
 			.select({
 				session: {
@@ -78,7 +82,9 @@ export const handle = async ({ event, resolve }) => {
 				account: {
 					username: schema.accounts.username,
 					semesterId: schema.accounts.semesterId,
-					lastUpdatedAt: schema.accounts.lastUpdatedAt
+					lastUpdatedAt: schema.accounts.lastUpdatedAt,
+					profileName: schema.accounts.profileName,
+					displayName: schema.accounts.displayName
 				},
 				college: {
 					id: schema.colleges.id,
@@ -124,11 +130,11 @@ export const handle = async ({ event, resolve }) => {
 				)
 			)
 			.where(eq(schema.sessions.id, event.locals.sessionId))
-			.limit(1)
-			.$withCache({
-				tag: sessionCacheTag(event.locals.sessionId),
-				config: { ex: (1 * DAY) / SECOND }
-			});
+			.limit(1);
+		// .$withCache({
+		// 	tag: sessionCacheTag(event.locals.sessionId),
+		// 	config: { ex: (1 * DAY) / SECOND }
+		// });
 
 		if (dbSession == null) {
 			auth.deleteTokenCookies(event);

@@ -48,6 +48,8 @@ declare global {
 					username: string;
 					semesterId: number;
 					lastUpdatedAt: Date;
+					profileName: string;
+					displayName: string;
 				};
 				college: {
 					id: number;

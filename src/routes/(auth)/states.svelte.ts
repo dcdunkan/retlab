@@ -8,7 +8,9 @@ import type {
 	ClientSettingsState,
 	DeviceType
 } from "$lib/server/schema";
+import type { ExpandAttendanceSubjectCardsOption } from "$lib/types";
 import { isHttpError, isValidationError, type RemoteQueryFunction } from "@sveltejs/kit";
+import { getContext, setContext } from "svelte";
 import { DEFAULT_SETTINGS } from "./settings/default-settings";
 
 export const settingsState = createSettings();
@@ -36,7 +38,7 @@ function createSettings() {
 	};
 }
 
-export const auth = createResolvableState<{
+export type ClientSessionUser = {
 	session: {
 		id: string;
 		deviceInfo: string | null;
@@ -46,6 +48,8 @@ export const auth = createResolvableState<{
 	account: {
 		username: string;
 		semesterId: number;
+		profileName: string;
+		displayName: string;
 		lastUpdatedAt: Date;
 	};
 	college: {
@@ -53,7 +57,39 @@ export const auth = createResolvableState<{
 		name: string;
 		baseUrl: string;
 	};
-}>();
+	notificationServerSettings: {
+		url: string;
+		vapidKey: string;
+	} | null;
+	settings: {
+		attendancePercentMax: number;
+		attendancePercentMin: number;
+		expandAttendanceSubjects: ExpandAttendanceSubjectCardsOption;
+		invalidAttendanceMarker: "double-hyphen" | "single-hyphen" | "mdash" | "ndash";
+		showAttendanceBarByDefault: boolean;
+	} | null;
+};
+
+const CLIENT_SESSION_USER_CONTEXT_KEY = Symbol("client-session-user");
+
+export function setClientSessionUser(getData: () => ClientSessionUser): ClientSessionUser {
+	const proxied = $state(getData());
+
+	// pick up fresh server data after invalidate()/navigation
+	$effect.pre(() => {
+		Object.assign(proxied, getData());
+	});
+
+	setContext(CLIENT_SESSION_USER_CONTEXT_KEY, proxied);
+	return proxied;
+}
+
+export function getClientSessionUser(): ClientSessionUser {
+	const data = getContext<ClientSessionUser | undefined>(CLIENT_SESSION_USER_CONTEXT_KEY);
+	if (data == null)
+		throw new Error("getClientSessionUser() called outside an authenticated layout");
+	return data;
+}
 
 export const notificationServerSettingsState = createNotificationSettings();
 
