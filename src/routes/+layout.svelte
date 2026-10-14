@@ -33,7 +33,13 @@
 	}}
 /> -->
 
-<ModeWatcher defaultMode="system" />
+<ModeWatcher
+	defaultMode="system"
+	themeColors={{
+		light: "#ffffff",
+		dark: "#131313"
+	}}
+/>
 
 <Toaster
 	position="bottom-right"
