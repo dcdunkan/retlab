@@ -19,20 +19,15 @@
 	import { cachedGracefulRemoteQuery, settingsState } from "../states.svelte";
 	import type { PageProps } from "./$types.js";
 	import { DEFAULT_SETTINGS } from "./default-settings";
-	import DestroyAccountDialog from "./destroy-account-dialog.svelte";
-	import LogoutDialog from "./logout-dialog.svelte";
 	import NotificationSection from "./notifications-section.svelte";
 	import SessionCard from "./session-card.svelte";
 	import * as remotes from "./settings.remote.js";
 	import WebAccessSection from "./web-access-section.svelte";
 	import confetti from "canvas-confetti";
+	import Timestamp from "$lib/components/timestamp.svelte";
+	import AccountSection from "./account-section.svelte";
 
 	let { data }: PageProps = $props();
-
-	const timeFormatter = new Intl.DateTimeFormat("en-IN", {
-		dateStyle: "medium",
-		timeStyle: "medium"
-	});
 
 	const sessions = cachedGracefulRemoteQuery(
 		{ name: "getSessions", version: 1 },
@@ -365,7 +360,14 @@
 					<div>
 						<div class="font-bold">Refresh hard-cache</div>
 						<p class="text-sm font-medium text-ret-accent">
-							Last updated at <b>{timeFormatter.format(hardCacheLastUpdatedAt)}</b>
+							Last updated <Timestamp
+								timestamp={hardCacheLastUpdatedAt}
+								class="font-medium"
+								dateTimeFormatOptions={{
+									dateStyle: "medium",
+									timeStyle: "medium"
+								}}
+							/>
 						</p>
 					</div>
 
@@ -464,42 +466,7 @@
 
 <WebAccessSection sessionUser={data.sessionUser} />
 
-<section class="space-y-4">
-	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Account</h2>
-
-	<div class="divide-y-2 divide-border border-2 border-border">
-		<div class="flex justify-between gap-4 px-4 py-3">
-			<div class="space-y-2">
-				<div>
-					<div class="font-bold">Logout from your account</div>
-					<p class="text-sm font-medium text-ret-accent">
-						You logged in at <b>{timeFormatter.format(data.sessionUser.session.createdAt)}</b>
-					</p>
-				</div>
-
-				<p class="text-sm">
-					This does <b>not</b> really log out your account session from Etlab btw. But, you log out from
-					Retlab, and Retlab WILL call the logout route of Etlab's API, but it doesn't seem to have any
-					real effect (meaning, your access token is still valid).
-				</p>
-			</div>
-			<LogoutDialog />
-		</div>
-
-		<div class="flex justify-between gap-4 px-4 py-3">
-			<div class="space-y-2">
-				<div>
-					<div class="font-bold">Destroy your account</div>
-				</div>
-				<p class="text-sm">
-					Delete your Retlab account, and everything with it. This doesn't do anything to your
-					actual Etlab account.
-				</p>
-			</div>
-			<DestroyAccountDialog />
-		</div>
-	</div>
-</section>
+<AccountSection sessionUser={data.sessionUser} />
 
 <section>
 	<h2 class="sticky top-10 z-49 -mx-4 bg-background/75 px-4 py-2 text-2xl italic">Playground</h2>
