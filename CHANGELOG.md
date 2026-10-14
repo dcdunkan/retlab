@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2026.10.14
 
+### Added
+
+- Admin page to see general statistics, where the admin credentials are configurable through environmental variables `ADMIN_COLLEGE_ID` and `ADMIN_COLLEGE_USERNAME`.
+
 ### Fixed
 
 - Retlab notifications are now reliable again!
