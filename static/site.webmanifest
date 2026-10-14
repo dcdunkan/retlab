@@ -19,8 +19,12 @@
 		}
 	],
 	"start_url": "/",
-	"theme_color": "#131313",
-	"background_color": "#131313",
+	"theme_color": "#ffffff",
+	"background_color": "#ffffff",
+	"color_scheme_dark": {
+		"theme_color": "#131313",
+		"background_color": "#131313"
+	},
 	"display": "standalone",
 	"shortcuts": [
 		{
