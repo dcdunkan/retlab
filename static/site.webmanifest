@@ -3,6 +3,7 @@
 	"name": "Retlab",
 	"short_name": "ret",
 	"description": "Etlab sucks. But Retlab tries not to. Retlab is an alternative frontend for the Etlab with some tweaks.",
+	"categories": ["education", "productivity", "utilities"],
 	"icons": [
 		{
 			"src": "/web-app-manifest-192x192.png",
@@ -18,7 +19,33 @@
 		}
 	],
 	"start_url": "/",
-	"theme_color": "#ffffff",
-	"background_color": "#ffffff",
-	"display": "standalone"
+	"theme_color": "#131313",
+	"background_color": "#131313",
+	"display": "standalone",
+	"shortcuts": [
+		{
+			"name": "Attendance",
+			"short_name": "Attendance",
+			"description": "View attendance calendar & by subject",
+			"url": "/attendance"
+		},
+		{
+			"name": "Assignments",
+			"short_name": "Assignments",
+			"description": "View assignments",
+			"url": "/assignments"
+		},
+		{
+			"name": "Results",
+			"short_name": "Results",
+			"description": "View sessional & internal results",
+			"url": "/results"
+		},
+		{
+			"name": "Settings",
+			"short_name": "Settings",
+			"description": "Tweaks and other settings",
+			"url": "/settings"
+		}
+	]
 }
