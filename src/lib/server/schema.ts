@@ -218,6 +218,8 @@ export const accounts = pgTable(
 		collegeId: integer("college_id").notNull(),
 		username: text().notNull(),
 
+		///== data from login details
+
 		profileName: text("profile_name").notNull(),
 		imageUrl: text("image_url").notNull(),
 
@@ -230,6 +232,9 @@ export const accounts = pgTable(
 		// regNo: text("reg_no").notNull(), // -
 		// rollNo: text("roll_no").notNull(), // -
 		// studentId: integer("student_id").notNull(), // -
+
+		///== added stuff
+		displayName: text("display_name").notNull(),
 
 		lastUpdatedAt: timestamp("last_updated_at", { mode: "date" }).notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull()

@@ -51,7 +51,7 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 		invalid(issue("Couldn't authorize with Etlab instance"));
 	}
 
-	const updated: Omit<Account, "username" | "collegeId" | "createdAt"> = {
+	const updated: Omit<Account, "username" | "collegeId" | "createdAt" | "displayName"> = {
 		profileName: loginDetails.profile_name,
 		imageUrl: loginDetails.url,
 
@@ -69,6 +69,7 @@ export const loginForm = form(loginSchema, async (data, issue) => {
 			collegeId: data.collegeId,
 			username: data.username,
 			createdAt: new Date(),
+			displayName: loginDetails.profile_name,
 			...updated
 		})
 		.onConflictDoUpdate({
