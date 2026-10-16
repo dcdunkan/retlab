@@ -236,6 +236,11 @@ export const accounts = pgTable(
 		///== added stuff
 		displayName: text("display_name").notNull(),
 
+		onboardedAt: timestamp("onboarded_at", { mode: "date" }),
+		onboardingSkipped: boolean("onboarding_skipped").default(false).notNull(),
+
+		// todo: collect more info: isktu, start&end_years
+
 		lastUpdatedAt: timestamp("last_updated_at", { mode: "date" }).notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull()
 	},

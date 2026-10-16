@@ -50,6 +50,8 @@ declare global {
 					lastUpdatedAt: Date;
 					profileName: string;
 					displayName: string;
+					onboardedAt: Date | null;
+					onboardingSkipped: boolean;
 				};
 				college: {
 					id: number;

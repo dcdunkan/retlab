@@ -26,6 +26,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--font-sans: "Recursive Sans Casual", sans-serif;
 	--font-serif: "Ysabeau Office", serif;
 	--font-mono: "Recursive Mono", monospace;
+	--font-hand: "Homemade Apple", cursive;
 
 	--box-shadow-x: calc(var(--spacing) / 2);
 	--box-shadow-y: calc(var(--spacing) / 4 * 3);
@@ -100,6 +101,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--font-sans: "Recursive Sans Casual", sans-serif;
 	--font-serif: "Ysabeau Office", "Lora", serif;
 	--font-mono: "Recursive Mono", monospace;
+	--font-hand: "Homemade Apple", cursive;
 
 	--box-shadow-x: calc(var(--spacing) / 2);
 	--box-shadow-y: calc(var(--spacing) / 4 * 3);
@@ -170,6 +172,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--font-sans: var(--font-sans);
 	--font-serif: var(--font-serif);
 	--font-mono: var(--font-mono);
+	--font-hand: var(--font-hand);
 
 	--spacing-shadow-x: var(--box-shadow-x);
 	--spacing-shadow-y: var(--box-shadow-y);

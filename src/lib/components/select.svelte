@@ -22,14 +22,14 @@
 				}
 			]
 		>;
-		multiple?: Snippet<
-			[
-				{
-					selected: { value: string; label: string; disabled?: boolean }[];
-					placeholder?: string | undefined;
-				}
-			]
-		>;
+		// multiple?: Snippet<
+		// 	[
+		// 		{
+		// 			selected: { value: string; label: string; disabled?: boolean }[];
+		// 			placeholder?: string | undefined;
+		// 		}
+		// 	]
+		// >;
 	};
 
 	let {
@@ -41,8 +41,12 @@
 		disabled,
 		single,
 		multiple,
+		"aria-invalid": ariaInvalid,
 		...restProps
-	}: Props = $props();
+	}: Props & {
+		"aria-invalid"?: boolean | "false" | "true" | undefined;
+		multiple?: boolean; // todo: use this
+	} = $props();
 </script>
 
 <!--
@@ -51,7 +55,11 @@ get along, so we shut typescript up by casting `value` to `never`, however,
 from the perspective of the consumer of this component, it will be typed appropriately.
 -->
 <Select.Root bind:value={value as never} {...restProps}>
-	<Select.Trigger {disabled} class={cn(buttonVariants({ variant: "outline" }), className)}>
+	<Select.Trigger
+		aria-invalid={ariaInvalid}
+		{disabled}
+		class={cn(buttonVariants({ variant: "outline" }), className)}
+	>
 		{@const selected = value}
 		{#if restProps.type === "single"}
 			{#if single != null}
@@ -67,7 +75,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 			{/if}
 		{:else if restProps.type === "multiple"}
 			{#if multiple != null}
-				{@render multiple?.({
+				<!-- {@render multiple?.({
 					selected:
 						Array.isArray(selected) && selected.length > 0
 							? selected
@@ -75,7 +83,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 									.filter((item) => item != null)
 							: [],
 					placeholder: placeholder
-				})}
+				})} -->
 			{:else if Array.isArray(selected) && selected.length > 0}
 				{items.find((v) => selected[0] === v.value)?.label}
 				{#if selected.length > 1}

@@ -60,7 +60,7 @@ export const handle = async ({ event, resolve }) => {
 		// console.log("auth successful");
 		if (event.route.id == "/login") {
 			// todo: refactor for all "non-protected" routes
-			redirect(307, "/");
+			return redirect(307, "/");
 		}
 
 		// console.log("finding session");
@@ -84,7 +84,9 @@ export const handle = async ({ event, resolve }) => {
 					semesterId: schema.accounts.semesterId,
 					lastUpdatedAt: schema.accounts.lastUpdatedAt,
 					profileName: schema.accounts.profileName,
-					displayName: schema.accounts.displayName
+					displayName: schema.accounts.displayName,
+					onboardedAt: schema.accounts.onboardedAt,
+					onboardingSkipped: schema.accounts.onboardingSkipped
 				},
 				college: {
 					id: schema.colleges.id,
@@ -132,6 +134,7 @@ export const handle = async ({ event, resolve }) => {
 			.where(eq(schema.sessions.id, event.locals.sessionId))
 			.limit(1)
 			.$withCache({
+				// todo: invalidate all & add this back
 				tag: sessionCacheTag(event.locals.sessionId),
 				config: { ex: (1 * DAY) / SECOND }
 			});
@@ -139,8 +142,17 @@ export const handle = async ({ event, resolve }) => {
 		if (dbSession == null) {
 			auth.deleteTokenCookies(event);
 			event.locals.sessionId = null;
-			redirect(307, "/login");
+			return redirect(307, "/login");
 		}
+
+		if (event.route.id === "/(auth)/hello") {
+			if (dbSession.account.onboardedAt != null) {
+				return redirect(307, "/");
+			}
+		} else if (!dbSession.account.onboardingSkipped && dbSession.account.onboardedAt == null) {
+			return redirect(307, "/hello");
+		}
+
 		// await auth.setTokenCookies(event, dbSession.id);
 		event.locals.sessionUser = {
 			session: dbSession.session,

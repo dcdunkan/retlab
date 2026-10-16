@@ -18,7 +18,7 @@
 	import { getLocalSubscription } from "$lib/browser";
 	import { IDBStore, openIdb } from "$lib/indexeddb";
 	import type { IconComponentProps } from "phosphor-svelte";
-	import { onMount, type Component } from "svelte";
+	import { onMount, untrack, type Component } from "svelte";
 	import type { LayoutProps } from "./$types";
 	import { DEFAULT_SETTINGS } from "./settings/default-settings";
 	import {
@@ -32,21 +32,39 @@
 
 	setClientSessionUser(() => data.sessionUser);
 
+	$effect(() => {
+		const settings = data.sessionUser.settings;
+		untrack(() => {
+			settingsState.set(
+				settings == null
+					? DEFAULT_SETTINGS
+					: {
+							attendancePercentMax: settings.attendancePercentMax,
+							attendancePercentMin: settings.attendancePercentMin,
+							expandAttendanceSubjects: settings.expandAttendanceSubjects,
+							invalidAttendanceMarker: settings.invalidAttendanceMarker,
+							showAttendanceBarByDefault: settings.showAttendanceBarByDefault
+						}
+			);
+			settingsState.resolve();
+		});
+	});
+
 	onMount(async () => {
-		// Resolve normal settings:
-		if (data.sessionUser.settings != null) {
-			// tweak stuff
-			settingsState.set({
-				attendancePercentMax: data.sessionUser.settings.attendancePercentMax,
-				attendancePercentMin: data.sessionUser.settings.attendancePercentMin,
-				expandAttendanceSubjects: data.sessionUser.settings.expandAttendanceSubjects,
-				invalidAttendanceMarker: data.sessionUser.settings.invalidAttendanceMarker,
-				showAttendanceBarByDefault: data.sessionUser.settings.showAttendanceBarByDefault
-			});
-		} else {
-			settingsState.set(DEFAULT_SETTINGS);
-		}
-		settingsState.resolve();
+		// // Resolve normal settings:
+		// if (data.sessionUser.settings != null) {
+		// 	// tweak stuff
+		// 	settingsState.set({
+		// 		attendancePercentMax: data.sessionUser.settings.attendancePercentMax,
+		// 		attendancePercentMin: data.sessionUser.settings.attendancePercentMin,
+		// 		expandAttendanceSubjects: data.sessionUser.settings.expandAttendanceSubjects,
+		// 		invalidAttendanceMarker: data.sessionUser.settings.invalidAttendanceMarker,
+		// 		showAttendanceBarByDefault: data.sessionUser.settings.showAttendanceBarByDefault
+		// 	});
+		// } else {
+		// 	settingsState.set(DEFAULT_SETTINGS);
+		// }
+		// settingsState.resolve();
 
 		// Resolve notification server settings:
 		if (data.sessionUser.notificationServerSettings != null) {

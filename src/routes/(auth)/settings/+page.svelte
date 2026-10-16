@@ -194,7 +194,7 @@
 							</Slider.ThumbLabel>
 						</Slider.Root>
 
-						<ul class="list-inside list-[square] text-sm">
+						<ul class="ml-4 list-[square] text-sm">
 							<li>
 								Above or equal to <Input
 									id="tweaks-safe-range-value"
