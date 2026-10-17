@@ -7,16 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2026.10.17
+
+### Added
+
+- A new font "Homemade Apple" as `font-hand`.
+- Implement user onboarding page for first time users. The existing users can visit /hello to onboard if they wanted to.
+- Disabled styles for input component.
+
+### Fixed
+
+- Invalidate session user data cache after any modification.
+
+### Removed
+
+- Temporarily removed the multiple option from select component. (for easier use with `form` remote function)
+
+## 2026.10.15
+
+### Fixed
+
+- Use session user context in the rest of the application.
+- Use theme-color in mode-watcher and in the PWA manifest, for better integration with device.
+
 ## 2026.10.14
 
 ### Added
 
 - Admin page to see general statistics, where the admin credentials are configurable through environmental variables `ADMIN_COLLEGE_ID` and `ADMIN_COLLEGE_USERNAME`.
+- Add user display name in settings, which can be configured in both dash & settings. Display names are used dashboard and other places (in future, possibly) to greet the user because the user profile name could be very long.
 
 ### Fixed
 
 - Retlab notifications are now reliable again!
 - Borders are more consistent overall & styled more nicely in switches and checkboxes.
+
+### Changed
+
+- Separate account section from settings/+page.svelte to account-section.svelte, to improve the DX with HMR which won't invoke the onMount & remote function executions on each reload.
+- Use context for storing and using the session user data. (which makes it deeply reactive because it uses $state). This fixes the issue with changing display name.
 
 ## 2026.10.13
 
