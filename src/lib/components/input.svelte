@@ -7,6 +7,7 @@
 			"border-2 border-border bg-background px-2.5 py-1.5 text-foreground ring-0",
 			"focus-visible:border-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0",
 			"invalid:border-error-border invalid:text-error-foreground invalid:ring-2 invalid:ring-error-border",
+			"disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
 			"transition-all duration-150",
 			"shadow-block-shadow"
 		)
