@@ -3,7 +3,7 @@ import { ApiEndPoints } from "$lib/generated/api-endpoints";
 import type { dash, login } from "$lib/generated/models";
 import { api } from "$lib/server";
 import * as auth from "$lib/server/auth";
-import { db, schema } from "$lib/server/db";
+import { db, schema, sessionCacheTag } from "$lib/server/db";
 import type { ClientSettingsState } from "$lib/server/schema";
 import { error } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -117,6 +117,8 @@ export const refreshHardCache = command(async () => {
 				)
 				.returning();
 
+			await db.$cache.invalidate({ tags: [sessionCacheTag(sessionUser.session.id)] });
+
 			// todo: is it really useful?
 			// event.locals.session.account = {
 			// 	...account,
@@ -199,6 +201,8 @@ export const destroyAccount = command(async () => {
 			)
 		);
 
+	await db.$cache.invalidate({ tags: [sessionCacheTag(sessionUser.session.id)] });
+
 	await Promise.all(
 		sessions.map((session) => {
 			return api.post(sessionUser.college.baseUrl + ApiEndPoints.LOGOUT_URL, {
@@ -250,6 +254,8 @@ export const changeAccountDisplayName = command(
 			});
 
 		if (updated == null) return error(400, "Something went wrong while updating display name!");
+
+		await db.$cache.invalidate({ tags: [sessionCacheTag(sessionUser.session.id)] });
 
 		return {
 			displayName: updated.displayName

@@ -1,7 +1,7 @@
 import { command, form, getRequestEvent } from "$app/server";
 import { error, redirect } from "@sveltejs/kit";
 import { ONBOARDING_DATA_SCHEMA } from "./onboarding.schema";
-import { db, schema } from "$lib/server/db";
+import { db, schema, sessionCacheTag } from "$lib/server/db";
 import { and, eq, sql } from "drizzle-orm";
 
 export const saveDetails = form(ONBOARDING_DATA_SCHEMA, async (args) => {
@@ -43,6 +43,8 @@ export const saveDetails = form(ONBOARDING_DATA_SCHEMA, async (args) => {
 			});
 	});
 
+	await db.$cache.invalidate({ tags: [sessionCacheTag(sessionUser.session.id)] });
+
 	return redirect(307, "/");
 });
 
@@ -61,4 +63,6 @@ export const skipOnboarding = command(async () => {
 				eq(schema.accounts.username, sessionUser.account.username)
 			)
 		);
+
+	await db.$cache.invalidate({ tags: [sessionCacheTag(sessionUser.session.id)] });
 });
