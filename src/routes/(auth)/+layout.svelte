@@ -171,7 +171,8 @@
 			HOME_PIECE,
 			{ href: "/academic-analysis", label: Piece.ACADEMIC_ANALYSIS }
 		],
-		"/(auth)/results": [HOME_PIECE, { href: "/results", label: Piece.RESULTS }]
+		"/(auth)/results": [HOME_PIECE, { href: "/results", label: Piece.RESULTS }],
+		"/(auth)/hello": [{ label: "a quick...", href: "/hello" }]
 	};
 
 	let pieces = $derived.by(() => {
@@ -202,9 +203,11 @@
 				{/each}
 			</div>
 			{#if page.route.id !== "/(auth)/settings"}
-				<a class="hover:bg-foreground/10" href={resolve("/settings")}>
-					<GearFineIcon weight="bold" />
-				</a>
+				{#if page.route.id !== "/(auth)/hello"}
+					<a class="hover:bg-foreground/10" href={resolve("/settings")}>
+						<GearFineIcon weight="bold" />
+					</a>
+				{/if}
 			{:else}
 				<a class="hover:bg-foreground/10" href={resolve("/")}>home</a>
 			{/if}

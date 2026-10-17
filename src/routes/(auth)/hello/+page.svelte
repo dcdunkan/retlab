@@ -80,7 +80,7 @@
 
 <div>
 	<div class="mt-6 font-hand text-6xl">Hello!</div>
-	<div class="text-sm">
+	<div class="mt-1 text-sm">
 		Just some quick settings to get started. <Button
 			variant="ghost"
 			size="min"
@@ -116,7 +116,7 @@
 	})}
 >
 	<div class="space-y-2">
-		<div class="font-bold">You'll be greeted as...</div>
+		<div class="font-semibold">You'll be greeted as...</div>
 		<!-- <p class="text-sm">
 			You can set a display name to be greeted by, in the dashboard and other places. It defaults to
 			your fetched full profile name.
@@ -141,7 +141,7 @@
 	</div>
 
 	<div class="space-y-2">
-		<div class="font-bold">...and you're in semester...</div>
+		<div class="font-semibold">...and you're in semester...</div>
 
 		<div class="flex w-full place-items-center">
 			<Select
@@ -184,7 +184,7 @@
 	</div>
 
 	<div class="space-y-4">
-		<div class="font-bold">...and your target attendance cutoffs are</div>
+		<div class="font-semibold">...and your target attendance cutoffs are</div>
 
 		<div class="grid grid-cols-3 gap-2 text-sm">
 			<div class="border-l-2 pl-2 text-error-foreground">
@@ -242,6 +242,7 @@
 			</span>
 			<Slider.Thumb
 				index={0}
+				disabled={isSaving}
 				class="peer/min block size-4 cursor-pointer border-2 border-border bg-background shadow-sm"
 			/>
 			<Slider.ThumbLabel
@@ -253,6 +254,7 @@
 			</Slider.ThumbLabel>
 			<Slider.Thumb
 				index={1}
+				disabled={isSaving}
 				class="peer/max block size-4 cursor-pointer border-2 border-border bg-background shadow-sm"
 			/>
 			<Slider.ThumbLabel
@@ -269,11 +271,13 @@
 			{...onboardingForm.fields.attendancePercentMin.as("number")}
 			type="hidden"
 			value={attendanceCutoffs[0]}
+			disabled={isSaving}
 		/>
 		<input
 			{...onboardingForm.fields.attendancePercentMax.as("number")}
 			type="hidden"
 			value={attendanceCutoffs[1]}
+			disabled={isSaving}
 		/>
 
 		<div class="flex flex-wrap gap-2">
@@ -281,6 +285,7 @@
 				<Button
 					type="button"
 					size="sm"
+					disabled={isSaving}
 					variant="outline"
 					onclick={() => {
 						customAttendanceCutoffMode = false;
@@ -297,6 +302,7 @@
 			{/each}
 			<Button
 				type="button"
+				disabled={isSaving}
 				size="sm"
 				variant="outline"
 				onclick={() => {
