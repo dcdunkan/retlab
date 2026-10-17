@@ -293,11 +293,11 @@
 						onboardingForm.fields.attendancePercentMax.set(preset.cutoffs[1]);
 					}}
 				>
+					<!-- <b>{preset.label}</b> -->
+					{preset.cutoffs[0]}% &ndash; {preset.cutoffs[1]}%
 					{#if !customAttendanceCutoffMode && attendanceCutoffs[0] === preset.cutoffs[0] && attendanceCutoffs[1] === preset.cutoffs[1]}
 						<CheckIcon weight="bold" class="text-success-foreground" />
 					{/if}
-					<!-- <b>{preset.label}</b> -->
-					{preset.cutoffs[0]}% &ndash; {preset.cutoffs[1]}%
 				</Button>
 			{/each}
 			<Button
@@ -309,10 +309,10 @@
 					customAttendanceCutoffMode = true;
 				}}
 			>
+				Custom
 				{#if customAttendanceCutoffMode}
 					<CheckIcon weight="bold" class="text-success-foreground" />
 				{/if}
-				Custom
 			</Button>
 		</div>
 
