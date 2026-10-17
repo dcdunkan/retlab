@@ -106,7 +106,13 @@
 			const initials: {
 				attendanceCutoffs: [number, number];
 				expandAttendanceSubjectCards: ExpandAttendanceSubjectCardsOption;
-			} = { attendanceCutoffs: [75, 90], expandAttendanceSubjectCards: "critical" };
+			} = {
+				attendanceCutoffs: [
+					DEFAULT_SETTINGS.attendancePercentMin,
+					DEFAULT_SETTINGS.attendancePercentMax
+				],
+				expandAttendanceSubjectCards: DEFAULT_SETTINGS.expandAttendanceSubjects
+			};
 
 			tweaks = {
 				saving: false,
@@ -150,7 +156,39 @@
 						more helpful text for you!
 					</p>
 
-					<div class="mt-4 space-y-2">
+					<div class="mt-4 space-y-3">
+						<div class="flex flex-wrap items-center gap-2">
+							<span class="text-xs font-semibold text-muted-foreground">Scheme presets:</span>
+							<Button
+								type="button"
+								variant={tweaks.attendanceCutoffs.current[0] === 75 &&
+								tweaks.attendanceCutoffs.current[1] === 85
+									? "default"
+									: "outline"}
+								size="xsm"
+								disabled={tweaks.saving}
+								onclick={() => {
+									if (tweaks) tweaks.attendanceCutoffs.current = [75, 85];
+								}}
+							>
+								2024 Scheme (85%)
+							</Button>
+							<Button
+								type="button"
+								variant={tweaks.attendanceCutoffs.current[0] === 75 &&
+								tweaks.attendanceCutoffs.current[1] === 90
+									? "default"
+									: "outline"}
+								size="xsm"
+								disabled={tweaks.saving}
+								onclick={() => {
+									if (tweaks) tweaks.attendanceCutoffs.current = [75, 90];
+								}}
+							>
+								2019 Scheme (90%)
+							</Button>
+						</div>
+
 						<Slider.Root
 							max={99}
 							type="multiple"
