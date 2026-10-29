@@ -163,6 +163,7 @@ export const handle = async ({ event, resolve }) => {
 		};
 		return resolve(event);
 	} else {
+		// console.log("unauthorized");
 		if (event.url.pathname.startsWith("/api")) {
 			return resolve(event);
 		}
@@ -170,8 +171,11 @@ export const handle = async ({ event, resolve }) => {
 			return resolve(event);
 		}
 
-		// console.log("unauthorized");
-		if (event.route.id == "/login") {
+		if (event.route.id === "/docs") {
+			return resolve(event);
+		}
+
+		if (event.route.id === "/login") {
 			// console.log("at login");
 			return resolve(event);
 		}

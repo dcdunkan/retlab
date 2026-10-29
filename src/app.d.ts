@@ -1,6 +1,9 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
 import type { ErrorCode } from "$lib/errors";
+import "mdast";
+import "mdast-util-math";
+import "unified";
 
 // for information about these interfaces
 declare global {
@@ -8,11 +11,13 @@ declare global {
 	const __GIT_SHA__: string;
 	const __GIT_SHORT_SHA__: string;
 	const __EXPERIMENTAL_WEB_TOGGLES__: ExperimentalWebToggles;
+	const __DOCS_DETAILS__: DocsDetails;
 
 	type ExperimentalWebToggles = {
 		upload_assignment_mode: "app" | "web";
 		delete_assignment_mode: "app" | "web";
 	};
+	type DocsDetails = Record<string, { lastUpdatedAt: Date }>;
 
 	// sveltekit App
 	namespace App {
@@ -80,6 +85,37 @@ declare global {
 	}
 
 	export type SessionUser = NonNullable<App.Locals["sessionUser"]>;
+
+	export namespace Scripts {
+		export type ReleaseNoteEntry = {
+			tag: string;
+			commitSha: string;
+			commitShortSha: string;
+			date: Date;
+			filepath: string;
+			next?: string;
+			prev?: string;
+		};
+	}
 }
 
 export {};
+
+// === UNIFIED STUFF
+
+declare module "mdast" {
+	interface ImageData {
+		height: number;
+		width: number;
+		dark?: {
+			url: string;
+			height: number;
+			width: number;
+		};
+	}
+}
+
+// declare module "unified" {
+// 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+// 	export interface Data {}
+// }

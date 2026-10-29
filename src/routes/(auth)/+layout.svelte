@@ -190,7 +190,7 @@
 				{#each pieces as piece, i (i)}
 					{#if i == pieces.length - 1}
 						{#if piece.label}
-							<span class="font-medium">{piece.label}</span>
+							<span class="font-semibold">{piece.label}</span>
 						{/if}
 						{#if piece.icon}
 							<piece.icon weight="bold" />

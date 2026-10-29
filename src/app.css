@@ -27,6 +27,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--font-serif: "Ysabeau Office", serif;
 	--font-mono: "Recursive Mono", monospace;
 	--font-hand: "Homemade Apple", cursive;
+	--font-reader: "Libron", serif;
 
 	--box-shadow-x: calc(var(--spacing) / 2);
 	--box-shadow-y: calc(var(--spacing) / 4 * 3);
@@ -102,6 +103,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--font-serif: "Ysabeau Office", "Lora", serif;
 	--font-mono: "Recursive Mono", monospace;
 	--font-hand: "Homemade Apple", cursive;
+	--font-reader: "Libron", serif;
 
 	--box-shadow-x: calc(var(--spacing) / 2);
 	--box-shadow-y: calc(var(--spacing) / 4 * 3);
@@ -173,6 +175,7 @@ SO ANYTHING WITH % => taken from tailwind docs: https://tailwindcss.com/docs/col
 	--font-serif: var(--font-serif);
 	--font-mono: var(--font-mono);
 	--font-hand: var(--font-hand);
+	--font-reader: var(--font-reader);
 
 	--spacing-shadow-x: var(--box-shadow-x);
 	--spacing-shadow-y: var(--box-shadow-y);
@@ -303,4 +306,121 @@ input::-webkit-inner-spin-button.no-arrows {
 input[type="number"].no-arrows {
 	-moz-appearance: textfield;
 	appearance: textfield;
+}
+
+/*article.docs[data-font="reader"] {
+	@apply font-reader;
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-reader;
+	}
+}*/
+
+html[data-docs-font="reader"] article.docs {
+	@apply font-reader;
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-reader;
+	}
+}
+
+html[data-docs-font="sans"] article.docs {
+	@apply font-sans;
+}
+
+article.docs {
+	/*@apply font-sans;*/
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-serif;
+	}
+
+	h1 {
+		@apply text-4xl;
+	}
+	h2 {
+		@apply text-3xl;
+	}
+	h3 {
+		@apply text-2xl;
+	}
+	h4 {
+		@apply text-xl;
+	}
+	h5 {
+		@apply text-lg;
+	}
+	h6 {
+		@apply text-base;
+	}
+
+	b,
+	strong {
+		@apply font-semibold;
+	}
+
+	figure {
+		@apply space-y-2;
+	}
+	picture {
+		@apply flex flex-col items-center justify-center;
+	}
+	img {
+		@apply border-2 border-border shadow-block-shadow;
+	}
+	figcaption {
+		@apply text-center text-sm text-muted-foreground italic;
+	}
+
+	ul {
+		@apply ml-8 list-[square];
+	}
+	ol {
+		@apply ml-8 list-decimal;
+	}
+	p {
+		@apply leading-relaxed;
+	}
+	li {
+		@apply leading-relaxed;
+	}
+
+	section {
+		@apply space-y-4;
+	}
+
+	a:not([data-slot="button"]) {
+		@apply inline-flex place-items-center gap-1 font-medium text-ret-accent underline transition-colors duration-150 hover:bg-ret-accent/20 hover:text-ret-accent/90 hover:decoration-wavy;
+	}
+
+	a[aria-disabled="true"] {
+		@apply text-foreground no-underline hover:bg-inherit hover:text-foreground;
+	}
+
+	kbd {
+		@apply mr-0.5 border-2 px-1 py-0.5 text-sm font-bold shadow-block-shadow;
+	}
+
+	blockquote {
+		@apply space-y-2 border-l-2 border-border bg-muted px-4 py-3;
+	}
+
+	address {
+		@apply mr-8 ml-auto w-fit -rotate-z-6 text-center font-hand text-2xl font-semibold select-none;
+	}
 }

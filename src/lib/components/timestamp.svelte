@@ -8,20 +8,23 @@
 		timestamp,
 		raw = false,
 		class: className = "",
+		dateTimeFormatter,
 		dateTimeFormatOptions
 	}: {
 		timestamp: Date;
 		raw?: boolean;
 		class?: string;
+		dateTimeFormatter?: Intl.DateTimeFormat;
 		dateTimeFormatOptions?: Intl.DateTimeFormatOptions;
 	} = $props();
 
 	const timeFormatter = $derived(
-		new Intl.DateTimeFormat("en-IN", {
-			dateStyle: "medium",
-			timeStyle: "medium",
-			...dateTimeFormatOptions
-		})
+		dateTimeFormatter ??
+			new Intl.DateTimeFormat("en-IN", {
+				dateStyle: "medium",
+				timeStyle: "medium",
+				...dateTimeFormatOptions
+			})
 	);
 	let displayText = $derived(raw ? timeFormatter.format(timestamp) : timeDistanceToNow(timestamp));
 
@@ -62,7 +65,7 @@
 	size="min"
 	variant="ghost"
 	class={cn(
-		"w-fit text-left font-normal text-wrap whitespace-normal text-inherit underline decoration-inherit decoration-dashed underline-offset-4",
+		"w-fit text-left font-normal text-wrap whitespace-normal text-inherit underline decoration-inherit decoration-dashed underline-offset-4 select-auto",
 		className
 	)}
 	onmousedown={interactionStart}

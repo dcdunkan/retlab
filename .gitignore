@@ -27,3 +27,5 @@ cert
 
 docs/compiled
 db-dumps
+
+# docs/release-notes/generated.json

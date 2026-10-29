@@ -25,6 +25,7 @@
 		contentProps,
 		icon: Icon = undefined,
 		type,
+		disabled,
 		...restProps
 	}: Props = $props();
 
@@ -45,14 +46,32 @@
 
 	const mergedRootProps = $derived(mergeProps(restProps, { onOpenChange: handleOpenChange }));
 	const mergedInputProps = $derived(mergeProps(inputProps, { oninput: handleInput }));
+
+	let inputRef = $state<HTMLInputElement | null>(null);
+
+	const selectedLabel = $derived(
+		type === "single" && typeof value === "string"
+			? (items.find((item) => item.value === value)?.label ?? "")
+			: ""
+	);
+
+	// bits-ui doesn't sync the label on mount with a preset value, so do it here
+	$effect(() => {
+		if (!inputRef || document.activeElement === inputRef) return;
+		if (selectedLabel !== "" && inputRef.value !== selectedLabel) {
+			inputRef.value = selectedLabel;
+		}
+	});
 </script>
 
 <Combobox.Root {type} {items} bind:value={value as never} bind:open {...mergedRootProps}>
 	<div class="relative">
 		<Icon weight="bold" class="absolute inset-s-3 top-1/2 size-5 -translate-y-1/2" />
 		<Combobox.Input
-			{...mergedInputProps}
+			bind:ref={inputRef}
 			class={inputVariants({ class: ["w-full", Icon != null ? "px-10" : "pr-10"] })}
+			{...mergedInputProps}
+			{disabled}
 		/>
 		<Combobox.Trigger
 			class={buttonVariants({
@@ -60,6 +79,7 @@
 				size: "icon-xsm",
 				class: "absolute inset-e-3 top-1/2 size-5 -translate-y-1/2 touch-none"
 			})}
+			{disabled}
 		>
 			<CaretUpDownIcon class="size-5" weight="bold" />
 		</Combobox.Trigger>

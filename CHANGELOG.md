@@ -161,7 +161,13 @@ This update includes an enhanced theming system and an official theme set: Retma
 - Fixed the college ID selection schema to handle empty inputs.
 - Set length limits to username and password inputs in login screen.
 
-## [0.5.0] - 2026-05-04
+## 2026-08-10
+
+### Changed
+
+- Increased timeout for Etlab APIs because it gets timed out most of the time.
+
+## 2026-05-04
 
 ### Added
 
@@ -175,7 +181,7 @@ This update includes an enhanced theming system and an official theme set: Retma
 - Adjusted the variation settings of the UI font to make it look more playful.
 - Login page now loads very quick because of it's now prerendered.
 
-## [0.4.0] - 2026-05-03
+## 2026-05-03
 
 ### Added
 
@@ -183,7 +189,7 @@ This update includes an enhanced theming system and an official theme set: Retma
   You can deploy and connect your own notification server using [ret-nots](https://github.com/dcdunkan/retlab-notifications),
   the official notification server implementation (still minimal in implementation).
 
-## [0.3.0] - 2026-03-26
+## 2026-03-26
 
 ### Added
 
@@ -201,26 +207,26 @@ This update includes an enhanced theming system and an official theme set: Retma
 
 - Icon set was changed from [Lucide](https://lucide.dev) to [Phosphor Icons](https://phosphoricons.com).
 
-## [0.2.0] - 2026-01-13
+## 2026-01-13
 
 ### Added
 
 - Users can now adjust the percentage cutoffs for helpful messages in the attendance pages.
 
-## [0.1.1] - 2026-01-08
+## 2026-01-08
 
 ### Fixed
 
 - Invalid value used for calculating the attendance percentages and total number of classes.
 
-## [0.1.0] - 2026-01-04
+## 2026-01-04
 
 ### Added
 
 - Settings page with option for refreshing hard-cache and managing sessions and devices.
 - Implemented a generic dialog component that are used throughout the application.
 
-## [0.0.0] - 2026-01-01
+## 2026-01-01
 
 ### Added
 
