@@ -1,10 +1,20 @@
-import { DAY, SECOND } from "$lib";
-import * as auth from "$lib/server/auth";
-import { db, schema, sessionCacheTag } from "$lib/server/db";
-import { error, redirect } from "@sveltejs/kit";
-import { and, eq } from "drizzle-orm";
+// import { DAY, SECOND } from "$lib";
+// import * as auth from "$lib/server/auth";
+// import { db, schema, sessionCacheTag } from "$lib/server/db";
+// import { and, eq } from "drizzle-orm";
+import { redirect } from "@sveltejs/kit";
 
 export const handle = async ({ event, resolve }) => {
+	if (event.url.pathname === "/the-end") {
+		return resolve(event);
+	}
+	if (event.url.pathname.startsWith("/docs")) {
+		return resolve(event);
+	}
+
+	return redirect(307, "/the-end");
+
+	/*
 	if (event.url.pathname === "/api/proxy") {
 		return resolve(event);
 	}
@@ -183,4 +193,5 @@ export const handle = async ({ event, resolve }) => {
 	}
 
 	error(500, "Impossible!");
+	 */
 };
