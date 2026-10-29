@@ -13,6 +13,9 @@ const config = {
 		adapter: adapter(),
 		experimental: {
 			remoteFunctions: true
+		},
+		prerender: {
+			handleUnseenRoutes: "warn"
 		}
 	},
 	compilerOptions: {
