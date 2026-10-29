@@ -49,18 +49,36 @@
 	<div class="flex flex-col justify-between gap-4 sm:flex-row">
 		<h1 class="text-6xl font-bold">{totalPercent} %</h1>
 
-		<Button
-			variant="outline"
-			size="sm"
-			onclick={() => (attendanceMode = attendanceMode === "duty_leave" ? "normal" : "duty_leave")}
-		>
-			Include duty leave
-			{#if attendanceMode === "duty_leave"}
-				<CheckIcon weight="bold" />
-			{:else}
-				<XIcon weight="bold" />
-			{/if}
-		</Button>
+		<div class="flex flex-wrap items-center gap-2">
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={() => (attendanceMode = attendanceMode === "duty_leave" ? "normal" : "duty_leave")}
+			>
+				Include duty leave
+				{#if attendanceMode === "duty_leave"}
+					<CheckIcon weight="bold" />
+				{:else}
+					<XIcon weight="bold" />
+				{/if}
+			</Button>
+
+			<Button
+				variant="outline"
+				size="sm"
+				title="Click to toggle attendance scheme cutoff"
+				onclick={() => {
+					const nextCutoff = settingsState.value.attendancePercentMax === 85 ? 90 : 85;
+					settingsState.set({ attendancePercentMax: nextCutoff });
+				}}
+			>
+				{settingsState.value.attendancePercentMax === 85
+					? "2024 Scheme (85%)"
+					: settingsState.value.attendancePercentMax === 90
+						? "2019 Scheme (90%)"
+						: `${settingsState.value.attendancePercentMax}% Cutoff`}
+			</Button>
+		</div>
 	</div>
 
 	<div class="space-y-2">
